@@ -1,0 +1,28 @@
+table.table-bordered.dataTable .cell-title {
+    display: none
+}
+@media only screen and (max-width: 768px) {
+    table.table-bordered.dataTable{
+        border-collapse: collapse !important;
+    }
+    table.table-bordered.dataTable .table-header {
+        display: none !important;
+    }
+
+    table.table-bordered.dataTable .cell-title {
+        display: inherit;
+    }
+
+    table.table-bordered.dataTable tr {
+        border: 1px solid #f4f4f4;
+    }
+
+    table.table-bordered.dataTable th, table.table-bordered.dataTable td {
+        display: flex;
+        border: none;
+    }
+}
+
+table.table-bordered.dataTable .btn {
+    margin-right: 5px
+}

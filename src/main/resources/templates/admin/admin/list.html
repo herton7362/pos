@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:include="admin/common/header_statics :: header('首页')"></head>
+<body class="hold-transition skin-yellow sidebar-mini">
+<!--[if lte IE 9]>
+<p class="browsehappy">你正在使用<strong>过时</strong>的浏览器，奎爷 暂不支持。 请 <a href="http://browsehappy.com/" target="_blank">升级浏览器</a>
+    以获得更好的体验！</p>
+<![endif]-->
+<!-- Site wrapper -->
+<div class="wrapper">
+    <header th:include="admin/common/header_html"></header>
+    <!-- =============================================== -->
+    <aside th:include="admin/common/aside"></aside>
+    <!-- =============================================== -->
+
+    <!-- Content Wrapper. Contains page content -->
+    <div class="content-wrapper">
+        <!-- Content Header (Page header) -->
+        <section class="content-header">
+            <h1>
+                管理员管理
+                <small>管理员录入与修改</small>
+            </h1>
+            <ol class="breadcrumb">
+                <li>系统管理</li>
+                <li class="active">管理员管理</li>
+            </ol>
+        </section>
+
+        <!-- Main content -->
+        <section id="content" class="content" v-cloak>
+            <div class="row">
+                <div class="col-md-12">
+                    <crudgrid
+                            domain="admin"
+                            @save="afterSave"
+                            :columns="crudgrid.columns"
+                            :form-data="formData"
+                            :instance="crudgrid"
+                    >
+                        <template slot="form-body" scope="props">
+                            <div class="form-group">
+                                <label>登录名：</label>
+                                <input type="text" class="form-control" required v-model="props.form.loginName" placeholder="输入登录名">
+                            </div>
+                            <div class="form-group">
+                                <label>名称：</label>
+                                <input type="text" class="form-control" required v-model="props.form.name" placeholder="输入管理员名称">
+                            </div>
+                            <div class="form-group">
+                                <label>角色：</label>
+                                <combobox
+                                        class="form-control"
+                                        required
+                                        :multiple="true"
+                                        :options="role.data"
+                                        v-model="props.form.roleIds">
+                                </combobox>
+                            </div>
+                            <div class="form-group">
+                                <label>
+                                    密码：
+                                    <button
+                                            type="button"
+                                            class="btn btn-warning btn-flat btn-xs"
+                                            @click="formData.setPassword=!formData.setPassword">
+                                        <template v-if="formData.setPassword">取消设置密码</template>
+                                        <template v-else>设置密码</template>
+                                    </button>
+                                </label>
+                                <input
+                                        type="text"
+                                        class="form-control"
+                                        required v-model="props.form.password"
+                                        :calss="{'disabled': !formData.setPassword}"
+                                        :disabled="!formData.setPassword"
+                                        placeholder="输入管理员名称">
+                            </div>
+                        </template>
+                    </crudgrid>
+                </div>
+            </div>
+        </section>
+        <!-- /.content -->
+    </div>
+    <!-- /.content-wrapper -->
+    <footer th:include="admin/common/footer_html"></footer>
+</div>
+<!-- ./wrapper -->
+<footer th:include="admin/common/footer_statics"></footer>
+<script th:src="@{/static/js/modules/admin/list.js}"></script>
+</body>
+</html>

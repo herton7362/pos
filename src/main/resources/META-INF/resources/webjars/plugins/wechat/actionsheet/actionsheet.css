@@ -1,0 +1,15 @@
+.actionsheet .weui-actionsheet__title {
+    height: auto;
+    min-height: 50px;
+    padding: 0;
+}
+
+.actionsheet .weui-actionsheet__title-text {
+    margin: 0;
+    font-size: 16px;
+    color: #333;
+}
+
+.actionsheet .weui-actionsheet__cell {
+    font-size: 16px;
+}

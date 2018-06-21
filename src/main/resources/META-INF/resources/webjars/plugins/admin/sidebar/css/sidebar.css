@@ -1,0 +1,59 @@
+.sidebar-plugin {
+    white-space: nowrap;
+    overflow: hidden;
+    list-style: none;
+    margin: 0;
+    padding: 0;
+}
+
+.sidebar-plugin .treeview-menu > li > a {
+    padding: 10px 5px 10px 15px;
+}
+
+.sidebar-plugin>li.header{
+    background: transparent;
+    color: #333;
+    font-weight: 600;
+    overflow: hidden;
+    text-overflow: clip;
+    white-space: nowrap;
+    padding: 10px 25px 10px 15px;
+    font-size: 16px;
+}
+
+.sidebar-plugin>li>a {
+    padding: 12px 5px 12px 15px;
+    display: block;
+    position: relative;
+    color: #555;
+}
+
+.sidebar-plugin li>a:hover {
+    background-color: #E4E4E4;
+}
+
+.sidebar-plugin .treeview-menu > li > a {
+    color: #555;
+}
+
+.sidebar-plugin li.active>a {
+    color: #fff;
+    background: #f39c12;
+}
+
+.sidebar-plugin li > a > .fa-angle-left, .sidebar-plugin li > a > .pull-right-container > .fa-angle-left {
+    width: auto;
+    height: auto;
+    padding: 0;
+    margin-right: 10px;
+    -webkit-transition: transform 0.5s ease;
+    -o-transition: transform 0.5s ease;
+    transition: transform 0.5s ease;
+}
+
+.sidebar-plugin .menu-open > a > .fa-angle-left, .sidebar-plugin .menu-open > a > .pull-right-container > .fa-angle-left {
+    -webkit-transform: rotate(-90deg);
+    -ms-transform: rotate(-90deg);
+    -o-transform: rotate(-90deg);
+    transform: rotate(-90deg);
+}

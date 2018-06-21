@@ -1,0 +1,31 @@
+.bubble-info {
+    position: fixed;
+    top: 60px;
+    width: 280px;
+    right: 10px;
+    z-index: 1610;
+}
+
+.bubble-info h4 {
+    font-size: 16px;
+}
+
+@media (min-width: 768px) {
+    .messager .modal-dialog {
+        display: block;
+        margin:0;
+    }
+}
+
+.messager .alert-icon {
+    position: absolute;
+    left: 15px;
+    top: 15px;
+    font-size: 40px;
+    color: #39cccc;
+}
+
+.messager .modal-body {
+    font-size: 16px;
+    padding: 25px 65px;
+}

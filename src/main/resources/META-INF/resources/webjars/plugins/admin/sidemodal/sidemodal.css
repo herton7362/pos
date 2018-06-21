@@ -1,0 +1,62 @@
+.sidemodal {
+    position: fixed;
+    z-index: -1;
+    left:0;
+    right: 0;
+    top: 0;
+    bottom: 0;
+}
+
+.sidemodal .sidemodal-mask {
+    position: fixed;
+    z-index: 1;
+    left:0;
+    right: 0;
+    top: 0;
+    bottom: 0;
+}
+
+.sidemodal.sidemodal-open {
+    z-index: 1041;
+}
+
+.sidemodal .control-sidebar {
+    padding: 0;
+    bottom: 0;
+    box-shadow: -4px 0px 11px 0px rgba(0, 0, 0, 0.14);
+}
+
+.sidemodal .box {
+    z-index: 2;
+    margin: 0;
+    border: none;
+    box-shadow: none;
+    height: 100%;
+}
+
+.sidemodal .box .box-body {
+    overflow-y: auto;
+    height: 100%;
+    padding: 20px 20px 110px 20px;
+}
+
+.sidemodal .box .box-header {
+    padding: 20px;
+}
+
+.sidemodal .box .box-footer {
+    width: 100%;
+    position: absolute;
+    bottom: 0;
+    text-align: center;
+}
+
+.control-sidebar.control-sidebar-open, .control-sidebar.control-sidebar-open + .control-sidebar-bg {
+    right: 0 !important;
+}
+
+@media only screen and (max-width: 768px) {
+    .sidemodal .control-sidebar {
+        width: 98% !important;
+    }
+}

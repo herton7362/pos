@@ -1,0 +1,98 @@
+[v-cloak] {
+    display: none;
+}
+
+
+.attachment-list .mailbox-attachment-icon {
+    height: 220px;
+    width: 198px;
+    overflow: hidden;
+}
+
+.mailbox-attachment-name {
+    overflow: hidden;/*超出部分隐藏*/
+    white-space: nowrap;/*不换行*/
+    text-overflow:ellipsis;/*超出部分省略号显示*/
+    width: 180px;
+    display: block;
+}
+
+.mailbox-attachment-icon img {
+    font-size: 20px;
+    font-weight: normal;
+}
+
+@media (max-width: 768px) {
+    .attachment-list .mailbox-attachment-icon,
+    .mailbox-attachments li {
+        height: auto;
+        width: 100%;
+    }
+}
+
+.padding-lr-15 {
+    padding-left: 15px;
+    padding-right: 15px;
+}
+
+.sidebar-menu .treeview-menu > li > a {
+    padding: 10px 5px 10px 15px;
+}
+
+.login-footer {
+    position: absolute;
+    bottom: 120px;
+    left: 50%;
+    margin-left: -60px;
+    text-align: center;
+    line-height: 25px;
+}
+
+.login-footer a {
+    color: #999;
+}
+
+.login-footer a:hover {
+    text-decoration: underline;
+}
+
+.login-box-msg.error {
+    color: #ff3b30;
+}
+
+.login-footer p {
+    color: #93cbf9;
+}
+
+body.login-page .login-logo a {
+    color: #fff;
+}
+
+/* ==========================================================================
+   Component: form
+ ============================================================================ */
+@media (max-width: 768px) {
+    .search {
+        margin-top: 20px;
+        width: 100%;
+    }
+}
+
+.form-control-feedback.fa-times-circle-o {
+    z-index: 4;
+    cursor: pointer;
+    pointer-events:all;
+}
+
+.search .form-control-feedback {
+    color: #555;
+    line-height: 30px;
+    height: 30px;
+}
+
+/* ==========================================================================
+   Component: checkbox,radio
+ ============================================================================ */
+.checkbox label:first-child, .radio label:first-child {
+    padding-left: 0;
+}

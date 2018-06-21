@@ -1,0 +1,16 @@
+.weui-icon_toast.weui-icon-info-circle，
+.weui-icon_toast.fa-exclamation,
+.weui-icon_toast.fa-close {
+    margin: 14px 0 6px;
+}
+
+.weui-icon_toast.weui-icon-info-circle:before,
+.weui-icon_toast.fa-exclamation:before,
+.weui-icon_toast.fa-close:before {
+    color: #FFFFFF;
+    font-size: 55px;
+}
+
+.weui-toast {
+    z-index: 5005;
+}
