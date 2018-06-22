@@ -51,6 +51,20 @@ define(['jquery', 'utils'], function($, utils) {
         '                                  @click="remove(datagrid.$instance.selectedRows, $event)">\n' +
         '                              <i class="fa fa-trash"></i> 删除\n' +
         '                          </button>\n' +
+        '                          <button\n' +
+        '                                  class="btn btn-flat btn-danger"\n' +
+        '                                  :disabled="datagrid.$instance.selectedRows <= 0"\n' +
+        '                                  :class="{\'disabled\': datagrid.$instance.selectedRows <= 0}"\n' +
+        '                                  @click="disable(datagrid.$instance.selectedRows, $event)">\n' +
+        '                              <i class="fa fa-stop"></i> 禁用\n' +
+        '                          </button>\n' +
+        '                          <button\n' +
+        '                                  class="btn btn-flat btn-success"\n' +
+        '                                  :disabled="datagrid.$instance.selectedRows <= 0"\n' +
+        '                                  :class="{\'disabled\': datagrid.$instance.selectedRows <= 0}"\n' +
+        '                                  @click="enable(datagrid.$instance.selectedRows, $event)">\n' +
+        '                              <i class="fa fa-play"></i> 启用\n' +
+        '                          </button>\n' +
         '                          <slot name="toolbar"></slot>\n' +
         '                      </div>\n' +
         '                      <div class="col-md-3">\n' +
@@ -109,6 +123,8 @@ define(['jquery', 'utils'], function($, utils) {
         '                      <template slot="operator" scope="props">\n' +
         '                          <a class="btn btn-xs bg-green" @click="edit(props.row)" title="修改"><i class="fa fa-pencil"></i></a>\n' +
         '                          <a class="btn btn-xs bg-red" @click="remove(props.row, $event)" title="删除"><i class="fa fa-trash"></i></a>\n' +
+        '                          <a v-if="props.row.logicallyDeleted" class="btn btn-xs bg-green" @click="enable(props.row, $event)" title="启用"><i class="fa fa-play"></i></a>\n' +
+        '                          <a v-if="!props.row.logicallyDeleted" class="btn btn-xs bg-red" @click="disable(props.row, $event)" title="禁用"><i class="fa fa-stop"></i></a>\n' +
         '                          <slot name="datagrid-operator" v-bind:row="props.row"></slot>\n' +
         '                      </template>\n' +
         '                  </datagrid>\n' +
@@ -208,6 +224,48 @@ define(['jquery', 'utils'], function($, utils) {
                             success: function() {
                                 messager.bubble('删除成功');
                                 self.$emit('remove', ids);
+                                self.refresh();
+                            }
+                        });
+                    });
+                });
+            },
+            disable: function(row, event) {
+                var rows = [];
+                var self = this;
+                require(['messager'], function(messager) {
+                    messager.alert('确定要禁用吗？', event, function() {
+                        var ids = [];
+                        $.each(rows.concat(row), function() {
+                            ids.push(this.id);
+                        });
+                        $.ajax({
+                            url: utils.patchUrl('/api/' + self.domain + '/disable/' + ids.join(',')),
+                            type: 'POST',
+                            success: function() {
+                                messager.bubble('禁用成功');
+                                self.$emit('disable', ids);
+                                self.refresh();
+                            }
+                        });
+                    });
+                });
+            },
+            enable: function(row, event) {
+                var rows = [];
+                var self = this;
+                require(['messager'], function(messager) {
+                    messager.alert('确定要启用吗？', event, function() {
+                        var ids = [];
+                        $.each(rows.concat(row), function() {
+                            ids.push(this.id);
+                        });
+                        $.ajax({
+                            url: utils.patchUrl('/api/' + self.domain + '/enable/' + ids.join(',')),
+                            type: 'POST',
+                            success: function() {
+                                messager.bubble('启用成功');
+                                self.$emit('enable', ids);
                                 self.refresh();
                             }
                         });

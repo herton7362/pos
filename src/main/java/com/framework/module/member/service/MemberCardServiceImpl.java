@@ -2,7 +2,6 @@ package com.framework.module.member.service;
 
 import com.framework.module.member.domain.Member;
 import com.framework.module.member.domain.MemberCard;
-import com.framework.module.member.domain.MemberCardRepository;
 import com.kratos.common.AbstractCrudService;
 import com.kratos.common.PageRepository;
 import com.kratos.exceptions.BusinessException;
@@ -15,12 +14,7 @@ import org.springframework.transaction.annotation.Transactional;
 @Component
 @Transactional
 public class MemberCardServiceImpl extends AbstractCrudService<MemberCard> implements MemberCardService {
-    private final MemberCardRepository memberCardRepository;
     private final MemberService memberService;
-    @Override
-    protected PageRepository<MemberCard> getRepository() {
-        return memberCardRepository;
-    }
 
     @Override
     public MemberCard save(MemberCard memberCard) throws Exception {
@@ -36,10 +30,8 @@ public class MemberCardServiceImpl extends AbstractCrudService<MemberCard> imple
     @Lazy
     @Autowired
     public MemberCardServiceImpl(
-            MemberCardRepository memberCardRepository,
             MemberService memberService
     ) {
-        this.memberCardRepository = memberCardRepository;
         this.memberService = memberService;
     }
 }

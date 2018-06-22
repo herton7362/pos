@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:include="admin/common/header_statics :: header('首页轮播图片管理')"></head>
+<body class="hold-transition skin-yellow sidebar-mini">
+<!--[if lte IE 9]>
+<p class="browsehappy">你正在使用<strong>过时</strong>的浏览器，奎爷 暂不支持。 请 <a href="http://browsehappy.com/" target="_blank">升级浏览器</a>
+    以获得更好的体验！</p>
+<![endif]-->
+<!-- Site wrapper -->
+<div class="wrapper">
+    <header th:include="admin/common/header_html"></header>
+    <!-- =============================================== -->
+    <aside th:include="admin/common/aside"></aside>
+    <!-- =============================================== -->
+
+    <!-- Content Wrapper. Contains page content -->
+    <div class="content-wrapper">
+        <!-- Content Header (Page header) -->
+        <section class="content-header">
+            <h1>
+                首页轮播图片管理
+                <small>首页轮播图片录入与修改</small>
+            </h1>
+            <ol class="breadcrumb">
+                <li>首页管理</li>
+                <li class="active">首页轮播图片管理</li>
+            </ol>
+        </section>
+
+        <!-- Main content -->
+        <section id="content" class="content" v-cloak>
+            <div class="row">
+                <div class="col-md-12">
+                    <crudgrid
+                            domain="carouselImg"
+                            :columns="crudgrid.columns"
+                            :form-data="formData"
+                            :instance="crudgrid"
+                    >
+                        <template slot="form-body" scope="props">
+                            <div class="form-group">
+                                <label>图片：</label>
+                                <uploader v-model="props.form.image"></uploader>
+                            </div>
+                            <div class="form-group">
+                                <label>备注：</label>
+                                <input type="text" class="form-control" v-model="props.form.remark" placeholder="输入备注">
+                            </div>
+                        </template>
+                    </crudgrid>
+                </div>
+            </div>
+        </section>
+        <!-- /.content -->
+    </div>
+    <!-- /.content-wrapper -->
+    <footer th:include="admin/common/footer_html"></footer>
+</div>
+<!-- ./wrapper -->
+<footer th:include="admin/common/footer_statics"></footer>
+<script th:src="@{/static/js/modules/carouselImg/list.js}"></script>
+</body>
+</html>

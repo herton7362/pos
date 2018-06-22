@@ -47,4 +47,16 @@ public interface CrudService<T extends BaseEntity> {
      * @param ts 调整后的顺序列表
      */
     void sort(List<T> ts) throws Exception;
+
+    /**
+     * 启用
+     * @param id 主键
+     */
+    void enable(String id) throws Exception;
+
+    /**
+     * 停用
+     * @param id 主键
+     */
+    void disable(String id) throws Exception;
 }

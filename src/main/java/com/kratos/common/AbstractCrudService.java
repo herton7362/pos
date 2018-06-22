@@ -5,6 +5,7 @@ import com.kratos.common.utils.StringUtils;
 import com.kratos.entity.BaseEntity;
 import com.kratos.exceptions.BusinessException;
 import com.kratos.module.auth.UserThread;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -37,34 +38,40 @@ public abstract class AbstractCrudService<T extends BaseEntity> implements CrudS
      * 获取实体Repository
      * @return {@link PageRepository} 实现类
      */
-    protected abstract PageRepository<T> getRepository();
+    protected PageRepository<T> getRepository() {
+        return null;
+    }
+
+    /**
+     * 获取实体Repository
+     */
+    @Autowired
+    protected PageRepository<T> pageRepository;
 
     @Override
     public PageResult<T> findAll(PageRequest pageRequest, Map<String, String[]> param) throws Exception {
-        Page<T> page = getRepository().findAll(getSpecification(param), pageRequest);
+        Page<T> page = pageRepository.findAll(getSpecification(param), pageRequest);
         return new PageResult<>(page);
     }
 
     @Override
     public List<T> findAll(Map<String, String[]> param) throws Exception {
-        return getRepository().findAll(getSpecification(param));
+        return pageRepository.findAll(getSpecification(param));
     }
 
     @Override
     public T findOne(String id) throws Exception {
-        return getRepository().findOne(id);
+        return pageRepository.findOne(id);
     }
 
     @Override
     public void delete(String id) throws Exception {
-        T t = getRepository().findOne(id);
-        t.setLogicallyDeleted(true);
-        getRepository().save(t);
+        pageRepository.delete(id);
     }
 
     @Override
     public T save(T t) throws Exception {
-        return getRepository().save(t);
+        return pageRepository.save(t);
     }
 
     /**
@@ -204,7 +211,6 @@ public abstract class AbstractCrudService<T extends BaseEntity> implements CrudS
                     }
                 }
             }
-            predicate.add(criteriaBuilder.equal(root.get("logicallyDeleted"), false));
             String clientId = UserThread.getInstance().getClientId();
             if(StringUtils.isNotBlank(clientId) && !this.allEntities) {
                 predicate.add(criteriaBuilder.equal(root.get("clientId"), UserThread.getInstance().getClientId()));
@@ -247,15 +253,39 @@ public abstract class AbstractCrudService<T extends BaseEntity> implements CrudS
         }
     }
 
+    public void enable(String id) throws Exception {
+        if(StringUtils.isBlank(id)) {
+            throw new BusinessException("id不能为空");
+        }
+        T t = pageRepository.findOne(id);
+        if(!t.getLogicallyDeleted()) {
+            return;
+        }
+        t.setLogicallyDeleted(false);
+        pageRepository.save(t);
+    }
+
+    public void disable(String id) throws Exception {
+        if(StringUtils.isBlank(id)) {
+            throw new BusinessException("id不能为空");
+        }
+        T t = pageRepository.findOne(id);
+        if(t.getLogicallyDeleted()) {
+            return;
+        }
+        t.setLogicallyDeleted(true);
+        pageRepository.save(t);
+    }
+
     public void sort(List<T> ts) throws Exception {
         T t;
         for (int i = 0; i < ts.size(); i++) {
             if(StringUtils.isBlank(ts.get(i).getId())) {
                 throw new BusinessException("参数不正确，缺失主键");
             }
-            t = getRepository().findOne(ts.get(i).getId());
+            t = pageRepository.findOne(ts.get(i).getId());
             t.setSortNumber(i);
-            getRepository().save(t);
+            pageRepository.save(t);
         }
     }
 }

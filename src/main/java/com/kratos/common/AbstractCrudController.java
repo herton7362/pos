@@ -24,7 +24,7 @@ public abstract class AbstractCrudController<T extends BaseEntity> extends Abstr
     @ApiOperation(value="保存")
     @RequestMapping(method = RequestMethod.POST)
     public ResponseEntity<T> save(@RequestBody T t) throws Exception {
-        t = getService().save(t);
+        t = crudService.save(t);
         return new ResponseEntity<>(t, HttpStatus.OK);
     }
 
@@ -36,7 +36,7 @@ public abstract class AbstractCrudController<T extends BaseEntity> extends Abstr
     public ResponseEntity<T> delete(@PathVariable String id) throws Exception {
         String[] ids = id.split(",");
         for (String s : ids) {
-            getService().delete(s);
+            crudService.delete(s);
         }
         return new ResponseEntity<>(HttpStatus.OK);
     }
@@ -47,7 +47,33 @@ public abstract class AbstractCrudController<T extends BaseEntity> extends Abstr
     @ApiOperation(value="调整排序")
     @RequestMapping(value = "/sort", method = RequestMethod.POST)
     public ResponseEntity<T> sort(@RequestBody List<T> ts) throws Exception {
-        getService().sort(ts);
+        crudService.sort(ts);
         return new ResponseEntity<>(HttpStatus.OK);
+    }
+
+    /**
+     * 启用
+     */
+    @ApiOperation(value="启用")
+    @RequestMapping(value = "/enable/{id}", method = RequestMethod.POST)
+    public ResponseEntity<T> enable(@PathVariable String id) throws Exception {
+        String[] ids = id.split(",");
+        for (String s : ids) {
+            crudService.enable(s);
+        }
+        return new ResponseEntity<>(HttpStatus.CREATED);
+    }
+
+    /**
+     * 停用
+     */
+    @ApiOperation(value="停用")
+    @RequestMapping(value = "/disable/{id}", method = RequestMethod.POST)
+    public ResponseEntity<T> disable(@PathVariable String id) throws Exception {
+        String[] ids = id.split(",");
+        for (String s : ids) {
+            crudService.disable(s);
+        }
+        return new ResponseEntity<>(HttpStatus.CREATED);
     }
 }

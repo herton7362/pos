@@ -4,6 +4,7 @@ import com.kratos.entity.BaseEntity;
 import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiImplicitParams;
 import io.swagger.annotations.ApiOperation;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ModelAttribute;
@@ -26,7 +27,12 @@ public abstract class AbstractReadController<T extends BaseEntity> {
      * 获取实体的service
      * @return {@link CrudService} 实现类
      */
-    protected abstract CrudService<T> getService();
+    protected CrudService<T> getService() {
+        return null;
+    }
+
+    @Autowired
+    protected CrudService<T> crudService;
 
     /**
      * 查询
@@ -42,10 +48,10 @@ public abstract class AbstractReadController<T extends BaseEntity> {
     public ResponseEntity<?> searchPagedList(@ModelAttribute PageParam pageParam, HttpServletRequest request) throws Exception {
         Map<String, String[]> param = request.getParameterMap();
         if(pageParam.isPageAble()) {
-            PageResult<T> page = getService().findAll(pageParam.getPageRequest(), param);
+            PageResult<T> page = crudService.findAll(pageParam.getPageRequest(), param);
             return new ResponseEntity<>(page, HttpStatus.OK);
         }
-        List<T> list = getService().findAll(param);
+        List<T> list = crudService.findAll(param);
         return new ResponseEntity<>(list, HttpStatus.OK);
     }
 
@@ -55,6 +61,6 @@ public abstract class AbstractReadController<T extends BaseEntity> {
     @ApiOperation(value="查询一个")
     @RequestMapping(value = "/{id}", method = RequestMethod.GET)
     public ResponseEntity<? extends T> getOne(@PathVariable String id) throws Exception {
-        return new ResponseEntity<>(getService().findOne(id), HttpStatus.OK);
+        return new ResponseEntity<>(crudService.findOne(id), HttpStatus.OK);
     }
 }
