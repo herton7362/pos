@@ -12,17 +12,17 @@ import javax.persistence.Entity;
 public class BonusRule extends BaseEntity {
     @ApiModelProperty(value = "条件如 > 4000 则填写 4000")
     @Column(length = 11, precision = 2)
-    private Double condition;
+    private Double conditionValue;
     @ApiModelProperty(value = "备注")
     @Column(length = 100)
     private String remark;
 
-    public Double getCondition() {
-        return condition;
+    public Double getConditionValue() {
+        return conditionValue;
     }
 
-    public void setCondition(Double condition) {
-        this.condition = condition;
+    public void setConditionValue(Double conditionValue) {
+        this.conditionValue = conditionValue;
     }
 
     public String getRemark() {
