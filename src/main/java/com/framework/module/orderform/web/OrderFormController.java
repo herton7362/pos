@@ -44,7 +44,7 @@ public class OrderFormController extends AbstractCrudController<OrderForm> {
     }
 
     /**
-     * 支付
+     * 支 付
      */
     @ApiOperation(value="支付")
     @RequestMapping(value = "/pay", method = RequestMethod.POST)
