@@ -47,5 +47,5 @@ public interface MemberService extends CrudService<Member> {
 
     Member getFatherMemberByAccount(String account);
 
-    boolean batchImport(String fileName, MultipartFile file) throws Exception;
+    Integer batchImport(String fileName, MultipartFile file) throws Exception;
 }
