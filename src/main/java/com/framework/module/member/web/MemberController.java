@@ -8,6 +8,7 @@ import com.kratos.common.AbstractCrudController;
 import com.kratos.common.CrudService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
+import org.apache.poi.ss.formula.functions.T;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -109,14 +110,14 @@ public class MemberController extends AbstractCrudController<Member> {
      */
     @ApiOperation(value="导入成员收益")
     @PostMapping("/import/profit")
-    public boolean addUser(@RequestParam("profitFile") MultipartFile profitFile) {
-        boolean a = false;
+    public ResponseEntity<Integer> addUser(@RequestParam("profitFile") MultipartFile profitFile) {
         String fileName = profitFile.getOriginalFilename();
+        int insertSize = 0;
         try {
-            a = memberService.batchImport(fileName, profitFile);
+            insertSize = memberService.batchImport(fileName, profitFile);
         } catch (Exception e) {
             e.printStackTrace();
         }
-        return  a;
+        return new ResponseEntity<>(insertSize, HttpStatus.OK);
     }
 }

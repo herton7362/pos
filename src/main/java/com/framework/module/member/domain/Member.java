@@ -60,7 +60,7 @@ public class Member extends BaseUser {
     @ManyToOne
     private Attachment headPhoto;
     @ApiModelProperty(value = "父节点手机")
-    private String fatherMobile;
+    private String fatherId;
     @ApiModelProperty(value = "会员级别")
     private String memberLevel;
 
@@ -180,11 +180,11 @@ public class Member extends BaseUser {
         this.headPhoto = headPhoto;
     }
 
-    public String getFatherMobile() {
-        return fatherMobile;
+    public String getFatherId() {
+        return fatherId;
     }
 
-    public void setFatherMobile(String fatherMobile) {
-        this.fatherMobile = fatherMobile;
+    public void setFatherId(String fatherId) {
+        this.fatherId = fatherId;
     }
 }
