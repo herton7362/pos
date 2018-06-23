@@ -9,7 +9,7 @@ import javax.persistence.Entity;
 
 @Entity
 @ApiModel("收益规则")
-public class BonusRule extends BaseEntity {
+public class ActiveRule extends BaseEntity {
     @ApiModelProperty(value = "条件如 > 4000 则填写 4000")
     @Column(length = 11, precision = 2)
     private Double conditionValue;

@@ -1,6 +1,6 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
-<head th:include="admin/common/header_statics :: header('收益设置')"></head>
+<head th:include="admin/common/header_statics :: header('团建最低采购数设置')"></head>
 <body class="hold-transition skin-yellow sidebar-mini">
 <!--[if lte IE 9]>
 <p class="browsehappy">你正在使用<strong>过时</strong>的浏览器，奎爷 暂不支持。 请 <a href="http://browsehappy.com/" target="_blank">升级浏览器</a>
@@ -18,12 +18,12 @@
         <!-- Content Header (Page header) -->
         <section class="content-header">
             <h1>
-                收益设置
-                <small>收益设置录入与修改</small>
+                团建最低采购数设置
+                <small>团建最低采购数录入与修改</small>
             </h1>
             <ol class="breadcrumb">
-                <li>收益设置</li>
-                <li class="active">收益设置</li>
+                <li>奖励设置</li>
+                <li class="active">团建最低采购数设置</li>
             </ol>
         </section>
 
@@ -32,15 +32,15 @@
             <div class="row">
                 <div class="col-md-12">
                     <crudgrid
-                            domain="bonusRule"
+                            domain="groupBuildPurchaseRule"
                             :columns="crudgrid.columns"
                             :form-data="formData"
                             :instance="crudgrid"
                     >
                         <template slot="form-body" scope="props">
                             <div class="form-group">
-                                <label>激活奖励金额：</label>
-                                <input type="text" class="form-control" required v-model="props.form.conditionValue" placeholder="输入激活奖励金额">
+                                <label>最低采购数：</label>
+                                <input type="text" class="form-control" required v-model="props.form.minPurchaseCount" placeholder="输入最低采购数">
                             </div>
                             <div class="form-group">
                                 <label>备注：</label>
@@ -58,6 +58,6 @@
 </div>
 <!-- ./wrapper -->
 <footer th:include="admin/common/footer_statics"></footer>
-<script th:src="@{/static/js/modules/bonusRule/list.js}"></script>
+<script th:src="@{/static/js/modules/groupBuildPurchaseRule/list.js}"></script>
 </body>
 </html>
