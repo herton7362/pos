@@ -1,5 +1,10 @@
 package com.framework.module.member.domain;
 
+import com.kratos.entity.BaseEntity;
+import io.swagger.annotations.ApiModelProperty;
+import org.hibernate.annotations.GenericGenerator;
+
+import javax.persistence.*;
 import java.io.Serializable;
 import java.util.Date;
 
@@ -9,25 +14,30 @@ import java.util.Date;
  * @Auther: 张庆贺
  * @Date: 2018/6/23 11:30
  */
-public class ImportProfit implements Serializable {
-
+@Entity
+public class MemberProfitRecords extends BaseEntity {
+    @Column(length = 50)
     private String organizationNo;
-
+    @Column(length = 50)
     private String organizationName;
-
+    @Column(length = 50)
     private String userNo;
-
+    @Column(length = 20)
     private String userName;
-
+    @Column(precision = 2)
     private Double transactionAmount;
-
+    @Column(length = 50)
     private String sn;
-
+    @Column(length = 50)
     private String transactionType;
-
+    @Column(length = 20)
     private String userMobile;
-
+    @Column(length = 50)
     private Date transactionDate;
+    @Column(length = 10, precision = 2)
+    private double profit;
+    @Column(length = 255)
+    private String note;
 
     public String getOrganizationNo() {
         return organizationNo;
@@ -99,5 +109,21 @@ public class ImportProfit implements Serializable {
 
     public void setTransactionDate(Date transactionDate) {
         this.transactionDate = transactionDate;
+    }
+
+    public double getProfit() {
+        return profit;
+    }
+
+    public void setProfit(double profit) {
+        this.profit = profit;
+    }
+
+    public String getNote() {
+        return note;
+    }
+
+    public void setNote(String note) {
+        this.note = note;
     }
 }

@@ -1,9 +1,9 @@
 package com.framework.module.member.service;
 
 import com.framework.module.auth.MemberThread;
-import com.framework.module.member.domain.ImportProfit;
 import com.framework.module.member.domain.Member;
 import com.framework.module.member.domain.MemberCard;
+import com.framework.module.member.domain.MemberProfitRecords;
 import com.framework.module.member.domain.MemberRepository;
 import com.framework.module.record.domain.OperationRecord;
 import com.framework.module.record.service.OperationRecordService;
@@ -29,7 +29,9 @@ import javax.persistence.criteria.Predicate;
 import javax.persistence.criteria.Root;
 import java.io.InputStream;
 import java.math.BigDecimal;
+import java.text.SimpleDateFormat;
 import java.util.*;
+import java.util.logging.SimpleFormatter;
 
 @Component("memberService")
 @Transactional
@@ -37,6 +39,7 @@ public class MemberServiceImpl extends AbstractCrudService<Member> implements Me
     private final MemberRepository repository;
     private final MemberCardService memberCardService;
     private final OperationRecordService operationRecordService;
+    private final MemberProfitRecordsService memberProfitRecordsService;
 
     @Override
     public Member save(Member member) throws Exception {
@@ -146,8 +149,8 @@ public class MemberServiceImpl extends AbstractCrudService<Member> implements Me
     }
 
     @Override
-    public boolean batchImport(String fileName, MultipartFile file) throws Exception {
-        boolean notNull = false;
+    public Integer batchImport(String fileName, MultipartFile file) throws Exception {
+        Integer importSize = 0;
         if (!fileName.matches("^.+\\.(?i)(xls)$") && !fileName.matches("^.+\\.(?i)(xlsx)$")) {
             throw new BusinessException("输入文件格式不正确");
         }
@@ -163,51 +166,56 @@ public class MemberServiceImpl extends AbstractCrudService<Member> implements Me
             wb = new XSSFWorkbook(is);
         }
         Sheet sheet = wb.getSheetAt(0);
-        if (sheet != null) {
-            notNull = true;
-        }
-        List<ImportProfit> importProfitList = new ArrayList<>();
+        List<MemberProfitRecords> memberProfitRecordsList = new ArrayList<>();
         for (int r = 1; r <= sheet.getLastRowNum(); r++) {
-            ImportProfit importProfit = new ImportProfit();
+            MemberProfitRecords importProfit = new MemberProfitRecords();
             Row row = sheet.getRow(r);
             if (row == null) {
                 continue;
             }
+            row.getCell(0).setCellType(Cell.CELL_TYPE_STRING);
             String organizationNo = row.getCell(0).getStringCellValue();
             if (StringUtils.isBlank(organizationNo)) {
                 throw new BusinessException("机构编码为空");
             }
+            row.getCell(1).setCellType(Cell.CELL_TYPE_STRING);
             String organizationName = row.getCell(1).getStringCellValue();
+
+            row.getCell(2).setCellType(Cell.CELL_TYPE_STRING);
             String userNo = row.getCell(2).getStringCellValue();
+
+            row.getCell(3).setCellType(Cell.CELL_TYPE_STRING);
             String userName = row.getCell(3).getStringCellValue();
-            Double transactionAmount = row.getCell(4).getNumericCellValue();
+
+            row.getCell(4).setCellType(Cell.CELL_TYPE_STRING);
+            String transactionAmount = row.getCell(4).getStringCellValue();
+
+            row.getCell(5).setCellType(Cell.CELL_TYPE_STRING);
             String sn = row.getCell(5).getStringCellValue();
+
+            row.getCell(6).setCellType(Cell.CELL_TYPE_STRING);
             String transactionType = row.getCell(6).getStringCellValue();
+
+            row.getCell(7).setCellType(Cell.CELL_TYPE_STRING);
             String userMobile = row.getCell(7).getStringCellValue();
+
             Date transactionDate = row.getCell(8).getDateCellValue();
             importProfit.setOrganizationNo(organizationNo);
             importProfit.setOrganizationName(organizationName);
             importProfit.setUserNo(userNo);
             importProfit.setUserName(userName);
-            importProfit.setTransactionAmount(transactionAmount);
-            importProfit.setSn(sn);
+            importProfit.setTransactionAmount(Double.valueOf(transactionAmount.replace(",", "")));
             importProfit.setTransactionType(transactionType);
+            importProfit.setSn(sn);
             importProfit.setUserMobile(userMobile);
             importProfit.setTransactionDate(transactionDate);
-            importProfitList.add(importProfit);
+            memberProfitRecordsList.add(importProfit);
         }
-//        for (User userResord : userList) {
-//            String name = userResord.getName();
-//            int cnt = userMapper.selectByName(name);
-//            if (cnt == 0) {
-//                userMapper.addUser(userResord);
-//                System.out.println(" 插入 "+userResord);
-//            } else {
-//                userMapper.updateUserByName(userResord);
-//                System.out.println(" 更新 "+userResord);
-//            }
-//        }
-        return notNull;
+        for (MemberProfitRecords t : memberProfitRecordsList) {
+            memberProfitRecordsService.save(t);
+        }
+        importSize = memberProfitRecordsList.size();
+        return importSize;
     }
 
     private Integer increaseNumber(Integer sourcePoint, Integer point) {
@@ -236,10 +244,11 @@ public class MemberServiceImpl extends AbstractCrudService<Member> implements Me
     public MemberServiceImpl(
             MemberRepository repository,
             MemberCardService memberCardService,
-            OperationRecordService operationRecordService
-    ) {
+            OperationRecordService operationRecordService,
+            MemberProfitRecordsService memberProfitRecordsService) {
         this.repository = repository;
         this.memberCardService = memberCardService;
         this.operationRecordService = operationRecordService;
+        this.memberProfitRecordsService = memberProfitRecordsService;
     }
 }
