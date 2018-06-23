@@ -2,6 +2,7 @@ package com.framework.module.member.service;
 
 import com.kratos.common.CrudService;
 import com.framework.module.member.domain.Member;
+import org.springframework.web.multipart.MultipartFile;
 
 public interface MemberService extends CrudService<Member> {
     /**
@@ -43,4 +44,8 @@ public interface MemberService extends CrudService<Member> {
      * @return 会员总数
      */
     Long count();
+
+    Member getFatherMemberByAccount(String account);
+
+    boolean batchImport(String fileName, MultipartFile file) throws Exception;
 }

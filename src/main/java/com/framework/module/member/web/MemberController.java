@@ -13,6 +13,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -101,5 +102,21 @@ public class MemberController extends AbstractCrudController<Member> {
     ) {
         this.memberService = memberService;
         this.memberLevelService = memberLevelService;
+    }
+
+    /**
+     * 获取会员优惠卷
+     */
+    @ApiOperation(value="导入成员收益")
+    @PostMapping("/import/profit")
+    public boolean addUser(@RequestParam("profitFile") MultipartFile profitFile) {
+        boolean a = false;
+        String fileName = profitFile.getOriginalFilename();
+        try {
+            a = memberService.batchImport(fileName, profitFile);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return  a;
     }
 }

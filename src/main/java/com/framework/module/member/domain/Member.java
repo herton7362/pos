@@ -13,6 +13,7 @@ import java.util.List;
 
 /**
  * 会员
+ *
  * @author tang he
  * @since 1.0.0
  */
@@ -52,12 +53,24 @@ public class Member extends BaseUser {
     private List<MemberCoupon> coupons;
     @ApiModelProperty(value = "会员卡")
     @OneToMany(mappedBy = "member")
-    @Where(clause="logically_deleted=0")
+    @Where(clause = "logically_deleted=0")
     @JsonIgnore
     private List<MemberCard> memberCards;
     @ApiModelProperty(value = "头像")
     @ManyToOne
     private Attachment headPhoto;
+    @ApiModelProperty(value = "父节点手机")
+    private String fatherMobile;
+    @ApiModelProperty(value = "会员级别")
+    private String memberLevel;
+
+    public String getMemberLevel() {
+        return memberLevel;
+    }
+
+    public void setMemberLevel(String memberLevel) {
+        this.memberLevel = memberLevel;
+    }
 
     public Member() {
         setUserType(BaseUser.UserType.MEMBER.name());
@@ -165,5 +178,13 @@ public class Member extends BaseUser {
 
     public void setHeadPhoto(Attachment headPhoto) {
         this.headPhoto = headPhoto;
+    }
+
+    public String getFatherMobile() {
+        return fatherMobile;
+    }
+
+    public void setFatherMobile(String fatherMobile) {
+        this.fatherMobile = fatherMobile;
     }
 }
