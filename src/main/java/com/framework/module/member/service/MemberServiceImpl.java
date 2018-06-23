@@ -1,10 +1,7 @@
 package com.framework.module.member.service;
 
 import com.framework.module.auth.MemberThread;
-import com.framework.module.member.domain.Member;
-import com.framework.module.member.domain.MemberCard;
-import com.framework.module.member.domain.MemberProfitRecords;
-import com.framework.module.member.domain.MemberRepository;
+import com.framework.module.member.domain.*;
 import com.framework.module.record.domain.OperationRecord;
 import com.framework.module.record.service.OperationRecordService;
 import com.kratos.common.AbstractCrudService;
@@ -29,9 +26,7 @@ import javax.persistence.criteria.Predicate;
 import javax.persistence.criteria.Root;
 import java.io.InputStream;
 import java.math.BigDecimal;
-import java.text.SimpleDateFormat;
 import java.util.*;
-import java.util.logging.SimpleFormatter;
 
 @Component("memberService")
 @Transactional
@@ -40,6 +35,7 @@ public class MemberServiceImpl extends AbstractCrudService<Member> implements Me
     private final MemberCardService memberCardService;
     private final OperationRecordService operationRecordService;
     private final MemberProfitRecordsService memberProfitRecordsService;
+    private final MemberLevelParamService memberLevelParamService;
 
     @Override
     public Member save(Member member) throws Exception {
@@ -204,11 +200,29 @@ public class MemberServiceImpl extends AbstractCrudService<Member> implements Me
             importProfit.setOrganizationName(organizationName);
             importProfit.setUserNo(userNo);
             importProfit.setUserName(userName);
-            importProfit.setTransactionAmount(Double.valueOf(transactionAmount.replace(",", "")));
+            Double transactionAmount1 = Double.valueOf(transactionAmount.replace(",", ""));
+            importProfit.setTransactionAmount(transactionAmount1);
             importProfit.setTransactionType(transactionType);
             importProfit.setSn(sn);
             importProfit.setUserMobile(userMobile);
             importProfit.setTransactionDate(transactionDate);
+            Member member = findOneByLoginName(userMobile);
+            if (member == null) {
+                throw new BusinessException(String.format("会员mobile:[%s]不存在", userMobile));
+            }
+            MemberLevelParam param = memberLevelParamService.getParamByLevel(member.getMemberLevel());
+            double profitRate = 0;
+            switch (transactionType) {
+                case "1":
+                    profitRate = param.getmPosProfit();
+                    break;
+                case "2":
+                    profitRate = param.getBigPosProfit();
+                    break;
+                default:
+                    break;
+            }
+            importProfit.setProfit(new BigDecimal(profitRate * transactionAmount1 / 10000d).setScale(2, BigDecimal.ROUND_HALF_UP).doubleValue());
             memberProfitRecordsList.add(importProfit);
         }
         for (MemberProfitRecords t : memberProfitRecordsList) {
@@ -245,10 +259,11 @@ public class MemberServiceImpl extends AbstractCrudService<Member> implements Me
             MemberRepository repository,
             MemberCardService memberCardService,
             OperationRecordService operationRecordService,
-            MemberProfitRecordsService memberProfitRecordsService) {
+            MemberProfitRecordsService memberProfitRecordsService, MemberLevelParamService memberLevelParamService) {
         this.repository = repository;
         this.memberCardService = memberCardService;
         this.operationRecordService = operationRecordService;
         this.memberProfitRecordsService = memberProfitRecordsService;
+        this.memberLevelParamService = memberLevelParamService;
     }
 }
