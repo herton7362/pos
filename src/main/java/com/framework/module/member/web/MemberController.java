@@ -110,7 +110,7 @@ public class MemberController extends AbstractCrudController<Member> {
      */
     @ApiOperation(value="导入成员收益")
     @PostMapping("/import/profit")
-    public ResponseEntity<Integer> addUser(@RequestParam("profitFile") MultipartFile profitFile) {
+    public ResponseEntity<Integer> userProfit(@RequestParam("profitFile") MultipartFile profitFile) {
         String fileName = profitFile.getOriginalFilename();
         int insertSize = 0;
         try {

@@ -18,6 +18,33 @@ public class MemberLevelParam extends BaseEntity {
     private int teamScale;
     private double mPosProfit;
     private int bigPosProfit;
+    private String allyTitle;
+    private String honor;
+    private String headquartersSupport;
+
+    public String getAllyTitle() {
+        return allyTitle;
+    }
+
+    public void setAllyTitle(String allyTitle) {
+        this.allyTitle = allyTitle;
+    }
+
+    public String getHonor() {
+        return honor;
+    }
+
+    public void setHonor(String honor) {
+        this.honor = honor;
+    }
+
+    public String getHeadquartersSupport() {
+        return headquartersSupport;
+    }
+
+    public void setHeadquartersSupport(String headquartersSupport) {
+        this.headquartersSupport = headquartersSupport;
+    }
 
     public int getLevel() {
         return level;
