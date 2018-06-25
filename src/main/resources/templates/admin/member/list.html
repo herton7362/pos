@@ -42,6 +42,10 @@
                     >
                         <template slot="form-body" scope="props">
                             <div class="form-group">
+                                <label>会员编号：</label>
+                                <input type="text" class="form-control" required v-model="props.form.memberNumber" placeholder="输入会员编号">
+                            </div>
+                            <div class="form-group">
                                 <label>名称：</label>
                                 <input type="text" class="form-control" required v-model="props.form.name" placeholder="输入会员名称">
                             </div>
@@ -78,11 +82,11 @@
                             </div>
 
                         </template>
-                        <template slot="datagrid-operator" scope="props">
+                      <!--  <template slot="datagrid-operator" scope="props">
                             <a class="btn btn-xs bg-green" @click="editMemberCard(props.row)" title="会员卡"><i class="fa fa-fw fa-credit-card"></i></a>
-                        </template>
+                        </template>-->
                     </crudgrid>
-                    <sidemodal title="会员卡维护" :footer="true" :instance="cards.sidemodal">
+                   <!-- <sidemodal title="会员卡维护" :footer="true" :instance="cards.sidemodal">
                         <template slot="body">
                             <div class="form-group">
                                 <label>会员卡：</label>
@@ -105,7 +109,7 @@
                                     </template>
                                 </datagrid>
                             </div>
-                            <!-- /.box-body -->
+                            &lt;!&ndash; /.box-body &ndash;&gt;
                         </template>
                         <template slot="footer">
                             <button type="button" class="btn btn-default margin-r-5 btn-flat" @click="cards.sidemodal.$instance.close()">关闭</button>
@@ -140,7 +144,7 @@
                                             <datepicker v-model="cards.form.expireDate"></datepicker>
                                         </div>
                                     </div>
-                                    <!-- /.box-body -->
+                                    &lt;!&ndash; /.box-body &ndash;&gt;
                                 </template>
                                 <template slot="footer">
                                     <button type="button" class="btn btn-default margin-r-5 btn-flat" @click="cards.modal.$instance.close()">取消编辑</button>
@@ -148,7 +152,7 @@
                                 </template>
                             </modal>
                         </form>
-                    </validator>
+                    </validator>-->
                 </div>
             </div>
         </section>
