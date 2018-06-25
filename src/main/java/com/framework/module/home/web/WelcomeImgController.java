@@ -6,7 +6,7 @@ import io.swagger.annotations.Api;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-@Api(value = "欢迎界面图片管理")
+@Api(value = "#欢迎界面图片管理")
 @RestController
 @RequestMapping("/api/welcomeImg")
 public class WelcomeImgController extends AbstractCrudController<WelcomeImg> {

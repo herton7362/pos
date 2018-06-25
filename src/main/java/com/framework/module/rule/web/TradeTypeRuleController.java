@@ -6,7 +6,7 @@ import io.swagger.annotations.Api;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-@Api("交易类型管理")
+@Api("#交易类型管理")
 @RestController
 @RequestMapping("/api/tradeTypeRule")
 public class TradeTypeRuleController extends AbstractCrudController<TradeTypeRule> {

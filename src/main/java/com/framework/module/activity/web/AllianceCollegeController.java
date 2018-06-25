@@ -6,7 +6,7 @@ import io.swagger.annotations.Api;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-@Api(value = "联盟学院管理")
+@Api(value = "#联盟学院管理")
 @RestController
 @RequestMapping("/api/allianceCollege")
 public class AllianceCollegeController extends AbstractCrudController<AllianceCollege> {

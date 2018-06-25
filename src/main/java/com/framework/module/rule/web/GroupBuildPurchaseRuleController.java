@@ -6,7 +6,7 @@ import io.swagger.annotations.Api;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-@Api("团建最低采购数设置")
+@Api("#团建最低采购数设置")
 @RestController
 @RequestMapping("/api/groupBuildPurchaseRule")
 public class GroupBuildPurchaseRuleController extends AbstractCrudController<GroupBuildPurchaseRule> {

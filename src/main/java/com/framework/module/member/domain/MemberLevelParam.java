@@ -14,20 +14,20 @@ import java.util.Date;
  */
 @Entity
 public class MemberLevelParam extends BaseEntity {
-    private int level;
-    private double totalTransactionVolume;
-    private int teamScale;
-    private double mPosProfit;
-    private int bigPosProfit;
+    private Integer level;
+    private Double totalTransactionVolume;
+    private Integer teamScale;
+    private Double mPosProfit;
+    private Double bigPosProfit;
     private String allyTitle;
     private String honor;
     private String headquartersSupport;
 
-    public double getTotalTransactionVolume() {
+    public Double getTotalTransactionVolume() {
         return totalTransactionVolume;
     }
 
-    public void setTotalTransactionVolume(double totalTransactionVolume) {
+    public void setTotalTransactionVolume(Double totalTransactionVolume) {
         this.totalTransactionVolume = totalTransactionVolume;
     }
 
@@ -55,35 +55,35 @@ public class MemberLevelParam extends BaseEntity {
         this.headquartersSupport = headquartersSupport;
     }
 
-    public int getLevel() {
+    public Integer getLevel() {
         return level;
     }
 
-    public void setLevel(int level) {
+    public void setLevel(Integer level) {
         this.level = level;
     }
 
-    public int getTeamScale() {
+    public Integer getTeamScale() {
         return teamScale;
     }
 
-    public void setTeamScale(int teamScale) {
+    public void setTeamScale(Integer teamScale) {
         this.teamScale = teamScale;
     }
 
-    public double getmPosProfit() {
+    public Double getmPosProfit() {
         return mPosProfit;
     }
 
-    public void setmPosProfit(double mPosProfit) {
+    public void setmPosProfit(Double mPosProfit) {
         this.mPosProfit = mPosProfit;
     }
 
-    public int getBigPosProfit() {
+    public Double getBigPosProfit() {
         return bigPosProfit;
     }
 
-    public void setBigPosProfit(int bigPosProfit) {
+    public void setBigPosProfit(Double bigPosProfit) {
         this.bigPosProfit = bigPosProfit;
     }
 }

@@ -8,7 +8,7 @@ import javax.persistence.Column;
 import javax.persistence.Entity;
 
 @Entity
-@ApiModel("消息中心")
+@ApiModel("#消息中心")
 public class Information extends BaseEntity {
     @ApiModelProperty(value = "标题")
     @Column(length = 200)
