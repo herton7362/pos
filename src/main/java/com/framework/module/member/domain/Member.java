@@ -59,7 +59,7 @@ public class Member extends BaseUser {
     @ApiModelProperty(value = "头像")
     @ManyToOne
     private Attachment headPhoto;
-    @ApiModelProperty(value = "父节点手机")
+    @ApiModelProperty(value = "父节点ID")
     private String fatherId;
     @ApiModelProperty(value = "会员级别")
     private String memberLevel;

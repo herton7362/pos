@@ -9,7 +9,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.*;
 
-@Component
+@Component("MemberLevelParamService")
 @Transactional
 public class MemberLevelParamServiceImpl extends AbstractCrudService<MemberLevelParam> implements MemberLevelParamService {
     @Override

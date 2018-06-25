@@ -45,7 +45,7 @@ public interface MemberService extends CrudService<Member> {
      */
     Long count();
 
-    Member getFatherMemberByAccount(String account);
+    Member getFatherMemberById(String id);
 
     Integer batchImport(String fileName, MultipartFile file) throws Exception;
 }

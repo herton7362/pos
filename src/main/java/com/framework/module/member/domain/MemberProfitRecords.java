@@ -38,6 +38,26 @@ public class MemberProfitRecords extends BaseEntity {
     private double profit;
     @Column(length = 255)
     private String note;
+    @Column()
+    private Integer status;
+    @Column()
+    private Integer profitType;
+
+    public Integer getProfitType() {
+        return profitType;
+    }
+
+    public void setProfitType(Integer profitType) {
+        this.profitType = profitType;
+    }
+
+    public Integer getStatus() {
+        return status;
+    }
+
+    public void setStatus(Integer status) {
+        this.status = status;
+    }
 
     public String getOrganizationNo() {
         return organizationNo;

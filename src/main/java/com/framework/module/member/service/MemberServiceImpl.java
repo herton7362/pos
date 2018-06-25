@@ -14,6 +14,7 @@ import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
+import org.apache.xmlbeans.impl.xb.xsdschema.Public;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Component;
@@ -139,10 +140,10 @@ public class MemberServiceImpl extends AbstractCrudService<Member> implements Me
     }
 
     @Override
-    public Member getFatherMemberByAccount(String account) {
-        repository.findOneByLoginName(account);
-        return null;
+    public Member getFatherMemberById(String id) {
+        return  repository.findOne(id);
     }
+
 
     @Override
     public Integer batchImport(String fileName, MultipartFile file) throws Exception {
@@ -164,7 +165,6 @@ public class MemberServiceImpl extends AbstractCrudService<Member> implements Me
         Sheet sheet = wb.getSheetAt(0);
         List<MemberProfitRecords> memberProfitRecordsList = new ArrayList<>();
         for (int r = 1; r <= sheet.getLastRowNum(); r++) {
-            MemberProfitRecords importProfit = new MemberProfitRecords();
             Row row = sheet.getRow(r);
             if (row == null) {
                 continue;
@@ -191,11 +191,11 @@ public class MemberServiceImpl extends AbstractCrudService<Member> implements Me
 
             row.getCell(6).setCellType(Cell.CELL_TYPE_STRING);
             String transactionType = row.getCell(6).getStringCellValue();
-
-            row.getCell(7).setCellType(Cell.CELL_TYPE_STRING);
-            String userMobile = row.getCell(7).getStringCellValue();
-
-            Date transactionDate = row.getCell(8).getDateCellValue();
+            Date transactionDate = row.getCell(7).getDateCellValue();
+            if (transactionDate == null){
+                transactionDate = new Date();
+            }
+            MemberProfitRecords importProfit = new MemberProfitRecords();
             importProfit.setOrganizationNo(organizationNo);
             importProfit.setOrganizationName(organizationName);
             importProfit.setUserNo(userNo);
@@ -204,26 +204,49 @@ public class MemberServiceImpl extends AbstractCrudService<Member> implements Me
             importProfit.setTransactionAmount(transactionAmount1);
             importProfit.setTransactionType(transactionType);
             importProfit.setSn(sn);
-            importProfit.setUserMobile(userMobile);
             importProfit.setTransactionDate(transactionDate);
-            Member member = findOneByLoginName(userMobile);
+            importProfit.setStatus(0);
+            importProfit.setProfitType(1);
+
+            Member member = findOneByLoginName(userNo);
             if (member == null) {
-                throw new BusinessException(String.format("会员mobile:[%s]不存在", userMobile));
+                throw new BusinessException(String.format("用户标号不存在:[%s]不存在", userNo));
             }
             MemberLevelParam param = memberLevelParamService.getParamByLevel(member.getMemberLevel());
-            double profitRate = 0;
-            switch (transactionType) {
-                case "1":
-                    profitRate = param.getmPosProfit();
-                    break;
-                case "2":
-                    profitRate = param.getBigPosProfit();
-                    break;
-                default:
-                    break;
-            }
+            double profitRate = param.getmPosProfit();
+//            switch (transactionType) {
+//                case "1":
+//                    profitRate = param.getmPosProfit();
+//                    break;
+//                case "2":
+//                    profitRate = param.getBigPosProfit();
+//                    break;
+//                default:
+//                    break;
+//            }
             importProfit.setProfit(new BigDecimal(profitRate * transactionAmount1 / 10000d).setScale(2, BigDecimal.ROUND_HALF_UP).doubleValue());
             memberProfitRecordsList.add(importProfit);
+
+            Member fatherMember = getFatherMemberById(member.getFatherId());
+            while (fatherMember != null) {
+                MemberProfitRecords fatherProfit = new MemberProfitRecords();
+                fatherProfit.setOrganizationNo(organizationNo);
+                fatherProfit.setOrganizationName(organizationName);
+                fatherProfit.setUserNo(userNo);
+                fatherProfit.setUserName(userName);
+                fatherProfit.setTransactionAmount(transactionAmount1);
+                fatherProfit.setTransactionType(transactionType);
+                fatherProfit.setSn(sn);
+                fatherProfit.setTransactionDate(transactionDate);
+                fatherProfit.setStatus(0);
+                fatherProfit.setProfitType(2);
+                MemberLevelParam fatherMemberParam = memberLevelParamService.getParamByLevel(fatherMember.getMemberLevel());
+                fatherProfit.setProfit(new BigDecimal((fatherMemberParam.getmPosProfit()- profitRate) * transactionAmount1 / 10000d).setScale(2, BigDecimal.ROUND_HALF_UP).doubleValue());
+                memberProfitRecordsList.add(importProfit);
+                fatherMember = getFatherMemberById(fatherMember.getFatherId());
+            }
+
+
         }
         for (MemberProfitRecords t : memberProfitRecordsList) {
             memberProfitRecordsService.save(t);
