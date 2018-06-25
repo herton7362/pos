@@ -63,6 +63,9 @@ public class Member extends BaseUser {
     private String fatherId;
     @ApiModelProperty(value = "会员级别")
     private String memberLevel;
+    @ApiModelProperty(value = "会员编号")
+    @Column(length = 500)
+    private String memberNumber;
 
     public String getMemberLevel() {
         return memberLevel;
@@ -186,5 +189,13 @@ public class Member extends BaseUser {
 
     public void setFatherId(String fatherId) {
         this.fatherId = fatherId;
+    }
+
+    public String getMemberNumber() {
+        return memberNumber;
+    }
+
+    public void setMemberNumber(String memberNumber) {
+        this.memberNumber = memberNumber;
     }
 }
