@@ -121,4 +121,20 @@ public class MemberController extends AbstractCrudController<Member> {
         }
         return new ResponseEntity<>(insertSize+" data has been handled.", HttpStatus.OK);
     }
+
+    /**
+     * 获取当月收益详情
+     */
+    @ApiOperation(value = "获取当月收益详情")
+    @RequestMapping(value = "/getProfitDetail/{memberId}", method = RequestMethod.GET)
+    public ResponseEntity<List<CouponResult>> getProfitDetail(@PathVariable String memberId) throws Exception {
+        Member member = memberService.findOne(memberId);
+        final List<CouponResult> coupons = new ArrayList<>();
+
+
+
+        return new ResponseEntity<>(coupons, HttpStatus.OK);
+    }
+
+
 }

@@ -1,9 +1,12 @@
 package com.framework.module.member.service;
 
 import com.framework.module.auth.MemberThread;
+import com.framework.module.common.Constant;
 import com.framework.module.member.domain.*;
 import com.framework.module.record.domain.OperationRecord;
 import com.framework.module.record.service.OperationRecordService;
+import com.framework.module.shop.domain.Shop;
+import com.framework.module.shop.domain.ShopRepository;
 import com.kratos.common.AbstractCrudService;
 import com.kratos.common.PageRepository;
 import com.kratos.exceptions.BusinessException;
@@ -14,7 +17,6 @@ import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
-import org.apache.xmlbeans.impl.xb.xsdschema.Public;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Component;
@@ -38,6 +40,7 @@ public class MemberServiceImpl extends AbstractCrudService<Member> implements Me
     private final OperationRecordService operationRecordService;
     private final MemberProfitRecordsService memberProfitRecordsService;
     private final MemberLevelParamService memberLevelParamService;
+    private final ShopRepository shopRepository;
 
     @Override
     public Member save(Member member) throws Exception {
@@ -176,6 +179,13 @@ public class MemberServiceImpl extends AbstractCrudService<Member> implements Me
                 continue;
             }
             MemberProfitRecords importProfit = getAllParamFromExcel(row, r);
+            Shop shop = shopRepository.findOneBySn(importProfit.getSn());
+            shop.setTransactionAmount(new BigDecimal(shop.getTransactionAmount() + importProfit.getTransactionAmount()).setScale(2, BigDecimal.ROUND_HALF_UP).doubleValue());
+            if ((null == shop.getStatus() || shop.getStatus().equals(Shop.Status.UN_ACTIVE)) && shop.getTransactionAmount() > 4000) {
+                shop.setStatus(Shop.Status.ACTIVE);
+                shopRepository.save(shop);
+            }
+
             Member member = findOneByMemberNumber(importProfit.getUserNo());
             if (member == null) {
                 throw new BusinessException(String.format("第" + r + "行数据机不合法,用户编号不存在:[%s]", importProfit.getUserNo()));
@@ -205,10 +215,11 @@ public class MemberServiceImpl extends AbstractCrudService<Member> implements Me
 
     /**
      * 设置上级的收益情况
+     *
      * @param memberProfitRecordsList 入库的list
-     * @param importProfit 当前用户的收益情况
-     * @param member 当前用户
-     * @param profitRate 当前用户的收益
+     * @param importProfit            当前用户的收益情况
+     * @param member                  当前用户
+     * @param profitRate              当前用户的收益
      * @throws Exception 异常
      */
     private void setParamProfitRecords(List<MemberProfitRecords> memberProfitRecordsList, MemberProfitRecords importProfit, Member member, double profitRate) throws Exception {
@@ -224,7 +235,7 @@ public class MemberServiceImpl extends AbstractCrudService<Member> implements Me
             fatherProfit.setSn(importProfit.getSn());
             fatherProfit.setTransactionDate(importProfit.getTransactionDate());
             fatherProfit.setStatus(0);
-            fatherProfit.setProfitType(2);
+            fatherProfit.setProfitType(Constant.PROFIT_TYPE_GUANLI);
             fatherProfit.setMemberId(fatherMember.getId());
             MemberLevelParam fatherMemberParam = memberLevelParamService.getParamByLevel(fatherMember.getMemberLevel());
             fatherProfit.setProfit(new BigDecimal((fatherMemberParam.getmPosProfit() - profitRate) * importProfit.getTransactionAmount() / 10000d).setScale(2, BigDecimal.ROUND_HALF_UP).doubleValue());
@@ -239,6 +250,7 @@ public class MemberServiceImpl extends AbstractCrudService<Member> implements Me
 
     /**
      * 再Excel中获取数据并校验，校验通过后加入到实体中
+     *
      * @param row
      * @return
      */
@@ -295,7 +307,7 @@ public class MemberServiceImpl extends AbstractCrudService<Member> implements Me
         importProfit.setSn(sn);
         importProfit.setTransactionDate(transactionDate);
         importProfit.setStatus(0);
-        importProfit.setProfitType(1);
+        importProfit.setProfitType(Constant.PROFIT_TYPE_ZHIYING);
         return importProfit;
     }
 
@@ -326,11 +338,12 @@ public class MemberServiceImpl extends AbstractCrudService<Member> implements Me
             MemberRepository repository,
             MemberCardService memberCardService,
             OperationRecordService operationRecordService,
-            MemberProfitRecordsService memberProfitRecordsService, MemberLevelParamService memberLevelParamService) {
+            MemberProfitRecordsService memberProfitRecordsService, MemberLevelParamService memberLevelParamService, ShopRepository shopRepository) {
         this.repository = repository;
         this.memberCardService = memberCardService;
         this.operationRecordService = operationRecordService;
         this.memberProfitRecordsService = memberProfitRecordsService;
         this.memberLevelParamService = memberLevelParamService;
+        this.shopRepository = shopRepository;
     }
 }
