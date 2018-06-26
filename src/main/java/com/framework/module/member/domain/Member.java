@@ -63,9 +63,16 @@ public class Member extends BaseUser {
     private String fatherId;
     @ApiModelProperty(value = "会员级别")
     private String memberLevel;
-    @ApiModelProperty(value = "会员编号")
-    @Column(length = 500)
+    @ApiModelProperty(value = "对用POS系统的用户ID")
     private String memberNumber;
+
+    public String getMemberNumber() {
+        return memberNumber;
+    }
+
+    public void setMemberNumber(String memberNumber) {
+        this.memberNumber = memberNumber;
+    }
 
     public String getMemberLevel() {
         return memberLevel;
@@ -189,13 +196,5 @@ public class Member extends BaseUser {
 
     public void setFatherId(String fatherId) {
         this.fatherId = fatherId;
-    }
-
-    public String getMemberNumber() {
-        return memberNumber;
-    }
-
-    public void setMemberNumber(String memberNumber) {
-        this.memberNumber = memberNumber;
     }
 }

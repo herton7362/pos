@@ -19,6 +19,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.util.CollectionUtils;
 import org.springframework.web.multipart.MultipartFile;
 
 import javax.persistence.criteria.CriteriaBuilder;
@@ -55,6 +56,17 @@ public class MemberServiceImpl extends AbstractCrudService<Member> implements Me
     @Override
     public Member findOneByLoginName(String loginName) {
         return repository.findOneByLoginName(loginName);
+    }
+
+    @Override
+    public Member findOneByMemberNumber(String memberNumber) throws Exception {
+        Map<String, String[]> param = new HashMap<>();
+        param.put("memberNumber", new String[]{memberNumber});
+        List<Member> members = findAll(param);
+        if (!CollectionUtils.isEmpty(members)) {
+            return members.get(0);
+        }
+        return null;
     }
 
     @Override
@@ -140,12 +152,6 @@ public class MemberServiceImpl extends AbstractCrudService<Member> implements Me
     }
 
     @Override
-    public Member getFatherMemberById(String id) {
-        return  repository.findOne(id);
-    }
-
-
-    @Override
     public Integer batchImport(String fileName, MultipartFile file) throws Exception {
         Integer importSize = 0;
         if (!fileName.matches("^.+\\.(?i)(xls)$") && !fileName.matches("^.+\\.(?i)(xlsx)$")) {
@@ -169,90 +175,128 @@ public class MemberServiceImpl extends AbstractCrudService<Member> implements Me
             if (row == null) {
                 continue;
             }
-            row.getCell(0).setCellType(Cell.CELL_TYPE_STRING);
-            String organizationNo = row.getCell(0).getStringCellValue();
-            if (StringUtils.isBlank(organizationNo)) {
-                throw new BusinessException("机构编码为空");
-            }
-            row.getCell(1).setCellType(Cell.CELL_TYPE_STRING);
-            String organizationName = row.getCell(1).getStringCellValue();
-
-            row.getCell(2).setCellType(Cell.CELL_TYPE_STRING);
-            String userNo = row.getCell(2).getStringCellValue();
-
-            row.getCell(3).setCellType(Cell.CELL_TYPE_STRING);
-            String userName = row.getCell(3).getStringCellValue();
-
-            row.getCell(4).setCellType(Cell.CELL_TYPE_STRING);
-            String transactionAmount = row.getCell(4).getStringCellValue();
-
-            row.getCell(5).setCellType(Cell.CELL_TYPE_STRING);
-            String sn = row.getCell(5).getStringCellValue();
-
-            row.getCell(6).setCellType(Cell.CELL_TYPE_STRING);
-            String transactionType = row.getCell(6).getStringCellValue();
-            Date transactionDate = row.getCell(7).getDateCellValue();
-            if (transactionDate == null){
-                transactionDate = new Date();
-            }
-            MemberProfitRecords importProfit = new MemberProfitRecords();
-            importProfit.setOrganizationNo(organizationNo);
-            importProfit.setOrganizationName(organizationName);
-            importProfit.setUserNo(userNo);
-            importProfit.setUserName(userName);
-            Double transactionAmount1 = Double.valueOf(transactionAmount.replace(",", ""));
-            importProfit.setTransactionAmount(transactionAmount1);
-            importProfit.setTransactionType(transactionType);
-            importProfit.setSn(sn);
-            importProfit.setTransactionDate(transactionDate);
-            importProfit.setStatus(0);
-            importProfit.setProfitType(1);
-
-            Member member = findOneByLoginName(userNo);
+            MemberProfitRecords importProfit = getAllParamFromExcel(row, r);
+            Member member = findOneByMemberNumber(importProfit.getUserNo());
             if (member == null) {
-                throw new BusinessException(String.format("用户标号不存在:[%s]不存在", userNo));
+                throw new BusinessException(String.format("第" + r + "行数据机不合法,用户编号不存在:[%s]", importProfit.getUserNo()));
+            }
+            importProfit.setMemberId(member.getId());
+            if (StringUtils.isBlank(member.getMemberLevel())) {
+                throw new BusinessException(String.format("第" + r + "行数据机不合法,用户等级信息不存在:[%s]", importProfit.getUserNo()));
             }
             MemberLevelParam param = memberLevelParamService.getParamByLevel(member.getMemberLevel());
-            double profitRate = param.getmPosProfit();
-//            switch (transactionType) {
-//                case "1":
-//                    profitRate = param.getmPosProfit();
-//                    break;
-//                case "2":
-//                    profitRate = param.getBigPosProfit();
-//                    break;
-//                default:
-//                    break;
-//            }
-            importProfit.setProfit(new BigDecimal(profitRate * transactionAmount1 / 10000d).setScale(2, BigDecimal.ROUND_HALF_UP).doubleValue());
-            memberProfitRecordsList.add(importProfit);
-
-            Member fatherMember = getFatherMemberById(member.getFatherId());
-            while (fatherMember != null) {
-                MemberProfitRecords fatherProfit = new MemberProfitRecords();
-                fatherProfit.setOrganizationNo(organizationNo);
-                fatherProfit.setOrganizationName(organizationName);
-                fatherProfit.setUserNo(userNo);
-                fatherProfit.setUserName(userName);
-                fatherProfit.setTransactionAmount(transactionAmount1);
-                fatherProfit.setTransactionType(transactionType);
-                fatherProfit.setSn(sn);
-                fatherProfit.setTransactionDate(transactionDate);
-                fatherProfit.setStatus(0);
-                fatherProfit.setProfitType(2);
-                MemberLevelParam fatherMemberParam = memberLevelParamService.getParamByLevel(fatherMember.getMemberLevel());
-                fatherProfit.setProfit(new BigDecimal((fatherMemberParam.getmPosProfit()- profitRate) * transactionAmount1 / 10000d).setScale(2, BigDecimal.ROUND_HALF_UP).doubleValue());
-                memberProfitRecordsList.add(importProfit);
-                fatherMember = getFatherMemberById(fatherMember.getFatherId());
+            if (param == null) {
+                throw new BusinessException(String.format("第" + r + "行数据机不合法,用户等级信息不合法:[%s]", importProfit.getUserNo()));
             }
-
-
+            double profitRate = param.getmPosProfit();
+            importProfit.setProfit(new BigDecimal(profitRate * importProfit.getTransactionAmount() / 10000d).setScale(2, BigDecimal.ROUND_HALF_UP).doubleValue());
+            memberProfitRecordsList.add(importProfit);
+            if (StringUtils.isNotBlank(member.getFatherId())) {
+                setParamProfitRecords(memberProfitRecordsList, importProfit, member, profitRate);
+            }
         }
+        // 将数据都插入到数据库中
         for (MemberProfitRecords t : memberProfitRecordsList) {
             memberProfitRecordsService.save(t);
         }
         importSize = memberProfitRecordsList.size();
         return importSize;
+    }
+
+    /**
+     * 设置上级的收益情况
+     * @param memberProfitRecordsList 入库的list
+     * @param importProfit 当前用户的收益情况
+     * @param member 当前用户
+     * @param profitRate 当前用户的收益
+     * @throws Exception 异常
+     */
+    private void setParamProfitRecords(List<MemberProfitRecords> memberProfitRecordsList, MemberProfitRecords importProfit, Member member, double profitRate) throws Exception {
+        Member fatherMember = repository.findOne(member.getFatherId());
+        while (fatherMember != null) {
+            MemberProfitRecords fatherProfit = new MemberProfitRecords();
+            fatherProfit.setOrganizationNo(importProfit.getOrganizationNo());
+            fatherProfit.setOrganizationName(importProfit.getOrganizationName());
+            fatherProfit.setUserNo(importProfit.getUserNo());
+            fatherProfit.setUserName(importProfit.getUserName());
+            fatherProfit.setTransactionAmount(importProfit.getTransactionAmount());
+            fatherProfit.setTransactionType(importProfit.getTransactionType());
+            fatherProfit.setSn(importProfit.getSn());
+            fatherProfit.setTransactionDate(importProfit.getTransactionDate());
+            fatherProfit.setStatus(0);
+            fatherProfit.setProfitType(2);
+            fatherProfit.setMemberId(fatherMember.getId());
+            MemberLevelParam fatherMemberParam = memberLevelParamService.getParamByLevel(fatherMember.getMemberLevel());
+            fatherProfit.setProfit(new BigDecimal((fatherMemberParam.getmPosProfit() - profitRate) * importProfit.getTransactionAmount() / 10000d).setScale(2, BigDecimal.ROUND_HALF_UP).doubleValue());
+            memberProfitRecordsList.add(fatherProfit);
+            if (StringUtils.isBlank(fatherMember.getFatherId())) {
+                fatherMember = null;
+            } else {
+                fatherMember = repository.findOne(fatherMember.getFatherId());
+            }
+        }
+    }
+
+    /**
+     * 再Excel中获取数据并校验，校验通过后加入到实体中
+     * @param row
+     * @return
+     */
+    private MemberProfitRecords getAllParamFromExcel(Row row, int r) throws BusinessException {
+        row.getCell(0).setCellType(Cell.CELL_TYPE_STRING);
+        String organizationNo = row.getCell(0).getStringCellValue();
+        if (StringUtils.isBlank(organizationNo)) {
+            throw new BusinessException(String.format("第" + r + "行数据机不合法,[%s]为空", "机构编码"));
+        }
+        row.getCell(1).setCellType(Cell.CELL_TYPE_STRING);
+        String organizationName = row.getCell(1).getStringCellValue();
+        if (StringUtils.isBlank(organizationName)) {
+            throw new BusinessException(String.format("第" + r + "行数据机不合法,[%s]为空", "机构名称"));
+        }
+
+        row.getCell(2).setCellType(Cell.CELL_TYPE_STRING);
+        String userNo = row.getCell(2).getStringCellValue();
+        if (StringUtils.isBlank(userNo)) {
+            throw new BusinessException(String.format("第" + r + "行数据机不合法,[%s]为空", "用户编号"));
+        }
+
+        row.getCell(3).setCellType(Cell.CELL_TYPE_STRING);
+        String userName = row.getCell(3).getStringCellValue();
+        if (StringUtils.isBlank(userName)) {
+            throw new BusinessException(String.format("第" + r + "行数据机不合法,[%s]为空", "用户姓名"));
+        }
+
+        row.getCell(4).setCellType(Cell.CELL_TYPE_NUMERIC);
+        Double transactionAmount = row.getCell(4).getNumericCellValue();
+        if (transactionAmount == null) {
+            throw new BusinessException(String.format("第" + r + "行数据机不合法,[%s]为空", "交易金额"));
+        }
+        row.getCell(5).setCellType(Cell.CELL_TYPE_STRING);
+        String sn = row.getCell(5).getStringCellValue();
+        if (StringUtils.isBlank(sn)) {
+            throw new BusinessException(String.format("第" + r + "行数据机不合法,[%s]为空", "SN"));
+        }
+        row.getCell(6).setCellType(Cell.CELL_TYPE_STRING);
+        String transactionType = row.getCell(6).getStringCellValue();
+        if (StringUtils.isBlank(transactionType)) {
+            throw new BusinessException(String.format("第" + r + "行数据机不合法,[%s]为空", "交易类型"));
+        }
+        Date transactionDate = row.getCell(7).getDateCellValue();
+        if (transactionDate == null) {
+            transactionDate = new Date();
+        }
+        MemberProfitRecords importProfit = new MemberProfitRecords();
+        importProfit.setOrganizationNo(organizationNo);
+        importProfit.setOrganizationName(organizationName);
+        importProfit.setUserNo(userNo);
+        importProfit.setUserName(userName);
+        importProfit.setTransactionAmount(transactionAmount);
+        importProfit.setTransactionType(transactionType);
+        importProfit.setSn(sn);
+        importProfit.setTransactionDate(transactionDate);
+        importProfit.setStatus(0);
+        importProfit.setProfitType(1);
+        return importProfit;
     }
 
     private Integer increaseNumber(Integer sourcePoint, Integer point) {
