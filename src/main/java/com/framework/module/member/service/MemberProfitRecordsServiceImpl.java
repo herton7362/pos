@@ -5,7 +5,9 @@ import com.framework.module.member.domain.Member;
 import com.framework.module.member.domain.MemberLevelParam;
 import com.framework.module.member.domain.MemberProfitRecords;
 import com.framework.module.member.domain.MemberRepository;
+import com.framework.module.rule.domain.ActiveRule;
 import com.framework.module.rule.domain.GroupBuildDrawRule;
+import com.framework.module.rule.service.ActiveRuleService;
 import com.framework.module.rule.service.GroupBuildDrawRuleService;
 import com.framework.module.shop.domain.Shop;
 import com.framework.module.shop.domain.ShopRepository;
@@ -41,6 +43,7 @@ public class MemberProfitRecordsServiceImpl extends AbstractCrudService<MemberPr
     private final MemberLevelParamService memberLevelParamService;
     private final ShopRepository shopRepository;
     private final GroupBuildDrawRuleService groupBuildDrawRuleService;
+    private final ActiveRuleService activeRuleService;
 
     @Override
     public void setTeamBuildProfit(String fatherId) throws Exception {
@@ -69,6 +72,11 @@ public class MemberProfitRecordsServiceImpl extends AbstractCrudService<MemberPr
 
     @Override
     public Integer batchImport(String fileName, MultipartFile file) throws Exception {
+        List<ActiveRule> activeRules = activeRuleService.findAll(new HashMap<>());
+        if (CollectionUtils.isEmpty(activeRules) || activeRules.get(0).getConditionValue() == null){
+            throw new BusinessException("设备激活奖励未设置");
+        }
+
         Integer importSize = 0;
         if (!fileName.matches("^.+\\.(?i)(xls)$") && !fileName.matches("^.+\\.(?i)(xlsx)$")) {
             throw new BusinessException("输入文件格式不正确");
@@ -115,18 +123,10 @@ public class MemberProfitRecordsServiceImpl extends AbstractCrudService<MemberPr
             if (StringUtils.isNotBlank(member.getFatherId())) {
                 setParamProfitRecords(memberProfitRecordsList, importProfit, member, profitRate);
             }
-
             // 设置激活奖励
             shop.setTransactionAmount(new BigDecimal(shop.getTransactionAmount() + importProfit.getTransactionAmount()).setScale(2, BigDecimal.ROUND_HALF_UP).doubleValue());
-            if ((null == shop.getStatus() || shop.getStatus().equals(Shop.Status.UN_ACTIVE)) && shop.getTransactionAmount() > 4000) {
-                shop.setStatus(Shop.Status.ACTIVE);
-                shopRepository.save(shop);
-//                if (member.getActivationReward()==null || member.getActivationReward().intValue() == Constant.ACTIVATION_REWARD_NO){
-//                    member.setActivationReward(Constant.ACTIVATION_REWARD_YES);
-//                    repository.save(member);
-//                    MemberProfitRecords activationRewardProfit = new MemberProfitRecords();
-//                }
-            }
+            // 设置激活奖励
+            setActiveRewardProfit(activeRules, shop);
         }
         // 将数据都插入到数据库中
         for (MemberProfitRecords t : memberProfitRecordsList) {
@@ -134,6 +134,29 @@ public class MemberProfitRecordsServiceImpl extends AbstractCrudService<MemberPr
         }
         importSize = memberProfitRecordsList.size();
         return importSize;
+    }
+
+    private void setActiveRewardProfit(List<ActiveRule> activeRules, Shop shop) throws Exception {
+        if ((null == shop.getStatus() || shop.getStatus().equals(Shop.Status.UN_ACTIVE)) && shop.getTransactionAmount() >= activeRules.get(0).getConditionValue()) {
+            shop.setStatus(Shop.Status.ACTIVE);
+            Long rewardCount = shopRepository.count(
+                    (Root<Shop> root, CriteriaQuery<?> criteriaQuery, CriteriaBuilder criteriaBuilder) -> {
+                        List<Predicate> predicate = new ArrayList<>();
+                        predicate.add(criteriaBuilder.equal(root.get("memberId"), shop.getMemberId()));
+                        predicate.add(criteriaBuilder.equal(root.get("activationReward"), Constant.ACTIVATION_REWARD_YES));
+                        return criteriaBuilder.and(predicate.toArray(new Predicate[]{}));
+                    });
+            if (rewardCount == 0){
+                shop.setActivationReward(Constant.ACTIVATION_REWARD_YES);
+                MemberProfitRecords activationRewardProfit = new MemberProfitRecords();
+                activationRewardProfit.setProfitType(Constant.PROFIT_TYPE_TUANJIAN);
+                activationRewardProfit.setProfit(activeRules.get(0).getAwardMoney());
+                activationRewardProfit.setMemberId(shop.getMemberId());
+                activationRewardProfit.setTransactionDate(new Date());
+                save(activationRewardProfit);
+            }
+        }
+        shopRepository.save(shop);
     }
 
     /**
@@ -238,11 +261,12 @@ public class MemberProfitRecordsServiceImpl extends AbstractCrudService<MemberPr
             MemberRepository repository,
             MemberService memberService,
             MemberLevelParamService memberLevelParamService,
-            ShopRepository shopRepository, GroupBuildDrawRuleService groupBuildDrawRuleService) {
+            ShopRepository shopRepository, GroupBuildDrawRuleService groupBuildDrawRuleService, ActiveRuleService activeRuleService) {
         this.repository = repository;
         this.memberService = memberService;
         this.memberLevelParamService = memberLevelParamService;
         this.shopRepository = shopRepository;
         this.groupBuildDrawRuleService = groupBuildDrawRuleService;
+        this.activeRuleService = activeRuleService;
     }
 }

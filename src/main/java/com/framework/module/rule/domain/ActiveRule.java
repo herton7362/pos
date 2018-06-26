@@ -13,6 +13,9 @@ public class ActiveRule extends BaseEntity {
     @ApiModelProperty(value = "条件如 > 4000 则填写 4000")
     @Column(length = 11, precision = 2)
     private Double conditionValue;
+    @ApiModelProperty(value = "奖励金")
+    @Column(length = 11, precision = 2)
+    private Double awardMoney;
     @ApiModelProperty(value = "备注")
     @Column(length = 100)
     private String remark;
@@ -23,6 +26,14 @@ public class ActiveRule extends BaseEntity {
 
     public void setConditionValue(Double conditionValue) {
         this.conditionValue = conditionValue;
+    }
+
+    public Double getAwardMoney() {
+        return awardMoney;
+    }
+
+    public void setAwardMoney(Double awardMoney) {
+        this.awardMoney = awardMoney;
     }
 
     public String getRemark() {

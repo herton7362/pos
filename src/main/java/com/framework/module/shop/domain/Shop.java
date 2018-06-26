@@ -27,6 +27,17 @@ public class Shop extends BaseEntity {
     @ApiModelProperty(value = "交易总额")
     @Column(length = 11, precision = 2)
     private Double transactionAmount;
+    @ApiModelProperty(value = "是否领取激活奖励")
+    @Column(length = 1)
+    private Integer activationReward;
+
+    public Integer getActivationReward() {
+        return activationReward;
+    }
+
+    public void setActivationReward(Integer activationReward) {
+        this.activationReward = activationReward;
+    }
 
     public String getName() {
         return name;

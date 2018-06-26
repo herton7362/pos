@@ -4,4 +4,6 @@ import com.kratos.common.PageRepository;
 
 public interface ShopRepository extends PageRepository<Shop> {
     Shop findOneBySn(String sn);
+
+
 }

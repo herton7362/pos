@@ -52,10 +52,10 @@ public class MemberProfitController extends AbstractCrudController<MemberProfitR
      * 获取当月收益详情
      */
     @ApiOperation(value = "获取当月收益详情")
-    @RequestMapping(value = "/getProfitDetail/{memberId}", method = RequestMethod.GET)
-    public ResponseEntity<List<CouponResult>> getProfitDetail(@PathVariable String memberId) throws Exception {
+    @RequestMapping(value = "/getProfitDetail", method = RequestMethod.GET)
+    public ResponseEntity<List<CouponResult>> getProfitDetail() throws Exception {
         final List<CouponResult> coupons = new ArrayList<>();
-
+        memberProfitService.setTeamBuildProfit("2c911f24616e3ed60161c70ac3780aba");
 
 
         return new ResponseEntity<>(coupons, HttpStatus.OK);
