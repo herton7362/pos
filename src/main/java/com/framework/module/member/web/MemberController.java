@@ -25,6 +25,7 @@ import java.util.List;
 public class MemberController extends AbstractCrudController<Member> {
     private final MemberService memberService;
     private final MemberLevelService memberLevelService;
+
     @Override
     protected CrudService<Member> getService() {
         return memberService;
@@ -33,7 +34,7 @@ public class MemberController extends AbstractCrudController<Member> {
     /**
      * 根据会员卡获取会员
      */
-    @ApiOperation(value="根据会员卡获取会员")
+    @ApiOperation(value = "根据会员卡获取会员")
     @RequestMapping(value = "/cardNo/{cardNo}", method = RequestMethod.GET)
     public ResponseEntity<Member> getOneByCardNo(@PathVariable String cardNo) throws Exception {
         Member member = memberService.findOneByCardNo(cardNo);
@@ -43,7 +44,7 @@ public class MemberController extends AbstractCrudController<Member> {
     /**
      * 快速积分
      */
-    @ApiOperation(value="快速积分")
+    @ApiOperation(value = "快速积分")
     @RequestMapping(value = "/fastIncreasePoint", method = RequestMethod.POST)
     public ResponseEntity<?> fastIncreasePoint(@RequestBody FastIncreasePointParam param) throws Exception {
         memberService.fastIncreasePoint(param.getMemberId(), param.getPoint());
@@ -53,7 +54,7 @@ public class MemberController extends AbstractCrudController<Member> {
     /**
      * 储值扣费
      */
-    @ApiOperation(value="储值扣费")
+    @ApiOperation(value = "储值扣费")
     @RequestMapping(value = "/deductBalance", method = RequestMethod.POST)
     public ResponseEntity<?> deductBalance(@RequestBody DeductBalanceParam param) throws Exception {
         memberService.deductBalance(param.getMemberId(), param.getAmount());
@@ -63,12 +64,12 @@ public class MemberController extends AbstractCrudController<Member> {
     /**
      * 获取会员优惠卷
      */
-    @ApiOperation(value="获取会员优惠卷")
+    @ApiOperation(value = "获取会员优惠卷")
     @RequestMapping(value = "/coupon/{memberId}", method = RequestMethod.GET)
     public ResponseEntity<List<CouponResult>> getCoupons(@PathVariable String memberId) throws Exception {
         Member member = memberService.findOne(memberId);
         final List<CouponResult> coupons = new ArrayList<>();
-        if(member.getCoupons() != null) {
+        if (member.getCoupons() != null) {
             member.getCoupons().forEach(memberCoupon -> {
                 CouponResult couponResult = new CouponResult();
                 BeanUtils.copyProperties(memberCoupon.getCoupon(), couponResult);
@@ -81,7 +82,7 @@ public class MemberController extends AbstractCrudController<Member> {
     /**
      * 查询总数
      */
-    @ApiOperation(value="查询总数")
+    @ApiOperation(value = "查询总数")
     @RequestMapping(value = "/count", method = RequestMethod.GET)
     public ResponseEntity<Long> count() throws Exception {
         return new ResponseEntity<>(memberService.count(), HttpStatus.OK);
@@ -90,7 +91,7 @@ public class MemberController extends AbstractCrudController<Member> {
     /**
      * 查询总数
      */
-    @ApiOperation(value="查询总数")
+    @ApiOperation(value = "查询总数")
     @RequestMapping(value = "/level/{memberId}", method = RequestMethod.GET)
     public ResponseEntity<MemberLevel> count(@PathVariable String memberId) throws Exception {
         return new ResponseEntity<>(memberLevelService.getMemberMemberLevel(memberId), HttpStatus.OK);
@@ -108,16 +109,16 @@ public class MemberController extends AbstractCrudController<Member> {
     /**
      * 获取会员优惠卷
      */
-    @ApiOperation(value="导入成员收益")
-    @PostMapping("/import/profit")
-    public ResponseEntity<Integer> userProfit(@RequestParam("profitFile") MultipartFile profitFile) {
+    @ApiOperation(value = "导入成员收益")
+    @RequestMapping(value="/import/profit", method = RequestMethod.POST, produces = "application/json; charset=utf-8")
+    public ResponseEntity<String> userProfit(@RequestParam("profitFile") MultipartFile profitFile) {
         String fileName = profitFile.getOriginalFilename();
         int insertSize = 0;
         try {
             insertSize = memberService.batchImport(fileName, profitFile);
         } catch (Exception e) {
-            e.printStackTrace();
+            return new ResponseEntity<>(e.getMessage(), HttpStatus.BAD_REQUEST);
         }
-        return new ResponseEntity<>(insertSize, HttpStatus.OK);
+        return new ResponseEntity<>(insertSize+" data has been handled.", HttpStatus.OK);
     }
 }

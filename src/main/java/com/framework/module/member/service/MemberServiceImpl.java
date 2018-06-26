@@ -268,8 +268,8 @@ public class MemberServiceImpl extends AbstractCrudService<Member> implements Me
 
         row.getCell(4).setCellType(Cell.CELL_TYPE_NUMERIC);
         Double transactionAmount = row.getCell(4).getNumericCellValue();
-        if (transactionAmount == null) {
-            throw new BusinessException(String.format("第" + r + "行数据机不合法,[%s]为空", "交易金额"));
+        if (transactionAmount == null || transactionAmount.doubleValue() == 0) {
+            throw new BusinessException(String.format("第" + r + "行数据机不合法,[%s]数据不合法", "交易金额"));
         }
         row.getCell(5).setCellType(Cell.CELL_TYPE_STRING);
         String sn = row.getCell(5).getStringCellValue();
