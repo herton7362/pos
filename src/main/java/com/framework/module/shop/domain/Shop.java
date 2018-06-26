@@ -14,6 +14,8 @@ import javax.persistence.Enumerated;
 public class Shop extends BaseEntity {
     @ApiModelProperty(value = "姓名")
     private String name;
+    @ApiModelProperty(value = "会员id")
+    private String memberId;
     @ApiModelProperty(value = "sn码")
     private String sn;
     @ApiModelProperty(value = "手机")
@@ -32,6 +34,14 @@ public class Shop extends BaseEntity {
 
     public void setName(String name) {
         this.name = name;
+    }
+
+    public String getMemberId() {
+        return memberId;
+    }
+
+    public void setMemberId(String memberId) {
+        this.memberId = memberId;
     }
 
     public String getSn() {
