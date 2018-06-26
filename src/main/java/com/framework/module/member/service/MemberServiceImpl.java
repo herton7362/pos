@@ -73,6 +73,25 @@ public class MemberServiceImpl extends AbstractCrudService<Member> implements Me
     }
 
     @Override
+    public void setTeamBuildProfit(String fatherId) throws Exception {
+        Long activeCount = repository.count(
+                (Root<Member> root, CriteriaQuery<?> criteriaQuery, CriteriaBuilder criteriaBuilder) -> {
+                    List<Predicate> predicate = new ArrayList<>();
+                    predicate.add(criteriaBuilder.equal(root.get("fatherId"), fatherId));
+                    predicate.add(criteriaBuilder.equal(root.get("status"), Member.Status.ACTIVE));
+                    return criteriaBuilder.and(predicate.toArray(new Predicate[]{}));
+                });
+        if (activeCount > 0 && activeCount % 5 == 0) {
+            MemberProfitRecords teamBuilderProfit = new MemberProfitRecords();
+            teamBuilderProfit.setProfitType(Constant.PROFIT_TYPE_TUANJIAN);
+            teamBuilderProfit.setProfit(activeCount / 5 * 1000);
+            teamBuilderProfit.setMemberId(fatherId);
+            teamBuilderProfit.setTransactionDate(new Date());
+            memberProfitRecordsService.save(teamBuilderProfit);
+        }
+    }
+
+    @Override
     public Member findOneByCardNo(String cardNo) throws Exception {
         Map<String, String[]> param = new HashMap<>();
         param.put("cardNumber", new String[]{cardNo});
@@ -179,13 +198,6 @@ public class MemberServiceImpl extends AbstractCrudService<Member> implements Me
                 continue;
             }
             MemberProfitRecords importProfit = getAllParamFromExcel(row, r);
-            Shop shop = shopRepository.findOneBySn(importProfit.getSn());
-            shop.setTransactionAmount(new BigDecimal(shop.getTransactionAmount() + importProfit.getTransactionAmount()).setScale(2, BigDecimal.ROUND_HALF_UP).doubleValue());
-            if ((null == shop.getStatus() || shop.getStatus().equals(Shop.Status.UN_ACTIVE)) && shop.getTransactionAmount() > 4000) {
-                shop.setStatus(Shop.Status.ACTIVE);
-                shopRepository.save(shop);
-            }
-
             Member member = findOneByMemberNumber(importProfit.getUserNo());
             if (member == null) {
                 throw new BusinessException(String.format("第" + r + "行数据机不合法,用户编号不存在:[%s]", importProfit.getUserNo()));
@@ -201,8 +213,22 @@ public class MemberServiceImpl extends AbstractCrudService<Member> implements Me
             double profitRate = param.getmPosProfit();
             importProfit.setProfit(new BigDecimal(profitRate * importProfit.getTransactionAmount() / 10000d).setScale(2, BigDecimal.ROUND_HALF_UP).doubleValue());
             memberProfitRecordsList.add(importProfit);
+            // 如果父节点不为空，设置父节点的收益
             if (StringUtils.isNotBlank(member.getFatherId())) {
                 setParamProfitRecords(memberProfitRecordsList, importProfit, member, profitRate);
+            }
+
+            // 设置激活奖励
+            Shop shop = shopRepository.findOneBySn(importProfit.getSn());
+            shop.setTransactionAmount(new BigDecimal(shop.getTransactionAmount() + importProfit.getTransactionAmount()).setScale(2, BigDecimal.ROUND_HALF_UP).doubleValue());
+            if ((null == shop.getStatus() || shop.getStatus().equals(Shop.Status.UN_ACTIVE)) && shop.getTransactionAmount() > 4000) {
+                shop.setStatus(Shop.Status.ACTIVE);
+                shopRepository.save(shop);
+//                if (member.getActivationReward()==null || member.getActivationReward().intValue() == Constant.ACTIVATION_REWARD_NO){
+//                    member.setActivationReward(Constant.ACTIVATION_REWARD_YES);
+//                    repository.save(member);
+//                    MemberProfitRecords activationRewardProfit = new MemberProfitRecords();
+//                }
             }
         }
         // 将数据都插入到数据库中
@@ -234,7 +260,6 @@ public class MemberServiceImpl extends AbstractCrudService<Member> implements Me
             fatherProfit.setTransactionType(importProfit.getTransactionType());
             fatherProfit.setSn(importProfit.getSn());
             fatherProfit.setTransactionDate(importProfit.getTransactionDate());
-            fatherProfit.setStatus(0);
             fatherProfit.setProfitType(Constant.PROFIT_TYPE_GUANLI);
             fatherProfit.setMemberId(fatherMember.getId());
             MemberLevelParam fatherMemberParam = memberLevelParamService.getParamByLevel(fatherMember.getMemberLevel());
@@ -306,7 +331,6 @@ public class MemberServiceImpl extends AbstractCrudService<Member> implements Me
         importProfit.setTransactionType(transactionType);
         importProfit.setSn(sn);
         importProfit.setTransactionDate(transactionDate);
-        importProfit.setStatus(0);
         importProfit.setProfitType(Constant.PROFIT_TYPE_ZHIYING);
         return importProfit;
     }

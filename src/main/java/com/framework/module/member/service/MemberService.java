@@ -60,4 +60,10 @@ public interface MemberService extends CrudService<Member> {
      * @return 会员信息
      */
     Member findOneByMemberNumber(String memberNumber) throws Exception;
+
+    /**
+     * 用户购买机器激活后，设置上线团建奖励，测试的时候注意刚激活的这个是否算入
+     * @param fatherMemberId 当前激活用户的上线MemberId
+     */
+    void setTeamBuildProfit(String fatherMemberId) throws Exception;
 }

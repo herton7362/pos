@@ -65,6 +65,10 @@ public class Member extends BaseUser {
     private String memberLevel;
     @ApiModelProperty(value = "对用POS系统的用户ID")
     private String memberNumber;
+    @ApiModelProperty(value = "激活状态")
+    @Column(length = 20)
+    @Enumerated(EnumType.STRING)
+    private Status status;
 
     public String getMemberNumber() {
         return memberNumber;
@@ -196,5 +200,19 @@ public class Member extends BaseUser {
 
     public void setFatherId(String fatherId) {
         this.fatherId = fatherId;
+    }
+
+    public enum Status {
+        ACTIVE("已激活"),
+        UN_ACTIVE("未激活");
+        private String displayName;
+
+        Status(String displayName) {
+            this.displayName = displayName;
+        }
+
+        public String getDisplayName() {
+            return displayName;
+        }
     }
 }

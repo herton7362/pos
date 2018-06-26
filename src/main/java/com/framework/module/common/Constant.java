@@ -23,4 +23,13 @@ public abstract class Constant {
      * 收益类型，团建奖励
      */
     public static final int PROFIT_TYPE_TUANJIAN = 4;
+
+    /**
+     * 是否领取激活奖励-未领取
+     */
+    public static final int ACTIVATION_REWARD_NO =0;
+    /**
+     * 是否领取激活奖励-领取
+     */
+    public static final int ACTIVATION_REWARD_YES = 1;
 }
