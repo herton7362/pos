@@ -45,7 +45,19 @@ public interface MemberService extends CrudService<Member> {
      */
     Long count();
 
-    Member getFatherMemberById(String id);
-
+    /**
+     * 批量收益导入
+     * @param fileName 文件名称
+     * @param file 文件
+     * @return 导入结果
+     * @throws Exception ex
+     */
     Integer batchImport(String fileName, MultipartFile file) throws Exception;
+
+    /**
+     * 通过POS的用户ID查找用户会员
+     * @param memberNumber POS的用户ID
+     * @return 会员信息
+     */
+    Member findOneByMemberNumber(String memberNumber) throws Exception;
 }

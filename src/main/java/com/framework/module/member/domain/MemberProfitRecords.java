@@ -30,8 +30,8 @@ public class MemberProfitRecords extends BaseEntity {
     private String sn;
     @Column(length = 50)
     private String transactionType;
-    @Column(length = 20)
-    private String userMobile;
+    @Column(length = 50)
+    private String memberId;
     @Column(length = 50)
     private Date transactionDate;
     @Column(length = 10, precision = 2)
@@ -115,12 +115,12 @@ public class MemberProfitRecords extends BaseEntity {
         this.transactionType = transactionType;
     }
 
-    public String getUserMobile() {
-        return userMobile;
+    public String getMemberId() {
+        return memberId;
     }
 
-    public void setUserMobile(String userMobile) {
-        this.userMobile = userMobile;
+    public void setMemberId(String memberId) {
+        this.memberId = memberId;
     }
 
     public Date getTransactionDate() {
