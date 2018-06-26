@@ -5,6 +5,8 @@ import com.framework.module.member.domain.Member;
 import com.framework.module.member.domain.MemberLevelParam;
 import com.framework.module.member.domain.MemberProfitRecords;
 import com.framework.module.member.domain.MemberRepository;
+import com.framework.module.rule.domain.GroupBuildDrawRule;
+import com.framework.module.rule.service.GroupBuildDrawRuleService;
 import com.framework.module.shop.domain.Shop;
 import com.framework.module.shop.domain.ShopRepository;
 import com.kratos.common.AbstractCrudService;
@@ -38,6 +40,7 @@ public class MemberProfitRecordsServiceImpl extends AbstractCrudService<MemberPr
     private final MemberRepository repository;
     private final MemberLevelParamService memberLevelParamService;
     private final ShopRepository shopRepository;
+    private final GroupBuildDrawRuleService groupBuildDrawRuleService;
 
     @Override
     public void setTeamBuildProfit(String fatherId) throws Exception {
@@ -48,10 +51,16 @@ public class MemberProfitRecordsServiceImpl extends AbstractCrudService<MemberPr
                     predicate.add(criteriaBuilder.equal(root.get("status"), Member.Status.ACTIVE));
                     return criteriaBuilder.and(predicate.toArray(new Predicate[]{}));
                 });
-        if (activeCount > 0 && activeCount % 5 == 0) {
+        List<GroupBuildDrawRule> groupBuildDrawRules =groupBuildDrawRuleService.findAll(new HashMap<>());
+        if (CollectionUtils.isEmpty(groupBuildDrawRules) || groupBuildDrawRules.get(0).getMemberCount() == null || groupBuildDrawRules.get(0).getReward() == null){
+            throw new BusinessException("团建奖励设置不合法");
+        }
+        Integer memberCount = groupBuildDrawRules.get(0).getMemberCount();
+        Double reward = groupBuildDrawRules.get(0).getReward();
+        if (activeCount > 0 && activeCount % memberCount == 0) {
             MemberProfitRecords teamBuilderProfit = new MemberProfitRecords();
             teamBuilderProfit.setProfitType(Constant.PROFIT_TYPE_TUANJIAN);
-            teamBuilderProfit.setProfit(activeCount / 5 * 1000);
+            teamBuilderProfit.setProfit(activeCount / memberCount * reward);
             teamBuilderProfit.setMemberId(fatherId);
             teamBuilderProfit.setTransactionDate(new Date());
             save(teamBuilderProfit);
@@ -229,10 +238,11 @@ public class MemberProfitRecordsServiceImpl extends AbstractCrudService<MemberPr
             MemberRepository repository,
             MemberService memberService,
             MemberLevelParamService memberLevelParamService,
-            ShopRepository shopRepository) {
+            ShopRepository shopRepository, GroupBuildDrawRuleService groupBuildDrawRuleService) {
         this.repository = repository;
         this.memberService = memberService;
         this.memberLevelParamService = memberLevelParamService;
         this.shopRepository = shopRepository;
+        this.groupBuildDrawRuleService = groupBuildDrawRuleService;
     }
 }
