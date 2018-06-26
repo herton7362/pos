@@ -1,9 +1,7 @@
 package com.framework.module.member.web;
 
-import com.framework.module.member.domain.Member;
-import com.framework.module.member.service.MemberLevelService;
-import com.framework.module.member.service.MemberProfitService;
-import com.framework.module.member.service.MemberService;
+import com.framework.module.member.domain.MemberProfitRecords;
+import com.framework.module.member.service.MemberProfitRecordsService;
 import com.kratos.common.AbstractCrudController;
 import com.kratos.common.CrudService;
 import io.swagger.annotations.Api;
@@ -20,17 +18,17 @@ import java.util.List;
 @Api(value = "会员管理")
 @RestController
 @RequestMapping("/api/memberprofit")
-public class MemberProfitController extends AbstractCrudController<Member> {
-    private final MemberProfitService memberProfitService;
+public class MemberProfitController extends AbstractCrudController<MemberProfitRecords> {
+    private final MemberProfitRecordsService memberProfitService;
 
     @Override
-    protected CrudService<Member> getService() {
+    protected CrudService<MemberProfitRecords> getService() {
         return memberProfitService;
     }
 
     @Autowired
     public MemberProfitController(
-            MemberProfitService memberProfitService) {
+            MemberProfitRecordsService memberProfitService) {
         this.memberProfitService = memberProfitService;
     }
 
@@ -56,7 +54,6 @@ public class MemberProfitController extends AbstractCrudController<Member> {
     @ApiOperation(value = "获取当月收益详情")
     @RequestMapping(value = "/getProfitDetail/{memberId}", method = RequestMethod.GET)
     public ResponseEntity<List<CouponResult>> getProfitDetail(@PathVariable String memberId) throws Exception {
-        Member member = memberProfitService.findOne(memberId);
         final List<CouponResult> coupons = new ArrayList<>();
 
 

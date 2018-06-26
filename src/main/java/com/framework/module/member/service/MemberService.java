@@ -1,8 +1,7 @@
 package com.framework.module.member.service;
 
-import com.kratos.common.CrudService;
 import com.framework.module.member.domain.Member;
-import org.springframework.web.multipart.MultipartFile;
+import com.kratos.common.CrudService;
 
 public interface MemberService extends CrudService<Member> {
     /**
