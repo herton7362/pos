@@ -63,20 +63,10 @@ public class Member extends BaseUser {
     private String fatherId;
     @ApiModelProperty(value = "会员级别")
     private String memberLevel;
-    @ApiModelProperty(value = "对用POS系统的用户ID")
-    private String memberNumber;
     @ApiModelProperty(value = "激活状态")
     @Column(length = 20)
     @Enumerated(EnumType.STRING)
     private Status status;
-
-    public String getMemberNumber() {
-        return memberNumber;
-    }
-
-    public void setMemberNumber(String memberNumber) {
-        this.memberNumber = memberNumber;
-    }
 
     public String getMemberLevel() {
         return memberLevel;

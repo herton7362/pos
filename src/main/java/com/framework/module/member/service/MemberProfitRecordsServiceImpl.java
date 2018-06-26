@@ -40,17 +40,6 @@ public class MemberProfitRecordsServiceImpl extends AbstractCrudService<MemberPr
     private final ShopRepository shopRepository;
 
     @Override
-    public Member findOneByMemberNumber(String memberNumber) throws Exception {
-        Map<String, String[]> param = new HashMap<>();
-        param.put("memberNumber", new String[]{memberNumber});
-        List<Member> members = memberService.findAll(param);
-        if (!CollectionUtils.isEmpty(members)) {
-            return members.get(0);
-        }
-        return null;
-    }
-
-    @Override
     public void setTeamBuildProfit(String fatherId) throws Exception {
         Long activeCount = repository.count(
                 (Root<Member> root, CriteriaQuery<?> criteriaQuery, CriteriaBuilder criteriaBuilder) -> {
@@ -94,7 +83,11 @@ public class MemberProfitRecordsServiceImpl extends AbstractCrudService<MemberPr
                 continue;
             }
             MemberProfitRecords importProfit = getAllParamFromExcel(row, r);
-            Member member = findOneByMemberNumber(importProfit.getUserNo());
+            Shop shop = shopRepository.findOneBySn(importProfit.getSn());
+            if (shop == null) {
+                throw new BusinessException(String.format("第" + r + "行数据机不合法,SN对应商户不存在SN为:[%s]", importProfit.getSn()));
+            }
+            Member member = memberService.findOne(shop.getMemberId());
             if (member == null) {
                 throw new BusinessException(String.format("第" + r + "行数据机不合法,用户编号不存在:[%s]", importProfit.getUserNo()));
             }
@@ -115,7 +108,6 @@ public class MemberProfitRecordsServiceImpl extends AbstractCrudService<MemberPr
             }
 
             // 设置激活奖励
-            Shop shop = shopRepository.findOneBySn(importProfit.getSn());
             shop.setTransactionAmount(new BigDecimal(shop.getTransactionAmount() + importProfit.getTransactionAmount()).setScale(2, BigDecimal.ROUND_HALF_UP).doubleValue());
             if ((null == shop.getStatus() || shop.getStatus().equals(Shop.Status.UN_ACTIVE)) && shop.getTransactionAmount() > 4000) {
                 shop.setStatus(Shop.Status.ACTIVE);
