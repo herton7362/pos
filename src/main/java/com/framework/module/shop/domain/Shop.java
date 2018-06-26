@@ -68,8 +68,7 @@ public class Shop extends BaseEntity {
 
     public enum Status {
         ACTIVE("已激活"),
-        UN_ACTIVE("未激活"),
-        DELIVERED("已发货");
+        UN_ACTIVE("未激活");
         private String displayName;
         Status(String displayName) {
             this.displayName = displayName;

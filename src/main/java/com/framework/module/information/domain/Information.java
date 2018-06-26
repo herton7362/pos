@@ -13,6 +13,9 @@ public class Information extends BaseEntity {
     @ApiModelProperty(value = "标题")
     @Column(length = 200)
     private String title;
+    @ApiModelProperty(value = "类别")
+    @Column(length = 200)
+    private String category;
     @ApiModelProperty(value = "内容")
     @Column(length = 2000)
     private String content;
@@ -23,6 +26,14 @@ public class Information extends BaseEntity {
 
     public void setTitle(String title) {
         this.title = title;
+    }
+
+    public String getCategory() {
+        return category;
+    }
+
+    public void setCategory(String category) {
+        this.category = category;
     }
 
     public String getContent() {
