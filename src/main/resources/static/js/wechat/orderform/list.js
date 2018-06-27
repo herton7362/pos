@@ -54,7 +54,8 @@ require(['jquery', 'vue', 'utils', 'weui', 'messager'], function ($, Vue, utils,
                     data: $.extend({
                         sort: 'updatedDate',
                         order: 'desc',
-                        'member.id': this.member.id
+                        'member.id': this.member.id,
+                        logicallyDeleted: false
                     }, status? {status: status}: {}),
                     success: function(data) {
                         self.orderForms = data.content;

@@ -121,7 +121,8 @@ require(['jquery', 'vue', 'utils', 'weui', 'messager'], function ($, Vue, utils,
                     data: {
                         sort: 'sortNumber,updatedDate',
                         order: 'asc,desc',
-                        'member.id': this.member.id
+                        'member.id': this.member.id,
+                        logicallyDeleted: false
                     },
                     success: function(data) {
                         if(data.content && data.content.length > 0) {

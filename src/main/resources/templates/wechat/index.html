@@ -10,15 +10,15 @@
 
     <!-- Full Width Column -->
     <div id="content" class="content-wrapper home product-list" v-cloak>
-        <div id="carousel-home-generic" class="carousel slide margin-bottom" data-ride="carousel" style="margin-bottom: 0">
-            <!-- Indicators -->
+       <!-- <div id="carousel-home-generic" class="carousel slide margin-bottom" data-ride="carousel" style="margin-bottom: 0">
+            &lt;!&ndash; Indicators &ndash;&gt;
             <ol class="carousel-indicators">
                 <li data-target="#carousel-home-generic" data-slide-to="0" class="active"></li>
                 <li data-target="#carousel-home-generic" data-slide-to="1"></li>
                 <li data-target="#carousel-home-generic" data-slide-to="2"></li>
             </ol>
 
-            <!-- Wrapper for slides -->
+            &lt;!&ndash; Wrapper for slides &ndash;&gt;
             <div class="carousel-inner" role="listbox">
                 <div class="item active">
                     <img th:src="@{/static/image/wechat/1_03.png}" alt="...">
@@ -31,7 +31,7 @@
                 </div>
             </div>
 
-            <!-- Controls -->
+            &lt;!&ndash; Controls &ndash;&gt;
             <a class="left carousel-control" href="#carousel-home-generic" role="button" data-slide="prev">
                 <span class="glyphicon glyphicon-chevron-left" aria-hidden="true"></span>
                 <span class="sr-only">Previous</span>
@@ -40,12 +40,12 @@
                 <span class="glyphicon glyphicon-chevron-right" aria-hidden="true"></span>
                 <span class="sr-only">Next</span>
             </a>
-        </div>
+        </div>-->
         <div class="container">
             <!-- Main content -->
             <section class="content">
                 <div class="panel">
-                    <div class="panel-heading">
+                    <!--<div class="panel-heading">
                         <h3 class="panel-title">
                             机具申领
                             <a href="#" class="more pull-right" @click="more">
@@ -53,7 +53,7 @@
                                 <i class="fa fa-angle-right"></i>
                             </a>
                         </h3>
-                    </div>
+                    </div>-->
                     <div class="panel-body">
                         <div class="col-xs-6 col-md-4 padding-none" v-for="product in products">
                             <div class="thumbnail margin-5" @click="productDetail(product)">
@@ -69,7 +69,7 @@
                                 </div>
                             </div>
                         </div>
-                        <button type="button" class="btn btn-block btn-sm btn-more" @click="more">查看更多</button>
+                        <!--<button type="button" class="btn btn-block btn-sm btn-more" @click="more">查看更多</button>-->
                     </div>
                 </div>
             </section>
@@ -79,7 +79,7 @@
     </div>
     <aside th:replace="wechat/common/aside"></aside>
     <!-- /.content-wrapper -->
-    <footer th:replace="wechat/common/footer_html"></footer>
+    <!--<footer th:replace="wechat/common/footer_html"></footer>-->
 </div>
 <!-- ./wrapper -->
 <footer th:replace="wechat/common/footer_statics"></footer>

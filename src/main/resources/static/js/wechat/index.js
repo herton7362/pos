@@ -27,7 +27,8 @@ require([
                         sort: 'sortNumber,updatedDate',
                         order: 'asc,desc',
                         currentPage: 1,
-                        pageSize: 10
+                        pageSize: 10,
+                        logicallyDeleted: false
                     },
                     success: function(data) {
                         self.products = data.content
@@ -65,7 +66,7 @@ require([
                     }
                 })
             }
-            this.loadProducts();
+            // this.loadProducts();
         }
     });
 })

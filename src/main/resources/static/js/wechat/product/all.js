@@ -30,7 +30,8 @@ require([
                     url: utils.patchUrl('/productCategory'),
                     data: {
                         sort: 'sortNumber,updatedDate',
-                        order: 'asc,desc'
+                        order: 'asc,desc',
+                        logicallyDeleted: false
                     },
                     success: function(data) {
                         self.productCategories = data.content;
@@ -50,7 +51,8 @@ require([
                         order: 'asc,desc',
                         'productCategory.id': id,
                         currentPage: this.currentPage,
-                        pageSize: this.pageSize
+                        pageSize: this.pageSize,
+                        logicallyDeleted: false
                     },
                     success: function(data) {
                         Vue.set(self.products, id, data.content);
