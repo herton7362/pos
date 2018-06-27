@@ -1,5 +1,6 @@
 package com.framework.module.member.web;
 
+import com.framework.module.member.domain.AchievementDetail;
 import com.framework.module.member.domain.MemberProfitRecords;
 import com.framework.module.member.domain.ProfitMonthDetail;
 import com.framework.module.member.service.MemberProfitRecordsService;
@@ -14,6 +15,7 @@ import org.springframework.util.CollectionUtils;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
@@ -61,9 +63,26 @@ public class MemberProfitController extends AbstractCrudController<MemberProfitR
      * @throws Exception 异常
      */
     @ApiOperation(value = "获取收益详情")
-    @RequestMapping(value = "/getMontnProfit/{memberId}/{startMonth}/{size}", method = RequestMethod.GET)
-    public ResponseEntity<List<ProfitMonthDetail>> getMontnProfit(@PathVariable String memberId, @PathVariable String startMonth, @PathVariable Integer size) throws Exception {
-        List<ProfitMonthDetail> result = memberProfitService.getProfitByMonth(memberId, startMonth, size);
+    @RequestMapping(value = "/getMonthProfit/{memberId}/{startMonth}/{size}", method = RequestMethod.GET)
+    public ResponseEntity<List<ProfitMonthDetail>> getMonthProfit(@PathVariable String memberId, @PathVariable String startMonth, @PathVariable Integer size){
+        List<ProfitMonthDetail> result = null;
+        try {
+            result = memberProfitService.getProfitByMonth(memberId, startMonth, size);
+        } catch (ParseException e) {
+            e.printStackTrace();
+        }
+        return new ResponseEntity<>(result, HttpStatus.OK);
+    }
+
+    @ApiOperation(value = "按照月份获取业绩详情")
+    @RequestMapping(value = "/getMonthAchievement/{memberId}/{startMonth}/{size}", method = RequestMethod.GET)
+    public ResponseEntity<List<AchievementDetail>> getMonthAchievement(@PathVariable String memberId, @PathVariable String startMonth, @PathVariable Integer size){
+        List<AchievementDetail> result = null;
+        try {
+            result = memberProfitService.getAchievementByMonth(memberId, startMonth, size);
+        } catch (ParseException e) {
+            e.printStackTrace();
+        }
         return new ResponseEntity<>(result, HttpStatus.OK);
     }
 

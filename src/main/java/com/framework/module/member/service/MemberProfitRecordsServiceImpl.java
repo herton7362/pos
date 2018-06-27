@@ -105,6 +105,48 @@ public class MemberProfitRecordsServiceImpl extends AbstractCrudService<MemberPr
     }
 
     @Override
+    public List<AchievementDetail> getAchievementByMonth(String memberId, String startMonth, int size) throws ParseException {
+        List<AchievementDetail> result = new ArrayList<>(size);
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyyMM");
+        Date searchMonth = sdf.parse(startMonth);
+        for (int i = 0; i < size; i++) {
+            AchievementDetail achievementDetail = new AchievementDetail();
+            SimpleDateFormat sdf1 = new SimpleDateFormat("yyyy-MM-dd");
+            Calendar calendar = Calendar.getInstance();
+            calendar.setTime(searchMonth);
+            calendar.add(Calendar.MONTH, -i);
+            calendar.set(Calendar.DAY_OF_MONTH, 1);
+            String firstDay = sdf1.format(calendar.getTime()) + " 00:00:00";
+            // 获取前一个月最后一天
+            calendar.add(Calendar.MONTH, 1);
+            calendar.set(Calendar.DAY_OF_MONTH, 0);
+            String lastDay = sdf1.format(calendar.getTime()) + " 23:59:59";
+            SimpleDateFormat sdf2 = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+            long start = sdf2.parse(firstDay).getTime();
+            long end = sdf2.parse(lastDay).getTime();
+            List<Member> sonList = repository.findMembersByFatherId(memberId, end);
+            if (sonList != null) {
+                achievementDetail.setTotalAllyNum(sonList.size());
+                int sonShopNum = 0;
+                int newSonShopNum = 0;
+                for (Member m : sonList) {
+                    List<Shop> shops = shopRepository.findAllByMemberId(m.getId(), 0, end);
+                    sonShopNum += shops == null ? 0 : shops.size();
+                    shops = shopRepository.findAllByMemberId(m.getId(), start, end);
+                    newSonShopNum += shops == null ? 0 : shops.size();
+                    Map<String, Double> resultMap = memberProfitRecordsRepository.statisProfitsByMonth(m.getId(), start, end);
+                    achievementDetail.setTransactionAmount(resultMap.get("totalTransactionAmount") == null ? 0 : resultMap.get("totalTransactionAmount"));
+                }
+                achievementDetail.setTotalAllyShopNum(sonShopNum);
+                achievementDetail.setNewAllyShopNum(newSonShopNum);
+            }
+            achievementDetail.setStatisDate(sdf.format(calendar.getTime()));
+            result.add(achievementDetail);
+        }
+        return result;
+    }
+
+    @Override
     public Integer batchImport(String fileName, MultipartFile file) throws Exception {
         List<ActiveRule> activeRules = activeRuleService.findAll(new HashMap<>());
         if (CollectionUtils.isEmpty(activeRules) || activeRules.get(0).getConditionValue() == null) {
@@ -209,8 +251,6 @@ public class MemberProfitRecordsServiceImpl extends AbstractCrudService<MemberPr
             fatherProfit.setOrganizationName(importProfit.getOrganizationName());
             fatherProfit.setUserNo(importProfit.getUserNo());
             fatherProfit.setUserName(importProfit.getUserName());
-            fatherProfit.setTransactionAmount(importProfit.getTransactionAmount());
-            fatherProfit.setTransactionType(importProfit.getTransactionType());
             fatherProfit.setSn(importProfit.getSn());
             fatherProfit.setTransactionDate(importProfit.getTransactionDate());
             fatherProfit.setProfitType(Constant.PROFIT_TYPE_GUANLI);

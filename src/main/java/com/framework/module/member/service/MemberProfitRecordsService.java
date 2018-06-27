@@ -1,5 +1,6 @@
 package com.framework.module.member.service;
 
+import com.framework.module.member.domain.AchievementDetail;
 import com.framework.module.member.domain.MemberProfitRecords;
 import com.framework.module.member.domain.ProfitMonthDetail;
 import com.kratos.common.CrudService;
@@ -30,9 +31,20 @@ public interface MemberProfitRecordsService extends CrudService<MemberProfitReco
      * @param memberId 会员ID
      * @param startMonth 起始月份
      * @param size 长度
-     * @return
+     * @return 收益详情
+     * @throws ParseException 异常
      */
     List<ProfitMonthDetail> getProfitByMonth(String memberId, String startMonth, int size) throws ParseException;
+
+    /**
+     * 按照月份获取业绩详情
+     * @param memberId 会员ID
+     * @param startMonth 起始月份
+     * @param size 长度
+     * @return 业绩详情
+     * @throws ParseException 异常
+     */
+    List<AchievementDetail> getAchievementByMonth(String memberId, String startMonth, int size) throws ParseException;
 
 
 }
