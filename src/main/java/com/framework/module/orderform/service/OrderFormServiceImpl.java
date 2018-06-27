@@ -3,7 +3,7 @@ package com.framework.module.orderform.service;
 import com.framework.module.auth.MemberThread;
 import com.framework.module.marketing.service.CouponService;
 import com.framework.module.member.domain.Member;
-import com.framework.module.member.domain.MemberCard;
+import com.framework.module.member.service.MemberProfitRecordsService;
 import com.framework.module.member.service.MemberService;
 import com.framework.module.orderform.domain.OrderForm;
 import com.framework.module.orderform.domain.OrderFormRepository;
@@ -13,14 +13,11 @@ import com.framework.module.orderform.web.RejectParam;
 import com.framework.module.orderform.web.SendOutParam;
 import com.framework.module.product.domain.Product;
 import com.framework.module.product.domain.ProductRepository;
-import com.framework.module.product.domain.Sku;
-import com.framework.module.product.service.ProductService;
 import com.framework.module.record.domain.OperationRecord;
 import com.framework.module.record.service.OperationRecordService;
 import com.kratos.common.AbstractCrudService;
 import com.kratos.common.PageRepository;
 import com.kratos.exceptions.BusinessException;
-import com.kratos.module.auth.service.OauthClientDetailsService;
 import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -39,6 +36,7 @@ public class OrderFormServiceImpl extends AbstractCrudService<OrderForm> impleme
     private final OperationRecordService operationRecordService;
     private final ProductRepository productRepository;
     private final CouponService couponService;
+    private final MemberProfitRecordsService memberProfitRecordsService;
 
     @Override
     protected PageRepository<OrderForm> getRepository() {
@@ -265,7 +263,26 @@ public class OrderFormServiceImpl extends AbstractCrudService<OrderForm> impleme
             orderForm.setPaymentStatus(OrderForm.PaymentStatus.PAYED);
             orderFormRepository.save(orderForm);
             consumeModifyMemberAccount(orderForm);
+            // 查询是否购买超过五个机器，并将当前用户改为激活状态，并且调用激活奖励接口
+            if(orderForm.getMember().getStatus() == Member.Status.UN_ACTIVE) {
+                param.clear();
+                param.put("member.id", new String[]{orderForm.getMember().getId()});
+                orderForms = findAll(param);
+                Integer total = 0;
+                for (OrderForm form : orderForms) {
+                    for (OrderItem orderItem : form.getItems()) {
+                        total = total + orderItem.getCount();
+                    }
+                }
+                if(total > 5) {
+                    Member member = memberService.findOne(orderForm.getMember().getId());
+                    member.setStatus(Member.Status.ACTIVE);
+                    memberService.save(member);
+                    memberProfitRecordsService.setTeamBuildProfit(member.getFatherId());
+                }
+            }
         }
+
     }
 
     /**
@@ -396,12 +413,14 @@ public class OrderFormServiceImpl extends AbstractCrudService<OrderForm> impleme
             MemberService memberService,
             OperationRecordService operationRecordService,
             ProductRepository productRepository,
-            CouponService couponService
+            CouponService couponService,
+            MemberProfitRecordsService memberProfitRecordsService
     ) {
         this.orderFormRepository = orderFormRepository;
         this.memberService = memberService;
         this.operationRecordService = operationRecordService;
         this.productRepository = productRepository;
         this.couponService = couponService;
+        this.memberProfitRecordsService = memberProfitRecordsService;
     }
 }
