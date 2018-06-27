@@ -1,8 +1,10 @@
 package com.framework.module.auth;
 
 import com.framework.module.member.domain.Member;
+import com.framework.module.member.domain.MemberCard;
 import com.framework.module.member.service.MemberService;
 import com.kratos.common.AbstractLoginService;
+import com.kratos.common.utils.StringUtils;
 import com.kratos.entity.BaseUser;
 import com.kratos.exceptions.BusinessException;
 import com.kratos.kits.Kits;
@@ -44,14 +46,25 @@ public class LoginServiceImpl extends AbstractLoginService {
     }
 
     @Override
-    public void register(String mobile, String code, String password) throws Exception {
+    public void register(String mobile, String code, String password, String invitePersonMobile) throws Exception {
         if(!verifyVerifyCode(mobile, code)) {
             throw new BusinessException(String.format("验证码%s不正确", code));
         }
         if(findUserByMobile(mobile) != null) {
             throw new BusinessException("该手机号已被注册，请选择找回密码或者直接登录");
         }
+        Member father = null;
+        if(StringUtils.isNotBlank(invitePersonMobile)) {
+            father = memberService.findOneByLoginName(invitePersonMobile);
+            if(father == null) {
+                throw new BusinessException("邀请人手机号不正确");
+            }
+        }
+
         Member member = new Member();
+        if(father != null) {
+            member.setFatherId(father.getId());
+        }
         member.setMobile(mobile);
         member.setLoginName(mobile);
         member.setPassword(new BCryptPasswordEncoder().encode(password));

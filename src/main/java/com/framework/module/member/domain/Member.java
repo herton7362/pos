@@ -67,6 +67,18 @@ public class Member extends BaseUser {
     @Column(length = 20)
     @Enumerated(EnumType.STRING)
     private Status status;
+    @ApiModelProperty(value = "银行卡号")
+    @Column(length = 50)
+    private String bankCardNumber;
+    @ApiModelProperty(value = "开户银行")
+    @Column(length = 200)
+    private String openAccountBank;
+    @ApiModelProperty(value = "开户地点")
+    @Column(length = 200)
+    private String openAccountAddress;
+    @ApiModelProperty(value = "支行网点")
+    @Column(length = 500)
+    private String openAccountSubbranch;
 
     public String getMemberLevel() {
         return memberLevel;
@@ -190,6 +202,46 @@ public class Member extends BaseUser {
 
     public void setFatherId(String fatherId) {
         this.fatherId = fatherId;
+    }
+
+    public Status getStatus() {
+        return status;
+    }
+
+    public void setStatus(Status status) {
+        this.status = status;
+    }
+
+    public String getBankCardNumber() {
+        return bankCardNumber;
+    }
+
+    public void setBankCardNumber(String bankCardNumber) {
+        this.bankCardNumber = bankCardNumber;
+    }
+
+    public String getOpenAccountBank() {
+        return openAccountBank;
+    }
+
+    public void setOpenAccountBank(String openAccountBank) {
+        this.openAccountBank = openAccountBank;
+    }
+
+    public String getOpenAccountAddress() {
+        return openAccountAddress;
+    }
+
+    public void setOpenAccountAddress(String openAccountAddress) {
+        this.openAccountAddress = openAccountAddress;
+    }
+
+    public String getOpenAccountSubbranch() {
+        return openAccountSubbranch;
+    }
+
+    public void setOpenAccountSubbranch(String openAccountSubbranch) {
+        this.openAccountSubbranch = openAccountSubbranch;
     }
 
     public enum Status {

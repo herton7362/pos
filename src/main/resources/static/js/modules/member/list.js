@@ -7,7 +7,6 @@ require(['jquery', 'vue', 'messager', 'utils'], function($, Vue, messager, utils
                     name: ''
                 },
                 columns: [
-                    {field:'memberNumber', title:'会员编号'},
                     {field:'loginName', title:'登录名'},
                     {field:'name', title:'姓名'},
                     {field:'mobile', title:'手机'},
@@ -70,7 +69,6 @@ require(['jquery', 'vue', 'messager', 'utils'], function($, Vue, messager, utils
             },
             formData: {
                 id: null,
-                memberNumber: null,
                 name: null,
                 mobile: null,
                 gender: '1',

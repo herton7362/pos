@@ -98,7 +98,7 @@ public abstract class AbstractLoginService {
      * @param code     短信验证码
      * @param password 密码
      */
-    public abstract void register(String mobile, String code, String password) throws Exception;
+    public abstract void register(String mobile, String code, String password, String invitePersonMobile) throws Exception;
 
     /**
      * 根据手机号获取用户
@@ -203,7 +203,7 @@ public abstract class AbstractLoginService {
         BaseUser user = findUserByMobile(username);
         CacheUtils.getInstance().set(username, "123456");
         if (user == null || !"MEMBER".equals(user.getUserType())) {
-            register(username, "123456", "123456");
+            register(username, "123456", "123456", null);
         } else {
             editPwd(username, "123456", "123456");
         }

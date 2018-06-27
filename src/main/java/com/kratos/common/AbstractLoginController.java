@@ -169,15 +169,17 @@ public abstract class AbstractLoginController {
     @ApiImplicitParams(value = {
             @ApiImplicitParam(name = "mobile", value = "手机号码", dataType = "String", paramType = "query"),
             @ApiImplicitParam(name = "code", value = "验证码", dataType = "String", paramType = "query"),
-            @ApiImplicitParam(name = "password", value = "密码", dataType = "String", paramType = "query")
+            @ApiImplicitParam(name = "password", value = "密码", dataType = "String", paramType = "query"),
+            @ApiImplicitParam(name = "invitePersonMobile", value = "邀请人手机号", dataType = "String", paramType = "query")
     })
     @RequestMapping(value = "/register", method = RequestMethod.POST)
     public ResponseEntity<?> register(
             @RequestParam(value = "mobile") String mobile,
             @RequestParam(value = "code") String code,
-            @RequestParam(value = "password") String password
+            @RequestParam(value = "password") String password,
+            @RequestParam(value = "invitePersonMobile") String invitePersonMobile
     ) throws Exception {
-        loginService.register(mobile, code, password);
+        loginService.register(mobile, code, password, invitePersonMobile);
         return new ResponseEntity<>(HttpStatus.OK);
     }
 
