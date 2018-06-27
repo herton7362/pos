@@ -1,6 +1,7 @@
 package com.framework.module.member.web;
 
 import com.framework.module.member.domain.MemberProfitRecords;
+import com.framework.module.member.domain.ProfitMonthDetail;
 import com.framework.module.member.service.MemberProfitRecordsService;
 import com.kratos.common.AbstractCrudController;
 import com.kratos.common.CrudService;
@@ -9,10 +10,13 @@ import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.util.CollectionUtils;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 @Api(value = "会员管理")
@@ -36,7 +40,7 @@ public class MemberProfitController extends AbstractCrudController<MemberProfitR
      * 获取会员优惠卷
      */
     @ApiOperation(value = "导入成员收益")
-    @RequestMapping(value="/import/profit", method = RequestMethod.POST, produces = "application/json; charset=utf-8")
+    @RequestMapping(value = "/import/profit", method = RequestMethod.POST, produces = "application/json; charset=utf-8")
     public ResponseEntity<String> userProfit(@RequestParam("profitFile") MultipartFile profitFile) {
         String fileName = profitFile.getOriginalFilename();
         int insertSize = 0;
@@ -45,20 +49,17 @@ public class MemberProfitController extends AbstractCrudController<MemberProfitR
         } catch (Exception e) {
             return new ResponseEntity<>(e.getMessage(), HttpStatus.BAD_REQUEST);
         }
-        return new ResponseEntity<>(insertSize+" data has been handled.", HttpStatus.OK);
+        return new ResponseEntity<>(insertSize + " data has been handled.", HttpStatus.OK);
     }
 
     /**
      * 获取当月收益详情
      */
     @ApiOperation(value = "获取当月收益详情")
-    @RequestMapping(value = "/getProfitDetail", method = RequestMethod.GET)
-    public ResponseEntity<List<CouponResult>> getProfitDetail() throws Exception {
-        final List<CouponResult> coupons = new ArrayList<>();
-        memberProfitService.setTeamBuildProfit("2c911f24616e3ed60161c70ac3780aba");
-
-
-        return new ResponseEntity<>(coupons, HttpStatus.OK);
+    @RequestMapping(value = "/getMontnProfit/{memberId}/{startMonth}/{size}", method = RequestMethod.GET)
+    public ResponseEntity<List<ProfitMonthDetail>> getMontnProfit(@PathVariable String memberId, @PathVariable String startMonth, @PathVariable Integer size) throws Exception {
+        List<ProfitMonthDetail> result = memberProfitService.getProfitByMonth(memberId, startMonth, size);
+        return new ResponseEntity<>(result, HttpStatus.OK);
     }
 
 

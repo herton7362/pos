@@ -1,10 +1,12 @@
 package com.framework.module.member.service;
 
-import com.framework.module.member.domain.Member;
 import com.framework.module.member.domain.MemberProfitRecords;
+import com.framework.module.member.domain.ProfitMonthDetail;
 import com.kratos.common.CrudService;
-import com.kratos.common.PageRepository;
 import org.springframework.web.multipart.MultipartFile;
+
+import java.text.ParseException;
+import java.util.List;
 
 public interface MemberProfitRecordsService extends CrudService<MemberProfitRecords>  {
 
@@ -22,4 +24,13 @@ public interface MemberProfitRecordsService extends CrudService<MemberProfitReco
      * @param fatherMemberId 当前激活用户的上线MemberId
      */
     void setTeamBuildProfit(String fatherMemberId) throws Exception;
+
+    /**
+     * 获取收益详情
+     * @param memberId 会员ID
+     * @param startMonth 起始月份
+     * @param size 长度
+     * @return
+     */
+    List<ProfitMonthDetail> getProfitByMonth(String memberId, String startMonth, int size) throws ParseException;
 }

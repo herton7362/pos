@@ -1,10 +1,7 @@
 package com.framework.module.member.service;
 
 import com.framework.module.common.Constant;
-import com.framework.module.member.domain.Member;
-import com.framework.module.member.domain.MemberLevelParam;
-import com.framework.module.member.domain.MemberProfitRecords;
-import com.framework.module.member.domain.MemberRepository;
+import com.framework.module.member.domain.*;
 import com.framework.module.rule.domain.ActiveRule;
 import com.framework.module.rule.domain.GroupBuildDrawRule;
 import com.framework.module.rule.service.ActiveRuleService;
@@ -33,6 +30,8 @@ import javax.persistence.criteria.Predicate;
 import javax.persistence.criteria.Root;
 import java.io.InputStream;
 import java.math.BigDecimal;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.*;
 
 @Component
@@ -44,6 +43,7 @@ public class MemberProfitRecordsServiceImpl extends AbstractCrudService<MemberPr
     private final ShopRepository shopRepository;
     private final GroupBuildDrawRuleService groupBuildDrawRuleService;
     private final ActiveRuleService activeRuleService;
+    private final MemberProfitRecordsRepository memberProfitRecordsRepository;
 
     @Override
     public void setTeamBuildProfit(String fatherId) throws Exception {
@@ -54,8 +54,8 @@ public class MemberProfitRecordsServiceImpl extends AbstractCrudService<MemberPr
                     predicate.add(criteriaBuilder.equal(root.get("status"), Member.Status.ACTIVE));
                     return criteriaBuilder.and(predicate.toArray(new Predicate[]{}));
                 });
-        List<GroupBuildDrawRule> groupBuildDrawRules =groupBuildDrawRuleService.findAll(new HashMap<>());
-        if (CollectionUtils.isEmpty(groupBuildDrawRules) || groupBuildDrawRules.get(0).getMemberCount() == null || groupBuildDrawRules.get(0).getReward() == null){
+        List<GroupBuildDrawRule> groupBuildDrawRules = groupBuildDrawRuleService.findAll(new HashMap<>());
+        if (CollectionUtils.isEmpty(groupBuildDrawRules) || groupBuildDrawRules.get(0).getMemberCount() == null || groupBuildDrawRules.get(0).getReward() == null) {
             throw new BusinessException("团建奖励设置不合法");
         }
         Integer memberCount = groupBuildDrawRules.get(0).getMemberCount();
@@ -71,12 +71,45 @@ public class MemberProfitRecordsServiceImpl extends AbstractCrudService<MemberPr
     }
 
     @Override
+    public List<ProfitMonthDetail> getProfitByMonth(String memberId, String startMonth, int size) throws ParseException {
+        List<ProfitMonthDetail> result = new ArrayList<>(size);
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyyMM");
+        Date searchMonth = sdf.parse(startMonth);
+        for (int i = 0; i < size; i++) {
+            SimpleDateFormat sdf1 = new SimpleDateFormat("yyyy-MM-dd");
+            Calendar calendar = Calendar.getInstance();
+            calendar.setTime(searchMonth);
+            calendar.add(Calendar.MONTH, i);
+            calendar.set(Calendar.DAY_OF_MONTH, 1);
+            String firstDay = sdf1.format(calendar.getTime()) + " 00:00:00";
+            // 获取前一个月最后一天
+            calendar.add(Calendar.MONTH, 1);
+            calendar.set(Calendar.DAY_OF_MONTH, 0);
+            String lastDay = sdf1.format(calendar.getTime()) + " 23:59:59";
+            SimpleDateFormat sdf2 = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+            long start = sdf2.parse(firstDay).getTime();
+            long end = sdf2.parse(lastDay).getTime();
+
+            Map<String, Double> resultMap = memberProfitRecordsRepository.statisProfitsByMonth(memberId, start, end);
+            ProfitMonthDetail profitMonthDetail = new ProfitMonthDetail();
+            profitMonthDetail.setTotalProfit(resultMap.get("totalProfit") == null ? 0 : resultMap.get("totalProfit"));
+            profitMonthDetail.setActiveAward(resultMap.get("activeAward") == null ? 0 : resultMap.get("activeAward"));
+            profitMonthDetail.setDirectlyAward(resultMap.get("directlyAward") == null ? 0 : resultMap.get("directlyAward"));
+            profitMonthDetail.setManagerAward(resultMap.get("managerAward") == null ? 0 : resultMap.get("managerAward"));
+            profitMonthDetail.setTeamBuildAward(resultMap.get("teamBuildAward") == null ? 0 : resultMap.get("teamBuildAward"));
+            profitMonthDetail.setTotalTransactionAmount(resultMap.get("totalTransactionAmount") == null ? 0 : resultMap.get("totalTransactionAmount"));
+            profitMonthDetail.setMonth(sdf.format(calendar.getTime()));
+            result.add(profitMonthDetail);
+        }
+        return result;
+    }
+
+    @Override
     public Integer batchImport(String fileName, MultipartFile file) throws Exception {
         List<ActiveRule> activeRules = activeRuleService.findAll(new HashMap<>());
-        if (CollectionUtils.isEmpty(activeRules) || activeRules.get(0).getConditionValue() == null){
+        if (CollectionUtils.isEmpty(activeRules) || activeRules.get(0).getConditionValue() == null) {
             throw new BusinessException("设备激活奖励未设置");
         }
-
         Integer importSize = 0;
         if (!fileName.matches("^.+\\.(?i)(xls)$") && !fileName.matches("^.+\\.(?i)(xlsx)$")) {
             throw new BusinessException("输入文件格式不正确");
@@ -146,10 +179,10 @@ public class MemberProfitRecordsServiceImpl extends AbstractCrudService<MemberPr
                         predicate.add(criteriaBuilder.equal(root.get("activationReward"), Constant.ACTIVATION_REWARD_YES));
                         return criteriaBuilder.and(predicate.toArray(new Predicate[]{}));
                     });
-            if (rewardCount == 0){
+            if (rewardCount == 0) {
                 shop.setActivationReward(Constant.ACTIVATION_REWARD_YES);
                 MemberProfitRecords activationRewardProfit = new MemberProfitRecords();
-                activationRewardProfit.setProfitType(Constant.PROFIT_TYPE_TUANJIAN);
+                activationRewardProfit.setProfitType(Constant.PROFIT_TYPE_FANXIAN);
                 activationRewardProfit.setProfit(activeRules.get(0).getAwardMoney());
                 activationRewardProfit.setMemberId(shop.getMemberId());
                 activationRewardProfit.setTransactionDate(new Date());
@@ -261,12 +294,13 @@ public class MemberProfitRecordsServiceImpl extends AbstractCrudService<MemberPr
             MemberRepository repository,
             MemberService memberService,
             MemberLevelParamService memberLevelParamService,
-            ShopRepository shopRepository, GroupBuildDrawRuleService groupBuildDrawRuleService, ActiveRuleService activeRuleService) {
+            ShopRepository shopRepository, GroupBuildDrawRuleService groupBuildDrawRuleService, ActiveRuleService activeRuleService, MemberProfitRecordsRepository memberProfitRecordsRepository) {
         this.repository = repository;
         this.memberService = memberService;
         this.memberLevelParamService = memberLevelParamService;
         this.shopRepository = shopRepository;
         this.groupBuildDrawRuleService = groupBuildDrawRuleService;
         this.activeRuleService = activeRuleService;
+        this.memberProfitRecordsRepository = memberProfitRecordsRepository;
     }
 }
