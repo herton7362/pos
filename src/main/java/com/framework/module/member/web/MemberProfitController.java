@@ -54,13 +54,20 @@ public class MemberProfitController extends AbstractCrudController<MemberProfitR
 
     /**
      * 获取当月收益详情
+     * @param memberId 会员ID
+     * @param startMonth 起始月份格式YYYYMM
+     * @param size 一次请求长度
+     * @return 收益详情结果
+     * @throws Exception 异常
      */
-    @ApiOperation(value = "获取当月收益详情")
+    @ApiOperation(value = "获取收益详情")
     @RequestMapping(value = "/getMontnProfit/{memberId}/{startMonth}/{size}", method = RequestMethod.GET)
     public ResponseEntity<List<ProfitMonthDetail>> getMontnProfit(@PathVariable String memberId, @PathVariable String startMonth, @PathVariable Integer size) throws Exception {
         List<ProfitMonthDetail> result = memberProfitService.getProfitByMonth(memberId, startMonth, size);
         return new ResponseEntity<>(result, HttpStatus.OK);
     }
+
+
 
 
 }

@@ -79,7 +79,7 @@ public class MemberProfitRecordsServiceImpl extends AbstractCrudService<MemberPr
             SimpleDateFormat sdf1 = new SimpleDateFormat("yyyy-MM-dd");
             Calendar calendar = Calendar.getInstance();
             calendar.setTime(searchMonth);
-            calendar.add(Calendar.MONTH, i);
+            calendar.add(Calendar.MONTH, -i);
             calendar.set(Calendar.DAY_OF_MONTH, 1);
             String firstDay = sdf1.format(calendar.getTime()) + " 00:00:00";
             // 获取前一个月最后一天

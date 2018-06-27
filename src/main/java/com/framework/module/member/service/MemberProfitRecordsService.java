@@ -33,4 +33,6 @@ public interface MemberProfitRecordsService extends CrudService<MemberProfitReco
      * @return
      */
     List<ProfitMonthDetail> getProfitByMonth(String memberId, String startMonth, int size) throws ParseException;
+
+
 }
