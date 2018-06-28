@@ -74,9 +74,10 @@ public class MemberProfitRecordsServiceImpl extends AbstractCrudService<MemberPr
     public List<ProfitMonthDetail> getProfitByMonth(String memberId, String startMonth, int size) throws ParseException {
         List<ProfitMonthDetail> result = new ArrayList<>(size);
         SimpleDateFormat sdf = new SimpleDateFormat("yyyyMM");
+        SimpleDateFormat sdf1 = new SimpleDateFormat("yyyy-MM-dd");
+        SimpleDateFormat sdf2 = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
         Date searchMonth = sdf.parse(startMonth);
         for (int i = 0; i < size; i++) {
-            SimpleDateFormat sdf1 = new SimpleDateFormat("yyyy-MM-dd");
             Calendar calendar = Calendar.getInstance();
             calendar.setTime(searchMonth);
             calendar.add(Calendar.MONTH, -i);
@@ -86,7 +87,6 @@ public class MemberProfitRecordsServiceImpl extends AbstractCrudService<MemberPr
             calendar.add(Calendar.MONTH, 1);
             calendar.set(Calendar.DAY_OF_MONTH, 0);
             String lastDay = sdf1.format(calendar.getTime()) + " 23:59:59";
-            SimpleDateFormat sdf2 = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
             long start = sdf2.parse(firstDay).getTime();
             long end = sdf2.parse(lastDay).getTime();
 
@@ -108,11 +108,12 @@ public class MemberProfitRecordsServiceImpl extends AbstractCrudService<MemberPr
     public List<AchievementDetail> getAchievementByMonth(String memberId, String startMonth, int size) throws ParseException {
         List<AchievementDetail> result = new ArrayList<>(size);
         SimpleDateFormat sdf = new SimpleDateFormat("yyyyMM");
+        SimpleDateFormat sdf1 = new SimpleDateFormat("yyyy-MM-dd");
+        SimpleDateFormat sdf2 = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+        Calendar calendar = Calendar.getInstance();
         Date searchMonth = sdf.parse(startMonth);
         for (int i = 0; i < size; i++) {
             AchievementDetail achievementDetail = new AchievementDetail();
-            SimpleDateFormat sdf1 = new SimpleDateFormat("yyyy-MM-dd");
-            Calendar calendar = Calendar.getInstance();
             calendar.setTime(searchMonth);
             calendar.add(Calendar.MONTH, -i);
             calendar.set(Calendar.DAY_OF_MONTH, 1);
@@ -121,7 +122,6 @@ public class MemberProfitRecordsServiceImpl extends AbstractCrudService<MemberPr
             calendar.add(Calendar.MONTH, 1);
             calendar.set(Calendar.DAY_OF_MONTH, 0);
             String lastDay = sdf1.format(calendar.getTime()) + " 23:59:59";
-            SimpleDateFormat sdf2 = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
             long start = sdf2.parse(firstDay).getTime();
             long end = sdf2.parse(lastDay).getTime();
             List<Member> sonList = repository.findMembersByFatherId(memberId, end);
@@ -135,16 +135,15 @@ public class MemberProfitRecordsServiceImpl extends AbstractCrudService<MemberPr
     @Override
     public List<AchievementDetail> getAchievementByDate(String memberId, String date, int size) throws ParseException {
         List<AchievementDetail> result = new ArrayList<>(size);
+        Calendar calendar = Calendar.getInstance();
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMdd");
+        SimpleDateFormat sdf2 = new SimpleDateFormat("yyyyMMdd HH:mm:ss");
         for (int i = 0; i < size; i++) {
             AchievementDetail achievementDetail = new AchievementDetail();
-            SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMdd");
-            Calendar calendar = Calendar.getInstance();
             calendar.setTime(sdf.parse(date));
             calendar.add(Calendar.DAY_OF_MONTH, -i);
-
             String startTime = sdf.format(calendar.getTime()) + " 00:00:00";
             String endTime = sdf.format(calendar.getTime()) + " 23:59:59";
-            SimpleDateFormat sdf2 = new SimpleDateFormat("yyyyMMdd HH:mm:ss");
             long start = sdf2.parse(startTime).getTime();
             long end = sdf2.parse(endTime).getTime();
             List<Member> sonList = repository.findMembersByFatherId(memberId, end);
@@ -153,6 +152,69 @@ public class MemberProfitRecordsServiceImpl extends AbstractCrudService<MemberPr
             result.add(achievementDetail);
         }
         return result;
+    }
+
+    @Override
+    public List<Achievement> getAchievement(String memberId) throws ParseException {
+        List<Achievement> result = new ArrayList<>(2);
+        SimpleDateFormat sdf1 = new SimpleDateFormat("yyyy-MM-dd");
+        SimpleDateFormat sdf2 = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+        Calendar calendar = Calendar.getInstance();
+        for (int i = 0; i < 2; i++) {
+            Achievement achievement = new Achievement();
+            calendar.add(Calendar.MONTH, -i);
+            calendar.set(Calendar.DAY_OF_MONTH, 1);
+            String firstDay = sdf1.format(calendar.getTime()) + " 00:00:00";
+            // 获取前一个月最后一天
+            calendar.add(Calendar.MONTH, 1);
+            calendar.set(Calendar.DAY_OF_MONTH, 0);
+            String lastDay = sdf1.format(calendar.getTime()) + " 23:59:59";
+            long start = sdf2.parse(firstDay).getTime();
+            long end = sdf2.parse(lastDay).getTime();
+            List<Member> sonList = repository.findMembersByFatherId(memberId, end);
+            if (sonList != null) {
+                int newSonShopNum = 0;
+                double totalTransactionAmount = 0;
+                for (Member m : sonList) {
+                    List<Shop> shops = shopRepository.findAllByMemberId(m.getId(), start, end);
+                    newSonShopNum += shops == null ? 0 : shops.size();
+                    Map<String, Double> resultMap = memberProfitRecordsRepository.statisProfitsByMonth(m.getId(), start, end);
+                    totalTransactionAmount += resultMap.get("totalTransactionAmount") == null ? 0d : resultMap.get("totalTransactionAmount");
+                }
+                totalTransactionAmount = new BigDecimal(totalTransactionAmount).setScale(2, BigDecimal.ROUND_HALF_UP).doubleValue();
+                achievement.setAllyNewShopNum(newSonShopNum);
+                achievement.setAllyTransactionAmount(totalTransactionAmount);
+            }
+            List<Shop> shops1 = shopRepository.findAllByMemberId(memberId, start, end);
+            Map<String, Double> resultMap1 = memberProfitRecordsRepository.statisProfitsByMonth(memberId, start, end);
+            Double totalTransactionAmount1 = resultMap1.get("totalTransactionAmount") == null ? 0d : resultMap1.get("totalTransactionAmount");
+            achievement.setNewShopNum(shops1.size());
+            achievement.setTransactionAmount(new BigDecimal(totalTransactionAmount1).setScale(2, BigDecimal.ROUND_HALF_UP).doubleValue());
+            achievement.setStaticMonth(firstDay);
+            result.add(achievement);
+        }
+
+        return result;
+    }
+
+    @Override
+    public Integer getAllyNewShopToday(String memberId) throws ParseException {
+        Calendar calendar = Calendar.getInstance();
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMdd");
+        SimpleDateFormat sdf2 = new SimpleDateFormat("yyyyMMdd HH:mm:ss");
+        String startTime = sdf.format(calendar.getTime()) + " 00:00:00";
+        String endTime = sdf.format(calendar.getTime()) + " 23:59:59";
+        long start = sdf2.parse(startTime).getTime();
+        long end = sdf2.parse(endTime).getTime();
+        List<Member> sonList = repository.findMembersByFatherId(memberId, end);
+        int newSonShopNum = 0;
+        if (sonList != null) {
+            for (Member m : sonList) {
+                List<Shop> shops = shopRepository.findAllByMemberId(m.getId(), start, end);
+                newSonShopNum += shops == null ? 0 : shops.size();
+            }
+        }
+        return newSonShopNum;
     }
 
     private void getAchievementDetail(AchievementDetail achievementDetail, long start, long end, List<Member> sonList) {
@@ -167,7 +229,7 @@ public class MemberProfitRecordsServiceImpl extends AbstractCrudService<MemberPr
                 shops = shopRepository.findAllByMemberId(m.getId(), start, end);
                 newSonShopNum += shops == null ? 0 : shops.size();
                 Map<String, Double> resultMap = memberProfitRecordsRepository.statisProfitsByMonth(m.getId(), start, end);
-                totalTransactionAmount += resultMap.get("totalTransactionAmount") == null ? 0 : resultMap.get("totalTransactionAmount");
+                totalTransactionAmount += resultMap.get("totalTransactionAmount") == null ? 0d : resultMap.get("totalTransactionAmount");
             }
             achievementDetail.setTransactionAmount(new BigDecimal(totalTransactionAmount).setScale(2, BigDecimal.ROUND_HALF_UP).doubleValue());
             achievementDetail.setTotalAllyShopNum(sonShopNum);
@@ -298,8 +360,8 @@ public class MemberProfitRecordsServiceImpl extends AbstractCrudService<MemberPr
     /**
      * 再Excel中获取数据并校验，校验通过后加入到实体中
      *
-     * @param row
-     * @return
+     * @param row 行
+     * @return 收益数据
      */
     private MemberProfitRecords getAllParamFromExcel(Row row, int r) throws BusinessException {
         row.getCell(0).setCellType(Cell.CELL_TYPE_STRING);
@@ -327,7 +389,7 @@ public class MemberProfitRecordsServiceImpl extends AbstractCrudService<MemberPr
 
         row.getCell(4).setCellType(Cell.CELL_TYPE_NUMERIC);
         Double transactionAmount = row.getCell(4).getNumericCellValue();
-        if (transactionAmount == null || transactionAmount.doubleValue() == 0) {
+        if (transactionAmount == 0) {
             throw new BusinessException(String.format("第" + r + "行数据机不合法,[%s]数据不合法", "交易金额"));
         }
         row.getCell(5).setCellType(Cell.CELL_TYPE_STRING);

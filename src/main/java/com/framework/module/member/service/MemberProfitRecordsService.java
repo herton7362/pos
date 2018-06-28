@@ -1,5 +1,6 @@
 package com.framework.module.member.service;
 
+import com.framework.module.member.domain.Achievement;
 import com.framework.module.member.domain.AchievementDetail;
 import com.framework.module.member.domain.MemberProfitRecords;
 import com.framework.module.member.domain.ProfitMonthDetail;
@@ -55,6 +56,22 @@ public interface MemberProfitRecordsService extends CrudService<MemberProfitReco
      * @throws ParseException 异常
      */
     List<AchievementDetail> getAchievementByDate(String memberId, String date, int size) throws ParseException;
+
+    /**
+     * 获取业绩
+     * @param memberId 会员ID
+     * @return 业绩详情
+     * * @throws ParseException 异常
+     */
+    List<Achievement> getAchievement(String memberId) throws ParseException;
+
+    /**
+     * 获取联盟今日新增商户
+     * @param memberId 会员ID
+     * @return 新增商户数量
+     * @throws ParseException 异常
+     */
+    Integer getAllyNewShopToday(String memberId) throws ParseException;
 
 
 }

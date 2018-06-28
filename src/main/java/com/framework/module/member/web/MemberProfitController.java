@@ -1,5 +1,6 @@
 package com.framework.module.member.web;
 
+import com.framework.module.member.domain.Achievement;
 import com.framework.module.member.domain.AchievementDetail;
 import com.framework.module.member.domain.MemberProfitRecords;
 import com.framework.module.member.domain.ProfitMonthDetail;
@@ -20,6 +21,7 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.Map;
 
 @Api(value = "会员管理")
 @RestController
@@ -97,6 +99,28 @@ public class MemberProfitController extends AbstractCrudController<MemberProfitR
             return new ResponseEntity<>(result, HttpStatus.BAD_REQUEST);
         }
         return new ResponseEntity<>(result, HttpStatus.OK);
+    }
+
+    @ApiOperation(value = "获取业绩")
+    @RequestMapping(value = "/getAchievement/{memberId}", method = RequestMethod.GET)
+    public ResponseEntity<List<Achievement>> getAchievement(@PathVariable String memberId) {
+        List<Achievement> result = null;
+        try {
+            result = result = memberProfitService.getAchievement(memberId);
+        } catch (ParseException e) {
+            return new ResponseEntity<>(result, HttpStatus.BAD_REQUEST);
+        }
+        return new ResponseEntity<>(result, HttpStatus.OK);
+    }
+
+    @ApiOperation(value = "今日盟友等级商户")
+    @RequestMapping(value = "/getAllyNewShopToday/{memberId}", method = RequestMethod.GET)
+    public ResponseEntity<Integer> getAllyNewShopToday(@PathVariable String memberId) {
+        try {
+            return new ResponseEntity<>(memberProfitService.getAllyNewShopToday(memberId), HttpStatus.OK);
+        } catch (ParseException e) {
+            return new ResponseEntity<>(0, HttpStatus.OK);
+        }
     }
 
 
