@@ -7,6 +7,14 @@ require(['jquery', 'vue', 'messager', 'utils'], function($, Vue, messager, utils
                     name: ''
                 },
                 columns: [
+                    {field:'headPhoto', title:'头像', formatter: function(value) {
+                        if(value) {
+                            return '<img width="50" src="'+utils.patchUrl('/attachment/download/' + value.id)+'">';
+                        } else {
+                            return '无';
+                        }
+
+                    }},
                     {field:'loginName', title:'登录名'},
                     {field:'name', title:'姓名'},
                     {field:'mobile', title:'手机'},
@@ -70,6 +78,7 @@ require(['jquery', 'vue', 'messager', 'utils'], function($, Vue, messager, utils
             formData: {
                 id: null,
                 name: null,
+                headPhoto: null,
                 mobile: null,
                 gender: '1',
                 birthday: null,

@@ -16,7 +16,7 @@ import java.util.Date;
 public class MemberLevelParam extends BaseEntity {
     private Integer level;
     private Double totalTransactionVolume;
-    private Integer teamScale;
+    private String teamScale;
     private Double mPosProfit;
     private Double bigPosProfit;
     private String allyTitle;
@@ -63,11 +63,11 @@ public class MemberLevelParam extends BaseEntity {
         this.level = level;
     }
 
-    public Integer getTeamScale() {
+    public String getTeamScale() {
         return teamScale;
     }
 
-    public void setTeamScale(Integer teamScale) {
+    public void setTeamScale(String teamScale) {
         this.teamScale = teamScale;
     }
 
