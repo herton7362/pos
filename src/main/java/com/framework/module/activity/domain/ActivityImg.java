@@ -15,6 +15,9 @@ public class ActivityImg extends BaseEntity {
     @ApiModelProperty(value = "图片")
     @ManyToOne
     private Attachment image;
+    @ApiModelProperty(value = "活动链接地址")
+    @Column(length = 1000)
+    private String link;
     @ApiModelProperty(value = "备注")
     @Column(length = 100)
     private String remark;
@@ -25,6 +28,14 @@ public class ActivityImg extends BaseEntity {
 
     public void setImage(Attachment image) {
         this.image = image;
+    }
+
+    public String getLink() {
+        return link;
+    }
+
+    public void setLink(String link) {
+        this.link = link;
     }
 
     public String getRemark() {

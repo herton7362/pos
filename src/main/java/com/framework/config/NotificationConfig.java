@@ -11,11 +11,11 @@ public class NotificationConfig extends NotificationKitConfigurerAdaptor {
     public void configure(NotificationProviders notificationProvider) throws Exception {
         notificationProvider
                 .alidayuProvider()
-                .setAppId("24495956")
-                .setAppSecret("895912d66f8740c478c967b2167019fb")
+                .setAppId("LTAIhzaeNgs34p4B")
+                .setAppSecret("e7GPlgoluQ9SUxbuZLL9a1Y1LxdzNJ")
                 .setServerUrl("http://gw.api.taobao.com/router/rest")
-                .setSmsFreeSignName("鼎骏出行")
-                .setSmsTemplateCode("SMS_71820364")
+                .setSmsFreeSignName("会员宝管家")
+                .setSmsTemplateCode("SMS_138370042")
                 .setSmsType("normal")
                 .and()
                 .ipyyProvider()
@@ -28,7 +28,7 @@ public class NotificationConfig extends NotificationKitConfigurerAdaptor {
     @Override
     public void configure(NotificationTypes notificationTypes) throws Exception {
         notificationTypes
-                .smsVerifyCode().ipyyProvider()
+                .smsVerifyCode().alidayuProvider()
                 .and()
                 .smsBroadcast().ipyyProvider()
                 .and()

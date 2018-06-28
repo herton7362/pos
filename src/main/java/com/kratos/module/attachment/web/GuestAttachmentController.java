@@ -59,9 +59,19 @@ public class GuestAttachmentController extends AbstractReadController<Attachment
         }
         File file=new File(prefixPath, attachment.getPath());
         HttpHeaders headers=new HttpHeaders();
-        String downloadFileName=new String(attachment.getName().getBytes("UTF-8"),"ISO-8859-1");  //少了这句，可能导致下载中文文件名的文档，只有后缀名的情况
-        headers.setContentDispositionFormData("attachment", downloadFileName);//告知浏览器以下载方式打开
-        headers.setContentType(MediaType.APPLICATION_OCTET_STREAM);//设置MIME类型
+
+        if("jpg".equals(attachment.getFormat())) {
+            headers.setContentType(MediaType.IMAGE_JPEG);//设置MIME类型
+        } else if("png".equals(attachment.getFormat())) {
+            headers.setContentType(MediaType.IMAGE_PNG);//设置MIME类型
+        } else if("pdf".equals(attachment.getFormat())) {
+            headers.setContentType(MediaType.APPLICATION_PDF);//设置MIME类型
+        } else {
+            String downloadFileName=new String(attachment.getName().getBytes("UTF-8"),"ISO-8859-1");  //少了这句，可能导致下载中文文件名的文档，只有后缀名的情况
+            headers.setContentDispositionFormData("attachment", downloadFileName);//告知浏览器以下载方式打开
+            headers.setContentType(MediaType.APPLICATION_OCTET_STREAM);//设置MIME类型
+        }
+
         byte[] bytes = null;
         try {
             bytes = FileUtils.readFileToByteArray(file);
