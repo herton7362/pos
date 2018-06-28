@@ -46,6 +46,10 @@
                                 <input type="text" class="form-control" required v-model="props.form.name" placeholder="输入会员名称">
                             </div>
                             <div class="form-group">
+                                <label>头像：</label>
+                                <uploader v-model="props.form.headPhoto"></uploader>
+                            </div>
+                            <div class="form-group">
                                 <label>手机：</label>
                                 <input type="text" class="form-control" required v-model="props.form.mobile" placeholder="输入手机">
                             </div>
