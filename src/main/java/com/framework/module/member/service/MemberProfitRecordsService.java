@@ -73,5 +73,13 @@ public interface MemberProfitRecordsService extends CrudService<MemberProfitReco
      */
     Integer getAllyNewShopToday(String memberId) throws ParseException;
 
+    /**
+     * 获取历史总收益
+     * @param memberId 会员ID
+     * @return 新增商户数量
+     * @throws ParseException 异常
+     */
+    Double getTotalProfit(String memberId);
+
 
 }

@@ -226,6 +226,12 @@ public class MemberProfitRecordsServiceImpl extends AbstractCrudService<MemberPr
         return newSonShopNum;
     }
 
+    @Override
+    public Double getTotalProfit(String memberId) {
+        Map<String, Double> resultMap = memberProfitRecordsRepository.staticTotalProfit(memberId);
+        return resultMap.get("totalProfit") == null ? 0d : resultMap.get("totalProfit");
+    }
+
     private void getAchievementDetail(AchievementDetail achievementDetail, long start, long end, List<Member> sonList) {
         if (sonList != null) {
             achievementDetail.setTotalAllyNum(sonList.size());

@@ -144,5 +144,12 @@ public class MemberProfitController extends AbstractCrudController<MemberProfitR
         }
     }
 
+    @ApiOperation(value = "获取历史总收益")
+    @RequestMapping(value = "/getTotalProfit", method = RequestMethod.GET)
+    public ResponseEntity<Double> getTotalProfit() {
+        String memberId = UserThread.getInstance().get().getId();
+        return new ResponseEntity<>(memberProfitService.getTotalProfit(memberId), HttpStatus.OK);
+    }
+
 
 }
