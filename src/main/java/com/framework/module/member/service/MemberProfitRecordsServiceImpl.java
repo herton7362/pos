@@ -292,14 +292,14 @@ public class MemberProfitRecordsServiceImpl extends AbstractCrudService<MemberPr
                 throw new BusinessException(String.format("第" + r + "行数据机不合法,用户等级信息不合法:[%s]", importProfit.getUserNo()));
             }
             double profitRate = param.getmPosProfit();
-            importProfit.setProfit(new BigDecimal(profitRate * importProfit.getTransactionAmount() / 10000d).setScale(2, BigDecimal.ROUND_HALF_UP).doubleValue());
+            importProfit.setProfit(new BigDecimal(profitRate * importProfit.getTransactionAmount()).setScale(2, BigDecimal.ROUND_HALF_UP).doubleValue());
             memberProfitRecordsList.add(importProfit);
             // 如果父节点不为空，设置父节点的收益
             if (StringUtils.isNotBlank(member.getFatherId())) {
                 setParamProfitRecords(memberProfitRecordsList, importProfit, member, profitRate);
             }
             // 设置激活奖励
-            shop.setTransactionAmount(new BigDecimal(shop.getTransactionAmount() + importProfit.getTransactionAmount()).setScale(2, BigDecimal.ROUND_HALF_UP).doubleValue());
+            shop.setTransactionAmount(new BigDecimal(shop.getTransactionAmount() == null ? 0 : shop.getTransactionAmount() + importProfit.getTransactionAmount()).setScale(2, BigDecimal.ROUND_HALF_UP).doubleValue());
             // 设置激活奖励
             setActiveRewardProfit(activeRules, shop);
         }
@@ -356,7 +356,7 @@ public class MemberProfitRecordsServiceImpl extends AbstractCrudService<MemberPr
             fatherProfit.setProfitType(Constant.PROFIT_TYPE_GUANLI);
             fatherProfit.setMemberId(fatherMember.getId());
             MemberLevelParam fatherMemberParam = memberLevelParamService.getParamByLevel(fatherMember.getMemberLevel());
-            fatherProfit.setProfit(new BigDecimal((fatherMemberParam.getmPosProfit() - profitRate) * importProfit.getTransactionAmount() / 10000d).setScale(2, BigDecimal.ROUND_HALF_UP).doubleValue());
+            fatherProfit.setProfit(new BigDecimal((fatherMemberParam.getmPosProfit() - profitRate) * importProfit.getTransactionAmount()).setScale(2, BigDecimal.ROUND_HALF_UP).doubleValue());
             memberProfitRecordsList.add(fatherProfit);
             if (StringUtils.isBlank(fatherMember.getFatherId())) {
                 fatherMember = null;
