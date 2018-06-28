@@ -133,7 +133,7 @@ public class MemberProfitController extends AbstractCrudController<MemberProfitR
         return new ResponseEntity<>(result, HttpStatus.OK);
     }
 
-    @ApiOperation(value = "今日盟友等级商户")
+    @ApiOperation(value = "今日盟友登记商户")
     @RequestMapping(value = "/getAllyNewShopToday", method = RequestMethod.GET)
     public ResponseEntity<Integer> getAllyNewShopToday() {
         try {

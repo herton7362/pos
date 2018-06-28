@@ -32,8 +32,8 @@ public class MemberProfitRecords extends BaseEntity {
     private String transactionType;
     @Column(length = 50)
     private String memberId;
-    @Column(length = 50)
-    private Date transactionDate;
+    @Column()
+    private Long transactionDate;
     @Column(length = 10, precision = 2)
     private double profit;
     @Column(length = 255)
@@ -113,11 +113,11 @@ public class MemberProfitRecords extends BaseEntity {
         this.memberId = memberId;
     }
 
-    public Date getTransactionDate() {
+    public Long getTransactionDate() {
         return transactionDate;
     }
 
-    public void setTransactionDate(Date transactionDate) {
+    public void setTransactionDate(Long transactionDate) {
         this.transactionDate = transactionDate;
     }
 

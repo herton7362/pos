@@ -65,7 +65,7 @@ public class MemberProfitRecordsServiceImpl extends AbstractCrudService<MemberPr
             teamBuilderProfit.setProfitType(Constant.PROFIT_TYPE_TUANJIAN);
             teamBuilderProfit.setProfit(activeCount / memberCount * reward);
             teamBuilderProfit.setMemberId(fatherId);
-            teamBuilderProfit.setTransactionDate(new Date());
+            teamBuilderProfit.setTransactionDate(new Date().getTime());
             save(teamBuilderProfit);
         }
     }
@@ -357,7 +357,7 @@ public class MemberProfitRecordsServiceImpl extends AbstractCrudService<MemberPr
                 activationRewardProfit.setProfitType(Constant.PROFIT_TYPE_FANXIAN);
                 activationRewardProfit.setProfit(activeRules.get(0).getAwardMoney());
                 activationRewardProfit.setMemberId(shop.getMemberId());
-                activationRewardProfit.setTransactionDate(new Date());
+                activationRewardProfit.setTransactionDate(new Date().getTime());
                 save(activationRewardProfit);
             }
         }
@@ -452,7 +452,7 @@ public class MemberProfitRecordsServiceImpl extends AbstractCrudService<MemberPr
         importProfit.setTransactionAmount(transactionAmount);
         importProfit.setTransactionType(transactionType);
         importProfit.setSn(sn);
-        importProfit.setTransactionDate(transactionDate);
+        importProfit.setTransactionDate(transactionDate.getTime());
         importProfit.setProfitType(Constant.PROFIT_TYPE_ZHIYING);
         return importProfit;
     }
