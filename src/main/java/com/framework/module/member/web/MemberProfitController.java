@@ -45,7 +45,7 @@ public class MemberProfitController extends AbstractCrudController<MemberProfitR
     @RequestMapping(value = "/import/profit", method = RequestMethod.POST, produces = "application/json; charset=utf-8")
     public ResponseEntity<String> userProfit(@RequestParam("profitFile") MultipartFile profitFile) {
         String fileName = profitFile.getOriginalFilename();
-        int insertSize = 0;
+        int insertSize;
         try {
             insertSize = memberProfitService.batchImport(fileName, profitFile);
         } catch (Exception e) {
