@@ -61,7 +61,7 @@ public class MemberProfitController extends AbstractCrudController<MemberProfitR
      * @param size       size
      * @return 收益详情
      */
-    @ApiOperation(value = "获取收益详情")
+    @ApiOperation(value = "按照历史收益")
     @RequestMapping(value = "/getMonthProfit/{startMonth}/{size}", method = RequestMethod.GET)
     public ResponseEntity<List<ProfitMonthDetail>> getMonthProfit(@PathVariable String startMonth, @PathVariable Integer size) {
         List<ProfitMonthDetail> result = null;
@@ -79,7 +79,7 @@ public class MemberProfitController extends AbstractCrudController<MemberProfitR
      *
      * @return 收益详情
      */
-    @ApiOperation(value = "获取当月收益")
+    @ApiOperation(value = "获取当月收益详情")
     @RequestMapping(value = "/getProfit", method = RequestMethod.GET)
     public ResponseEntity<List<ProfitMonthDetail>> getProfit() {
         String memberId = UserThread.getInstance().get().getId();
@@ -94,7 +94,7 @@ public class MemberProfitController extends AbstractCrudController<MemberProfitR
         return new ResponseEntity<>(result, HttpStatus.OK);
     }
 
-    @ApiOperation(value = "按照月份获取业绩详情")
+    @ApiOperation(value = "按照月份获取历史业绩")
     @RequestMapping(value = "/getMonthAchievement/{startMonth}/{size}", method = RequestMethod.GET)
     public ResponseEntity<List<AchievementDetail>> getMonthAchievement(@PathVariable String startMonth, @PathVariable Integer size) {
         String memberId = UserThread.getInstance().get().getId();
@@ -107,7 +107,7 @@ public class MemberProfitController extends AbstractCrudController<MemberProfitR
         return new ResponseEntity<>(result, HttpStatus.OK);
     }
 
-    @ApiOperation(value = "按天获取业绩详情")
+    @ApiOperation(value = "按照天获取历史业绩")
     @RequestMapping(value = "/getDayAchievement/{startDate}/{size}", method = RequestMethod.GET)
     public ResponseEntity<List<AchievementDetail>> getDayAchievement(@PathVariable String startDate, @PathVariable Integer size) {
         String memberId = UserThread.getInstance().get().getId();
