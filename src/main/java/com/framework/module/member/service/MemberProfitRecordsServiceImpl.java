@@ -252,7 +252,7 @@ public class MemberProfitRecordsServiceImpl extends AbstractCrudService<MemberPr
         if (CollectionUtils.isEmpty(activeRules) || activeRules.get(0).getConditionValue() == null) {
             throw new BusinessException("设备激活奖励未设置");
         }
-        Integer importSize = 0;
+
         if (!fileName.matches("^.+\\.(?i)(xls)$") && !fileName.matches("^.+\\.(?i)(xlsx)$")) {
             throw new BusinessException("输入文件格式不正确");
         }
@@ -269,6 +269,7 @@ public class MemberProfitRecordsServiceImpl extends AbstractCrudService<MemberPr
         }
         Sheet sheet = wb.getSheetAt(0);
         List<MemberProfitRecords> memberProfitRecordsList = new ArrayList<>();
+        Integer importSize = sheet.getLastRowNum();
         for (int r = 1; r <= sheet.getLastRowNum(); r++) {
             Row row = sheet.getRow(r);
             if (row == null) {
@@ -307,7 +308,6 @@ public class MemberProfitRecordsServiceImpl extends AbstractCrudService<MemberPr
         for (MemberProfitRecords t : memberProfitRecordsList) {
             save(t);
         }
-        importSize = memberProfitRecordsList.size();
         return importSize;
     }
 
