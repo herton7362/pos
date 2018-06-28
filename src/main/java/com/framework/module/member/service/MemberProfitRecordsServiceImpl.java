@@ -140,10 +140,15 @@ public class MemberProfitRecordsServiceImpl extends AbstractCrudService<MemberPr
                 achievementDetail.setTotalAllyShopNum(sonShopNum);
                 achievementDetail.setNewAllyShopNum(newSonShopNum);
             }
-            achievementDetail.setStatisDate(sdf.format(calendar.getTime()));
+            achievementDetail.setStaticDate(sdf.format(calendar.getTime()));
             result.add(achievementDetail);
         }
         return result;
+    }
+
+    @Override
+    public List<AchievementDetail> getAchievementByDate(String memberId, String date, int size) throws ParseException {
+        return null;
     }
 
     @Override

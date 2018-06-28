@@ -56,15 +56,16 @@ public class MemberProfitController extends AbstractCrudController<MemberProfitR
 
     /**
      * 获取当月收益详情
-     * @param memberId 会员ID
+     *
+     * @param memberId   会员ID
      * @param startMonth 起始月份格式YYYYMM
-     * @param size 一次请求长度
+     * @param size       一次请求长度
      * @return 收益详情结果
      * @throws Exception 异常
      */
     @ApiOperation(value = "获取收益详情")
     @RequestMapping(value = "/getMonthProfit/{memberId}/{startMonth}/{size}", method = RequestMethod.GET)
-    public ResponseEntity<List<ProfitMonthDetail>> getMonthProfit(@PathVariable String memberId, @PathVariable String startMonth, @PathVariable Integer size){
+    public ResponseEntity<List<ProfitMonthDetail>> getMonthProfit(@PathVariable String memberId, @PathVariable String startMonth, @PathVariable Integer size) {
         List<ProfitMonthDetail> result = null;
         try {
             result = memberProfitService.getProfitByMonth(memberId, startMonth, size);
@@ -76,7 +77,7 @@ public class MemberProfitController extends AbstractCrudController<MemberProfitR
 
     @ApiOperation(value = "按照月份获取业绩详情")
     @RequestMapping(value = "/getMonthAchievement/{memberId}/{startMonth}/{size}", method = RequestMethod.GET)
-    public ResponseEntity<List<AchievementDetail>> getMonthAchievement(@PathVariable String memberId, @PathVariable String startMonth, @PathVariable Integer size){
+    public ResponseEntity<List<AchievementDetail>> getMonthAchievement(@PathVariable String memberId, @PathVariable String startMonth, @PathVariable Integer size) {
         List<AchievementDetail> result = null;
         try {
             result = memberProfitService.getAchievementByMonth(memberId, startMonth, size);
@@ -86,7 +87,17 @@ public class MemberProfitController extends AbstractCrudController<MemberProfitR
         return new ResponseEntity<>(result, HttpStatus.OK);
     }
 
-
+    @ApiOperation(value = "按天获取业绩详情")
+    @RequestMapping(value = "/getDayAchievement/{memberId}/{startDate}/{size}", method = RequestMethod.GET)
+    public ResponseEntity<List<AchievementDetail>> getDayAchievement(@PathVariable String memberId, @PathVariable String startDate, @PathVariable Integer size) {
+        List<AchievementDetail> result = null;
+        try {
+            result = memberProfitService.getAchievementByDate(memberId, startDate, size);
+        } catch (ParseException e) {
+            e.printStackTrace();
+        }
+        return new ResponseEntity<>(result, HttpStatus.OK);
+    }
 
 
 }

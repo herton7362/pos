@@ -18,20 +18,10 @@ public class AchievementDetail {
     private int totalAllyShopNum = 0;
     @ApiModelProperty(value = "盟友新增商户总数")
     private int newAllyShopNum = 0;
-    @ApiModelProperty(value = "盟友大POS交易总额")
-    private double bigPosTransactionAmount = 0;
     @ApiModelProperty(value = "盟友交易总额")
     private double transactionAmount = 0;
     @ApiModelProperty(value = "统计时间")
-    private String statisDate;
-
-    public String getStatisDate() {
-        return statisDate;
-    }
-
-    public void setStatisDate(String statisDate) {
-        this.statisDate = statisDate;
-    }
+    private String staticDate;
 
     public int getTotalAllyNum() {
         return totalAllyNum;
@@ -57,19 +47,19 @@ public class AchievementDetail {
         this.newAllyShopNum = newAllyShopNum;
     }
 
-    public double getBigPosTransactionAmount() {
-        return bigPosTransactionAmount;
-    }
-
-    public void setBigPosTransactionAmount(double bigPosTransactionAmount) {
-        this.bigPosTransactionAmount = bigPosTransactionAmount;
-    }
-
     public double getTransactionAmount() {
         return transactionAmount;
     }
 
     public void setTransactionAmount(double transactionAmount) {
         this.transactionAmount = transactionAmount;
+    }
+
+    public String getStaticDate() {
+        return staticDate;
+    }
+
+    public void setStaticDate(String staticDate) {
+        this.staticDate = staticDate;
     }
 }

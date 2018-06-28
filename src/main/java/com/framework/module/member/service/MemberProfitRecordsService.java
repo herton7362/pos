@@ -46,5 +46,15 @@ public interface MemberProfitRecordsService extends CrudService<MemberProfitReco
      */
     List<AchievementDetail> getAchievementByMonth(String memberId, String startMonth, int size) throws ParseException;
 
+    /**
+     * 按天获取业绩详情
+     * @param memberId 会员ID
+     * @param date 起始时间
+     * @param size 长度
+     * @return 业绩详情
+     * @throws ParseException 异常
+     */
+    List<AchievementDetail> getAchievementByDate(String memberId, String date, int size) throws ParseException;
+
 
 }
