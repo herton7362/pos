@@ -61,14 +61,14 @@ public class MemberProfitController extends AbstractCrudController<MemberProfitR
      * @param size       size
      * @return 收益详情
      */
-    @ApiOperation(value = "获取收益详情")
+    @ApiOperation(value = "按照历史收益")
     @RequestMapping(value = "/getMonthProfit/{startMonth}/{size}", method = RequestMethod.GET)
     public ResponseEntity<List<ProfitMonthDetail>> getMonthProfit(@PathVariable String startMonth, @PathVariable Integer size) {
         List<ProfitMonthDetail> result = null;
         String memberId = UserThread.getInstance().get().getId();
         try {
             result = memberProfitService.getProfitByMonth(memberId, startMonth, size);
-        } catch (ParseException e) {
+        } catch (Exception e) {
             e.printStackTrace();
         }
         return new ResponseEntity<>(result, HttpStatus.OK);
@@ -79,7 +79,7 @@ public class MemberProfitController extends AbstractCrudController<MemberProfitR
      *
      * @return 收益详情
      */
-    @ApiOperation(value = "获取当月收益")
+    @ApiOperation(value = "获取当月收益详情")
     @RequestMapping(value = "/getProfit", method = RequestMethod.GET)
     public ResponseEntity<List<ProfitMonthDetail>> getProfit() {
         String memberId = UserThread.getInstance().get().getId();
@@ -88,33 +88,33 @@ public class MemberProfitController extends AbstractCrudController<MemberProfitR
             SimpleDateFormat sdf = new SimpleDateFormat("yyyyMM");
             Calendar calendar = Calendar.getInstance();
             result = memberProfitService.getProfitByMonth(memberId, sdf.format(calendar.getTime()), 1);
-        } catch (ParseException e) {
+        } catch (Exception e) {
             e.printStackTrace();
         }
         return new ResponseEntity<>(result, HttpStatus.OK);
     }
 
-    @ApiOperation(value = "按照月份获取业绩详情")
+    @ApiOperation(value = "按照月份获取历史业绩")
     @RequestMapping(value = "/getMonthAchievement/{startMonth}/{size}", method = RequestMethod.GET)
     public ResponseEntity<List<AchievementDetail>> getMonthAchievement(@PathVariable String startMonth, @PathVariable Integer size) {
         String memberId = UserThread.getInstance().get().getId();
         List<AchievementDetail> result = null;
         try {
             result = memberProfitService.getAchievementByMonth(memberId, startMonth, size);
-        } catch (ParseException e) {
+        } catch (Exception e) {
             return new ResponseEntity<>(result, HttpStatus.BAD_REQUEST);
         }
         return new ResponseEntity<>(result, HttpStatus.OK);
     }
 
-    @ApiOperation(value = "按天获取业绩详情")
+    @ApiOperation(value = "按照天获取历史业绩")
     @RequestMapping(value = "/getDayAchievement/{startDate}/{size}", method = RequestMethod.GET)
     public ResponseEntity<List<AchievementDetail>> getDayAchievement(@PathVariable String startDate, @PathVariable Integer size) {
         String memberId = UserThread.getInstance().get().getId();
         List<AchievementDetail> result = new ArrayList<>();
         try {
             result = memberProfitService.getAchievementByDate(memberId, startDate, size);
-        } catch (ParseException e) {
+        } catch (Exception e) {
             return new ResponseEntity<>(result, HttpStatus.BAD_REQUEST);
         }
         return new ResponseEntity<>(result, HttpStatus.OK);
@@ -142,6 +142,13 @@ public class MemberProfitController extends AbstractCrudController<MemberProfitR
         } catch (ParseException e) {
             return new ResponseEntity<>(0, HttpStatus.OK);
         }
+    }
+
+    @ApiOperation(value = "获取历史总收益")
+    @RequestMapping(value = "/getTotalProfit", method = RequestMethod.GET)
+    public ResponseEntity<Double> getTotalProfit() {
+        String memberId = UserThread.getInstance().get().getId();
+        return new ResponseEntity<>(memberProfitService.getTotalProfit(memberId), HttpStatus.OK);
     }
 
 

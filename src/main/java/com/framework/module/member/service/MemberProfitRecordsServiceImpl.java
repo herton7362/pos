@@ -71,7 +71,11 @@ public class MemberProfitRecordsServiceImpl extends AbstractCrudService<MemberPr
     }
 
     @Override
-    public List<ProfitMonthDetail> getProfitByMonth(String memberId, String startMonth, int size) throws ParseException {
+    public List<ProfitMonthDetail> getProfitByMonth(String memberId, String startMonth, int size) throws Exception {
+        Member member = memberService.findOne(memberId);
+        if (member == null) {
+            throw new BusinessException(String.format("会员id:[%s]不存在", memberId));
+        }
         List<ProfitMonthDetail> result = new ArrayList<>(size);
         SimpleDateFormat sdf = new SimpleDateFormat("yyyyMM");
         SimpleDateFormat sdf1 = new SimpleDateFormat("yyyy-MM-dd");
@@ -89,7 +93,9 @@ public class MemberProfitRecordsServiceImpl extends AbstractCrudService<MemberPr
             String lastDay = sdf1.format(calendar.getTime()) + " 23:59:59";
             long start = sdf2.parse(firstDay).getTime();
             long end = sdf2.parse(lastDay).getTime();
-
+            if (member.getCreatedDate() > end) {
+                break;
+            }
             Map<String, Double> resultMap = memberProfitRecordsRepository.staticProfitsByMonth(memberId, start, end);
             ProfitMonthDetail profitMonthDetail = new ProfitMonthDetail();
             profitMonthDetail.setTotalProfit(resultMap.get("totalProfit") == null ? 0 : resultMap.get("totalProfit"));
@@ -114,7 +120,12 @@ public class MemberProfitRecordsServiceImpl extends AbstractCrudService<MemberPr
     }
 
     @Override
-    public List<AchievementDetail> getAchievementByMonth(String memberId, String startMonth, int size) throws ParseException {
+    public List<AchievementDetail> getAchievementByMonth(String memberId, String startMonth, int size) throws Exception {
+        Member member = memberService.findOne(memberId);
+        if (member == null) {
+            throw new BusinessException(String.format("会员id:[%s]不存在", memberId));
+        }
+
         List<AchievementDetail> result = new ArrayList<>(size);
         SimpleDateFormat sdf = new SimpleDateFormat("yyyyMM");
         SimpleDateFormat sdf1 = new SimpleDateFormat("yyyy-MM-dd");
@@ -133,6 +144,9 @@ public class MemberProfitRecordsServiceImpl extends AbstractCrudService<MemberPr
             String lastDay = sdf1.format(calendar.getTime()) + " 23:59:59";
             long start = sdf2.parse(firstDay).getTime();
             long end = sdf2.parse(lastDay).getTime();
+            if (member.getCreatedDate() > end) {
+                break;
+            }
             List<Member> sonList = repository.findMembersByFatherId(memberId, end);
             getAchievementDetail(achievementDetail, start, end, sonList);
             achievementDetail.setStaticDate(sdf.format(calendar.getTime()));
@@ -142,7 +156,11 @@ public class MemberProfitRecordsServiceImpl extends AbstractCrudService<MemberPr
     }
 
     @Override
-    public List<AchievementDetail> getAchievementByDate(String memberId, String date, int size) throws ParseException {
+    public List<AchievementDetail> getAchievementByDate(String memberId, String date, int size) throws Exception {
+        Member member = memberService.findOne(memberId);
+        if (member == null) {
+            throw new BusinessException(String.format("会员id:[%s]不存在", memberId));
+        }
         List<AchievementDetail> result = new ArrayList<>(size);
         Calendar calendar = Calendar.getInstance();
         SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMdd");
@@ -155,6 +173,9 @@ public class MemberProfitRecordsServiceImpl extends AbstractCrudService<MemberPr
             String endTime = sdf.format(calendar.getTime()) + " 23:59:59";
             long start = sdf2.parse(startTime).getTime();
             long end = sdf2.parse(endTime).getTime();
+            if (member.getCreatedDate() > end) {
+                break;
+            }
             List<Member> sonList = repository.findMembersByFatherId(memberId, end);
             getAchievementDetail(achievementDetail, start, end, sonList);
             achievementDetail.setStaticDate(sdf.format(calendar.getTime()));
@@ -224,6 +245,12 @@ public class MemberProfitRecordsServiceImpl extends AbstractCrudService<MemberPr
             }
         }
         return newSonShopNum;
+    }
+
+    @Override
+    public Double getTotalProfit(String memberId) {
+        Map<String, Double> resultMap = memberProfitRecordsRepository.staticTotalProfit(memberId);
+        return resultMap.get("totalProfit") == null ? 0d : resultMap.get("totalProfit");
     }
 
     private void getAchievementDetail(AchievementDetail achievementDetail, long start, long end, List<Member> sonList) {
