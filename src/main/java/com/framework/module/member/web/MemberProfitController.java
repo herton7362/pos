@@ -68,7 +68,7 @@ public class MemberProfitController extends AbstractCrudController<MemberProfitR
         String memberId = UserThread.getInstance().get().getId();
         try {
             result = memberProfitService.getProfitByMonth(memberId, startMonth, size);
-        } catch (ParseException e) {
+        } catch (Exception e) {
             e.printStackTrace();
         }
         return new ResponseEntity<>(result, HttpStatus.OK);
@@ -88,7 +88,7 @@ public class MemberProfitController extends AbstractCrudController<MemberProfitR
             SimpleDateFormat sdf = new SimpleDateFormat("yyyyMM");
             Calendar calendar = Calendar.getInstance();
             result = memberProfitService.getProfitByMonth(memberId, sdf.format(calendar.getTime()), 1);
-        } catch (ParseException e) {
+        } catch (Exception e) {
             e.printStackTrace();
         }
         return new ResponseEntity<>(result, HttpStatus.OK);
@@ -101,7 +101,7 @@ public class MemberProfitController extends AbstractCrudController<MemberProfitR
         List<AchievementDetail> result = null;
         try {
             result = memberProfitService.getAchievementByMonth(memberId, startMonth, size);
-        } catch (ParseException e) {
+        } catch (Exception e) {
             return new ResponseEntity<>(result, HttpStatus.BAD_REQUEST);
         }
         return new ResponseEntity<>(result, HttpStatus.OK);
@@ -114,7 +114,7 @@ public class MemberProfitController extends AbstractCrudController<MemberProfitR
         List<AchievementDetail> result = new ArrayList<>();
         try {
             result = memberProfitService.getAchievementByDate(memberId, startDate, size);
-        } catch (ParseException e) {
+        } catch (Exception e) {
             return new ResponseEntity<>(result, HttpStatus.BAD_REQUEST);
         }
         return new ResponseEntity<>(result, HttpStatus.OK);

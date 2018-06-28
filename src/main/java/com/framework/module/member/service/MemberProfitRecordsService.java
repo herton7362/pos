@@ -35,7 +35,7 @@ public interface MemberProfitRecordsService extends CrudService<MemberProfitReco
      * @return 收益详情
      * @throws ParseException 异常
      */
-    List<ProfitMonthDetail> getProfitByMonth(String memberId, String startMonth, int size) throws ParseException;
+    List<ProfitMonthDetail> getProfitByMonth(String memberId, String startMonth, int size) throws Exception;
 
     /**
      * 按照月份获取业绩详情
@@ -45,7 +45,7 @@ public interface MemberProfitRecordsService extends CrudService<MemberProfitReco
      * @return 业绩详情
      * @throws ParseException 异常
      */
-    List<AchievementDetail> getAchievementByMonth(String memberId, String startMonth, int size) throws ParseException;
+    List<AchievementDetail> getAchievementByMonth(String memberId, String startMonth, int size) throws Exception;
 
     /**
      * 按天获取业绩详情
@@ -55,7 +55,7 @@ public interface MemberProfitRecordsService extends CrudService<MemberProfitReco
      * @return 业绩详情
      * @throws ParseException 异常
      */
-    List<AchievementDetail> getAchievementByDate(String memberId, String date, int size) throws ParseException;
+    List<AchievementDetail> getAchievementByDate(String memberId, String date, int size) throws Exception;
 
     /**
      * 获取业绩
