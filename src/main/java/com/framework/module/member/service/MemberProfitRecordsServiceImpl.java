@@ -90,7 +90,7 @@ public class MemberProfitRecordsServiceImpl extends AbstractCrudService<MemberPr
             long start = sdf2.parse(firstDay).getTime();
             long end = sdf2.parse(lastDay).getTime();
 
-            Map<String, Double> resultMap = memberProfitRecordsRepository.statisProfitsByMonth(memberId, start, end);
+            Map<String, Double> resultMap = memberProfitRecordsRepository.staticProfitsByMonth(memberId, start, end);
             ProfitMonthDetail profitMonthDetail = new ProfitMonthDetail();
             profitMonthDetail.setTotalProfit(resultMap.get("totalProfit") == null ? 0 : resultMap.get("totalProfit"));
             profitMonthDetail.setActiveAward(resultMap.get("activeAward") == null ? 0 : resultMap.get("activeAward"));
@@ -99,6 +99,15 @@ public class MemberProfitRecordsServiceImpl extends AbstractCrudService<MemberPr
             profitMonthDetail.setTeamBuildAward(resultMap.get("teamBuildAward") == null ? 0 : resultMap.get("teamBuildAward"));
             profitMonthDetail.setTotalTransactionAmount(resultMap.get("totalTransactionAmount") == null ? 0 : resultMap.get("totalTransactionAmount"));
             profitMonthDetail.setMonth(sdf.format(calendar.getTime()));
+
+            resultMap = memberProfitRecordsRepository.staticDirectAwardByMonth(memberId, start, end);
+            profitMonthDetail.setProfitMiaoDao(resultMap.get("profit1") == null ? 0 : resultMap.get("profit1"));
+            profitMonthDetail.setProfitSaoMa(resultMap.get("profit2") == null ? 0 : resultMap.get("profit2"));
+            profitMonthDetail.setProfitDaiHuan(resultMap.get("profit3") == null ? 0 : resultMap.get("profit3"));
+            profitMonthDetail.setTransactionAmountMiaoDao(resultMap.get("transaction1") == null ? 0 : resultMap.get("transaction1"));
+            profitMonthDetail.setTransactionAmountSaoMa(resultMap.get("transaction2") == null ? 0 : resultMap.get("transaction2"));
+            profitMonthDetail.setTransactionAmountDaiHuan(resultMap.get("transaction3") == null ? 0 : resultMap.get("transaction3"));
+
             result.add(profitMonthDetail);
         }
         return result;
@@ -178,7 +187,7 @@ public class MemberProfitRecordsServiceImpl extends AbstractCrudService<MemberPr
                 for (Member m : sonList) {
                     List<Shop> shops = shopRepository.findAllByMemberId(m.getId(), start, end);
                     newSonShopNum += shops == null ? 0 : shops.size();
-                    Map<String, Double> resultMap = memberProfitRecordsRepository.statisProfitsByMonth(m.getId(), start, end);
+                    Map<String, Double> resultMap = memberProfitRecordsRepository.staticProfitsByMonth(m.getId(), start, end);
                     totalTransactionAmount += resultMap.get("totalTransactionAmount") == null ? 0d : resultMap.get("totalTransactionAmount");
                 }
                 totalTransactionAmount = new BigDecimal(totalTransactionAmount).setScale(2, BigDecimal.ROUND_HALF_UP).doubleValue();
@@ -186,7 +195,7 @@ public class MemberProfitRecordsServiceImpl extends AbstractCrudService<MemberPr
                 achievement.setAllyTransactionAmount(totalTransactionAmount);
             }
             List<Shop> shops1 = shopRepository.findAllByMemberId(memberId, start, end);
-            Map<String, Double> resultMap1 = memberProfitRecordsRepository.statisProfitsByMonth(memberId, start, end);
+            Map<String, Double> resultMap1 = memberProfitRecordsRepository.staticProfitsByMonth(memberId, start, end);
             Double totalTransactionAmount1 = resultMap1.get("totalTransactionAmount") == null ? 0d : resultMap1.get("totalTransactionAmount");
             achievement.setNewShopNum(shops1.size());
             achievement.setTransactionAmount(new BigDecimal(totalTransactionAmount1).setScale(2, BigDecimal.ROUND_HALF_UP).doubleValue());
@@ -228,7 +237,7 @@ public class MemberProfitRecordsServiceImpl extends AbstractCrudService<MemberPr
                 sonShopNum += shops == null ? 0 : shops.size();
                 shops = shopRepository.findAllByMemberId(m.getId(), start, end);
                 newSonShopNum += shops == null ? 0 : shops.size();
-                Map<String, Double> resultMap = memberProfitRecordsRepository.statisProfitsByMonth(m.getId(), start, end);
+                Map<String, Double> resultMap = memberProfitRecordsRepository.staticProfitsByMonth(m.getId(), start, end);
                 totalTransactionAmount += resultMap.get("totalTransactionAmount") == null ? 0d : resultMap.get("totalTransactionAmount");
             }
             achievementDetail.setTransactionAmount(new BigDecimal(totalTransactionAmount).setScale(2, BigDecimal.ROUND_HALF_UP).doubleValue());

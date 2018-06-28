@@ -26,6 +26,66 @@ public class ProfitMonthDetail {
     private double totalTransactionAmount;
     @ApiModelProperty(value = "交易月份/yyyyMM")
     private String month;
+    @ApiModelProperty(value = "秒到/云闪付/理财收益")
+    private double profitMiaoDao;
+    @ApiModelProperty(value = "快捷支付扫码收益")
+    private double profitSaoMa;
+    @ApiModelProperty(value = "代还收益")
+    private double profitDaiHuan;
+    @ApiModelProperty(value = "秒到/云闪付/理财交易金额")
+    private double transactionAmountMiaoDao;
+    @ApiModelProperty(value = "快捷支付扫码交易金额")
+    private double transactionAmountSaoMa;
+    @ApiModelProperty(value = "代还交易金额")
+    private double transactionAmountDaiHuan;
+
+    public double getProfitMiaoDao() {
+        return profitMiaoDao;
+    }
+
+    public void setProfitMiaoDao(double profitMiaoDao) {
+        this.profitMiaoDao = profitMiaoDao;
+    }
+
+    public double getProfitSaoMa() {
+        return profitSaoMa;
+    }
+
+    public void setProfitSaoMa(double profitSaoMa) {
+        this.profitSaoMa = profitSaoMa;
+    }
+
+    public double getProfitDaiHuan() {
+        return profitDaiHuan;
+    }
+
+    public void setProfitDaiHuan(double profitDaiHuan) {
+        this.profitDaiHuan = profitDaiHuan;
+    }
+
+    public double getTransactionAmountMiaoDao() {
+        return transactionAmountMiaoDao;
+    }
+
+    public void setTransactionAmountMiaoDao(double transactionAmountMiaoDao) {
+        this.transactionAmountMiaoDao = transactionAmountMiaoDao;
+    }
+
+    public double getTransactionAmountSaoMa() {
+        return transactionAmountSaoMa;
+    }
+
+    public void setTransactionAmountSaoMa(double transactionAmountSaoMa) {
+        this.transactionAmountSaoMa = transactionAmountSaoMa;
+    }
+
+    public double getTransactionAmountDaiHuan() {
+        return transactionAmountDaiHuan;
+    }
+
+    public void setTransactionAmountDaiHuan(double transactionAmountDaiHuan) {
+        this.transactionAmountDaiHuan = transactionAmountDaiHuan;
+    }
 
     public String getMonth() {
         return month;
