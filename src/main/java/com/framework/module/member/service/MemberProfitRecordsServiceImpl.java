@@ -125,21 +125,7 @@ public class MemberProfitRecordsServiceImpl extends AbstractCrudService<MemberPr
             long start = sdf2.parse(firstDay).getTime();
             long end = sdf2.parse(lastDay).getTime();
             List<Member> sonList = repository.findMembersByFatherId(memberId, end);
-            if (sonList != null) {
-                achievementDetail.setTotalAllyNum(sonList.size());
-                int sonShopNum = 0;
-                int newSonShopNum = 0;
-                for (Member m : sonList) {
-                    List<Shop> shops = shopRepository.findAllByMemberId(m.getId(), 0, end);
-                    sonShopNum += shops == null ? 0 : shops.size();
-                    shops = shopRepository.findAllByMemberId(m.getId(), start, end);
-                    newSonShopNum += shops == null ? 0 : shops.size();
-                    Map<String, Double> resultMap = memberProfitRecordsRepository.statisProfitsByMonth(m.getId(), start, end);
-                    achievementDetail.setTransactionAmount(resultMap.get("totalTransactionAmount") == null ? 0 : resultMap.get("totalTransactionAmount"));
-                }
-                achievementDetail.setTotalAllyShopNum(sonShopNum);
-                achievementDetail.setNewAllyShopNum(newSonShopNum);
-            }
+            getAchievementDetail(achievementDetail, start, end, sonList);
             achievementDetail.setStaticDate(sdf.format(calendar.getTime()));
             result.add(achievementDetail);
         }
@@ -148,7 +134,45 @@ public class MemberProfitRecordsServiceImpl extends AbstractCrudService<MemberPr
 
     @Override
     public List<AchievementDetail> getAchievementByDate(String memberId, String date, int size) throws ParseException {
-        return null;
+        List<AchievementDetail> result = new ArrayList<>(size);
+        for (int i = 0; i < size; i++) {
+            AchievementDetail achievementDetail = new AchievementDetail();
+            SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMdd");
+            Calendar calendar = Calendar.getInstance();
+            calendar.setTime(sdf.parse(date));
+            calendar.add(Calendar.DAY_OF_MONTH, -i);
+
+            String startTime = sdf.format(calendar.getTime()) + " 00:00:00";
+            String endTime = sdf.format(calendar.getTime()) + " 23:59:59";
+            SimpleDateFormat sdf2 = new SimpleDateFormat("yyyyMMdd HH:mm:ss");
+            long start = sdf2.parse(startTime).getTime();
+            long end = sdf2.parse(endTime).getTime();
+            List<Member> sonList = repository.findMembersByFatherId(memberId, end);
+            getAchievementDetail(achievementDetail, start, end, sonList);
+            achievementDetail.setStaticDate(sdf.format(calendar.getTime()));
+            result.add(achievementDetail);
+        }
+        return result;
+    }
+
+    private void getAchievementDetail(AchievementDetail achievementDetail, long start, long end, List<Member> sonList) {
+        if (sonList != null) {
+            achievementDetail.setTotalAllyNum(sonList.size());
+            int sonShopNum = 0;
+            int newSonShopNum = 0;
+            double totalTransactionAmount = 0;
+            for (Member m : sonList) {
+                List<Shop> shops = shopRepository.findAllByMemberId(m.getId(), 0, end);
+                sonShopNum += shops == null ? 0 : shops.size();
+                shops = shopRepository.findAllByMemberId(m.getId(), start, end);
+                newSonShopNum += shops == null ? 0 : shops.size();
+                Map<String, Double> resultMap = memberProfitRecordsRepository.statisProfitsByMonth(m.getId(), start, end);
+                totalTransactionAmount += resultMap.get("totalTransactionAmount") == null ? 0 : resultMap.get("totalTransactionAmount");
+            }
+            achievementDetail.setTransactionAmount(new BigDecimal(totalTransactionAmount).setScale(2, BigDecimal.ROUND_HALF_UP).doubleValue());
+            achievementDetail.setTotalAllyShopNum(sonShopNum);
+            achievementDetail.setNewAllyShopNum(newSonShopNum);
+        }
     }
 
     @Override

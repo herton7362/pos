@@ -82,7 +82,7 @@ public class MemberProfitController extends AbstractCrudController<MemberProfitR
         try {
             result = memberProfitService.getAchievementByMonth(memberId, startMonth, size);
         } catch (ParseException e) {
-            e.printStackTrace();
+            return new ResponseEntity<>(result, HttpStatus.BAD_REQUEST);
         }
         return new ResponseEntity<>(result, HttpStatus.OK);
     }
@@ -94,7 +94,7 @@ public class MemberProfitController extends AbstractCrudController<MemberProfitR
         try {
             result = memberProfitService.getAchievementByDate(memberId, startDate, size);
         } catch (ParseException e) {
-            e.printStackTrace();
+            return new ResponseEntity<>(result, HttpStatus.BAD_REQUEST);
         }
         return new ResponseEntity<>(result, HttpStatus.OK);
     }
