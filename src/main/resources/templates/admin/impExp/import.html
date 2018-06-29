@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:include="admin/common/header_statics :: header('导入收益')"></head>
+<body class="hold-transition skin-yellow sidebar-mini">
+<!--[if lte IE 9]>
+<p class="browsehappy">你正在使用<strong>过时</strong>的浏览器，奎爷 暂不支持。 请 <a href="http://browsehappy.com/" target="_blank">升级浏览器</a>
+    以获得更好的体验！</p>
+<![endif]-->
+<!-- Site wrapper -->
+<div class="wrapper">
+    <header th:include="admin/common/header_html"></header>
+    <!-- =============================================== -->
+    <aside th:include="admin/common/aside"></aside>
+    <!-- =============================================== -->
+
+    <!-- Content Wrapper. Contains page content -->
+    <div class="content-wrapper">
+        <!-- Content Header (Page header) -->
+        <section class="content-header">
+            <h1>
+                导入导出
+                <small>收益导入</small>
+            </h1>
+            <ol class="breadcrumb">
+                <li>导入导出</li>
+                <li class="active">导入收益</li>
+            </ol>
+        </section>
+
+        <!-- Main content -->
+        <section id="content" class="content" v-cloak>
+            <div class="row">
+                <div class="col-md-12">
+                    <form class="margin-bottom" ref="uploadForm">
+                        <input ref="fileInput" type="file" name="profitFile" :accept="accept" :multiple="multiple" @change="upload"  style="display: none;"/>
+                        <button type="button" class="btn btn-flat btn-success btn-sm" @click="choseFile">
+                            <i class="fa fa-paperclip"></i> 上传附件
+                        </button>
+                        <button type="button" class="btn btn-flat btn-sm" @click="openModal">
+                            <i class="fa fa-fw fa-list"></i> 选择附件
+                        </button>
+                    </form>
+                    <div v-if="uploading">附件上传中请等待</div>
+                </div>
+            </div>
+        </section>
+        <!-- /.content -->
+    </div>
+    <!-- /.content-wrapper -->
+    <footer th:include="admin/common/footer_html"></footer>
+</div>
+<!-- ./wrapper -->
+<footer th:include="admin/common/footer_statics"></footer>
+<script th:src="@{/static/js/modules/impExp/import.js}"></script>
+</body>
+</html>
