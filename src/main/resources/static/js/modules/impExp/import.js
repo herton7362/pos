@@ -23,14 +23,23 @@ require(['jquery', 'vue', 'utils'], function($, Vue, utils) {
                 }
                 this.uploading = true;
                 $.ajax({
-                    url: utils.patchUrl('/attachment/upload'),
+                    url: utils.patchUrl('/api/memberprofit/import/profit'),
                     contentType: false,
                     processData: false,
                     type: 'POST',
                     data: new FormData(this.$refs['uploadForm']),
-                    success: function() {
+                    success: function(data) {
+                        debugger;
                         require(['messager'], function(messager) {
-                            messager.bubble('上传完毕');
+                            messager.bubble(data.responseText);
+                        });
+                        self.uploading = false;
+                        self.changeValue();
+                    },
+                    error: function(data) {
+                        debugger;
+                        require(['messager'], function(messager) {
+                            messager.bubble(data.responseText);
                         });
                         self.uploading = false;
                         self.changeValue();

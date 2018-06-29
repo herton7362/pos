@@ -2,6 +2,7 @@ package com.framework.module.member.domain;
 
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.kratos.common.utils.StringUtils;
 import com.kratos.entity.BaseUser;
 import com.kratos.module.attachment.domain.Attachment;
 import io.swagger.annotations.ApiModel;
@@ -81,6 +82,9 @@ public class Member extends BaseUser {
     private String openAccountSubbranch;
 
     public String getMemberLevel() {
+        if (StringUtils.isBlank(memberLevel)){
+            return "1";
+        }
         return memberLevel;
     }
 

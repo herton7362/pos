@@ -1,8 +1,6 @@
 package com.framework.module.member.domain;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
+import java.util.*;
 
 /**
  * <p>Description: </p>
@@ -14,7 +12,7 @@ public class Tree {
     private Member member;
     private List<Tree> children = new ArrayList<Tree>();
     private Double transactionAmount = 0d;
-    private List<Integer> childLevelList = new ArrayList<>();
+    private Map<String,Integer> childLevelList = new HashMap<>();
 
     public Tree(Member member) {
         this.member = member;
@@ -78,7 +76,7 @@ public class Tree {
         return transactionAmount;
     }
 
-    public List<Integer> getChildLevelList() {
+    public Map<String, Integer> getChildLevelMap() {
         return childLevelList;
     }
 
@@ -120,7 +118,7 @@ public class Tree {
      *
      * @return
      */
-    public Object getRootData() {
+    public Member getRootData() {
         return member;
     }
 
