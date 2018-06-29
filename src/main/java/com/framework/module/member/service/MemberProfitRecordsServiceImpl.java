@@ -335,7 +335,7 @@ public class MemberProfitRecordsServiceImpl extends AbstractCrudService<MemberPr
             double addedTransactionAmount = transactionAmountInDb + importProfit.getTransactionAmount();
             shop.setTransactionAmount(new BigDecimal(addedTransactionAmount).setScale(2, BigDecimal.ROUND_HALF_UP).doubleValue());
             // 设置激活奖励
-            setActiveRewardProfit(activeRules, shop, note);
+            setActiveRewardProfit(activeRules, shop, note, importProfit.getTransactionDate());
             shopRepository.save(shop);
         }
         // 将数据都插入到数据库中
@@ -345,7 +345,7 @@ public class MemberProfitRecordsServiceImpl extends AbstractCrudService<MemberPr
         return importSize;
     }
 
-    private void setActiveRewardProfit(List<ActiveRule> activeRules, Shop shop, String note) throws Exception {
+    private void setActiveRewardProfit(List<ActiveRule> activeRules, Shop shop, String note, Long transactionDate) throws Exception {
         if ((null == shop.getStatus() || shop.getStatus().equals(Shop.Status.UN_ACTIVE)) && shop.getTransactionAmount() >= activeRules.get(0).getConditionValue()) {
             shop.setStatus(Shop.Status.ACTIVE);
             Long rewardCount = shopRepository.count(
@@ -362,7 +362,7 @@ public class MemberProfitRecordsServiceImpl extends AbstractCrudService<MemberPr
                 activationRewardProfit.setProfitType(Constant.PROFIT_TYPE_FANXIAN);
                 activationRewardProfit.setProfit(activeRules.get(0).getAwardMoney());
                 activationRewardProfit.setMemberId(shop.getMemberId());
-                activationRewardProfit.setTransactionDate(new Date().getTime());
+                activationRewardProfit.setTransactionDate(transactionDate);
                 save(activationRewardProfit);
             }
         }
