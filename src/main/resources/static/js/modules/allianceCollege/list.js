@@ -8,6 +8,9 @@ require(['jquery', 'vue', 'messager', 'utils'], function($, Vue, messager, utils
                     name: ''
                 },
                 columns: [
+                    {field:'image', title:'图片', formatter: function(value) {
+                            return '<img width="50" src="'+utils.patchUrl('/attachment/download/' + value.id)+'">';
+                        }},
                     {field:'pdf', title:'pdf', formatter: function(value) {
                             return '<a href="'+utils.patchUrl('/attachment/download/' + value.id)+'">'+value.name+'</a>';
                         }},
@@ -27,6 +30,7 @@ require(['jquery', 'vue', 'messager', 'utils'], function($, Vue, messager, utils
             },
             formData: {
                 id: null,
+                image: null,
                 allianceCollegeCategory: {},
                 pdf: null,
                 remark: null

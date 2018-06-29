@@ -16,6 +16,9 @@ public class AllianceCollege extends BaseEntity {
     @ApiModelProperty(value = "上级分类")
     @ManyToOne(fetch = FetchType.EAGER)
     private AllianceCollegeCategory allianceCollegeCategory;
+    @ApiModelProperty(value = "图片")
+    @ManyToOne
+    private Attachment image;
     @ApiModelProperty(value = "pdf")
     @ManyToOne
     private Attachment pdf;
@@ -29,6 +32,14 @@ public class AllianceCollege extends BaseEntity {
 
     public void setAllianceCollegeCategory(AllianceCollegeCategory allianceCollegeCategory) {
         this.allianceCollegeCategory = allianceCollegeCategory;
+    }
+
+    public Attachment getImage() {
+        return image;
+    }
+
+    public void setImage(Attachment image) {
+        this.image = image;
     }
 
     public Attachment getPdf() {
