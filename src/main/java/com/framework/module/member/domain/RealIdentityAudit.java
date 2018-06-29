@@ -1,6 +1,5 @@
 package com.framework.module.member.domain;
 
-import com.framework.module.orderform.domain.OrderForm;
 import com.kratos.entity.BaseEntity;
 import com.kratos.module.attachment.domain.Attachment;
 import io.swagger.annotations.ApiModel;
@@ -16,6 +15,9 @@ public class RealIdentityAudit extends BaseEntity {
     @ApiModelProperty(required = true, value = "姓名")
     @Column(length = 30)
     private String name;
+    @ApiModelProperty(required = true, value = "会员id")
+    @Column(length = 36)
+    private String memberId;
     @ApiModelProperty(required = true, value = "身份证")
     @Column(length = 30)
     private String idCardNumber;
@@ -38,6 +40,14 @@ public class RealIdentityAudit extends BaseEntity {
 
     public void setName(String name) {
         this.name = name;
+    }
+
+    public String getMemberId() {
+        return memberId;
+    }
+
+    public void setMemberId(String memberId) {
+        this.memberId = memberId;
     }
 
     public String getIdCardNumber() {
