@@ -117,23 +117,6 @@ public class OrderFormServiceImpl extends AbstractCrudService<OrderForm> impleme
     }
 
     @Override
-    public OrderForm pay(OrderForm orderForm) throws Exception {
-        if(orderForm == null) {
-            throw new BusinessException("订单未找到");
-        }
-        if(OrderForm.OrderStatus.UN_PAY != orderForm.getStatus()) {
-            throw new BusinessException("订单状态不正确");
-        }
-        orderForm.getItems().forEach(item -> item.setOrderForm(orderForm));
-        validAccount(orderForm);
-        orderForm.setStatus(OrderForm.OrderStatus.PAYED);
-        orderForm.setPaymentStatus(OrderForm.PaymentStatus.PAYED);
-        final OrderForm newOrderForm = orderFormRepository.save(orderForm);
-        consumeModifyMemberAccount(newOrderForm);
-        return newOrderForm;
-    }
-
-    @Override
     public OrderForm saveShippingInfo(SendOutParam sendOutParam) throws Exception {
         OrderForm orderForm = orderFormRepository.findOne(sendOutParam.getId());
         if(orderForm == null) {
@@ -253,7 +236,7 @@ public class OrderFormServiceImpl extends AbstractCrudService<OrderForm> impleme
     }
 
     @Override
-    public void payed(String outTradeNo) throws Exception {
+    public OrderForm payed(String outTradeNo) throws Exception {
         Map<String, String[]> param = new HashMap<>();
         param.put("orderNumber", new String[]{outTradeNo});
         List<OrderForm> orderForms = findAll(param);
@@ -264,9 +247,10 @@ public class OrderFormServiceImpl extends AbstractCrudService<OrderForm> impleme
             orderFormRepository.save(orderForm);
             consumeModifyMemberAccount(orderForm);
             // 查询是否购买超过五个机器，并将当前用户改为激活状态，并且调用激活奖励接口
-            if(orderForm.getMember().getStatus() == Member.Status.UN_ACTIVE) {
+            if(orderForm.getMember().getStatus() == Member.Status.UN_ACTIVE || orderForm.getMember().getStatus() == null) {
                 param.clear();
                 param.put("member.id", new String[]{orderForm.getMember().getId()});
+                param.put("paymentStatus", new String[]{OrderForm.PaymentStatus.PAYED.name()});
                 orderForms = findAll(param);
                 Integer total = 0;
                 for (OrderForm form : orderForms) {
@@ -281,8 +265,9 @@ public class OrderFormServiceImpl extends AbstractCrudService<OrderForm> impleme
                     memberProfitRecordsService.setTeamBuildProfit(member.getFatherId());
                 }
             }
+            return orderForm;
         }
-
+        return null;
     }
 
     /**

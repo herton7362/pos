@@ -49,7 +49,7 @@ public class OrderFormController extends AbstractCrudController<OrderForm> {
     @ApiOperation(value="支付")
     @RequestMapping(value = "/pay", method = RequestMethod.POST)
     public ResponseEntity<OrderForm> pay(@RequestBody OrderForm orderForm) throws Exception {
-        return new ResponseEntity<>(orderFormService.pay(orderForm), HttpStatus.OK);
+        return new ResponseEntity<>(orderFormService.payed(orderForm.getOrderNumber()), HttpStatus.OK);
     }
 
     /**

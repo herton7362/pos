@@ -24,12 +24,6 @@ public interface OrderFormService extends CrudService<OrderForm> {
     Map<String,Integer> getOrderCounts(String memberId) throws Exception;
 
     /**
-     * 支付
-     * @param orderForm 订单参数
-     */
-    OrderForm pay(OrderForm orderForm)  throws Exception;
-
-    /**
      * 发货
      * @param sendOutParam 发货参数
      */
@@ -75,5 +69,5 @@ public interface OrderFormService extends CrudService<OrderForm> {
      * 已支付
      * @param outTradeNo 订单id
      */
-    void payed(String outTradeNo) throws Exception;
+    OrderForm payed(String outTradeNo) throws Exception;
 }
