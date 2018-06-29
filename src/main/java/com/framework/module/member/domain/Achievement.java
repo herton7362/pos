@@ -3,7 +3,7 @@ package com.framework.module.member.domain;
 import io.swagger.annotations.ApiModelProperty;
 
 /**
- * <p>Description: </p>
+ * <p>Description: 业绩</p>
  *
  * @Auther: 张庆贺
  * @Date: 2018/6/27 13:05
