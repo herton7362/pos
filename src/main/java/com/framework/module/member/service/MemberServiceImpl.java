@@ -132,7 +132,7 @@ public class MemberServiceImpl extends AbstractCrudService<Member> implements Me
     }
 
     @Override
-    public AllyMembers getAllyNum(String memberId) {
+    public AllyMembers getAlliesByMemberId(String memberId) {
         List<Member> allSons = repository.findMembersByFatherId(memberId, new Date().getTime());
         List<Member> allGrandson = new ArrayList<>();
         for (Member m : allSons) {
