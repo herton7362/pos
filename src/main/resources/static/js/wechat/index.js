@@ -66,7 +66,7 @@ require([
                     }
                 })
             }
-            // this.loadProducts();
+            this.loadProducts();
         }
     });
-})
+});
