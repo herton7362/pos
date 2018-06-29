@@ -9,6 +9,7 @@ import com.kratos.common.AbstractCrudController;
 import com.kratos.common.CrudService;
 import com.kratos.common.PageParam;
 import com.kratos.common.PageResult;
+import com.kratos.module.auth.UserThread;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiImplicitParams;
@@ -95,6 +96,19 @@ public class MemberController extends AbstractCrudController<Member> {
     }
 
     /**
+     * 查询儿子总数
+     *
+     * @return
+     * @throws Exception
+     */
+    @ApiOperation(value = "查询盟友总数")
+    @RequestMapping(value = "/allyNum", method = RequestMethod.GET)
+    public ResponseEntity<Map<String, Integer>> allyNum() {
+        String memberId = UserThread.getInstance().get().getId();
+        return new ResponseEntity<>(memberService.getAllyNum(memberId), HttpStatus.OK);
+    }
+
+    /**
      * 查询总数
      */
     @ApiOperation(value = "查询总数")
@@ -106,7 +120,7 @@ public class MemberController extends AbstractCrudController<Member> {
     /**
      * 获取盟友
      */
-    @ApiOperation(value="获取盟友", notes = "可以传查询条件例：name=张三，查询条件使用or分割")
+    @ApiOperation(value = "获取盟友", notes = "可以传查询条件例：name=张三，查询条件使用or分割")
     @ApiImplicitParams(value = {
             @ApiImplicitParam(name = "currentPage", value = "当前页数", dataType = "Integer", paramType = "query"),
             @ApiImplicitParam(name = "pageSize", value = "每页页数", dataType = "Integer", paramType = "query"),
@@ -117,7 +131,7 @@ public class MemberController extends AbstractCrudController<Member> {
     public ResponseEntity<?> searchPagedList(@ModelAttribute PageParam pageParam, HttpServletRequest request) throws Exception {
         Map<String, String[]> param = new HashMap<>(request.getParameterMap());
         param.put("fatherId", new String[]{MemberThread.getInstance().get().getId()});
-        if(pageParam.isPageAble()) {
+        if (pageParam.isPageAble()) {
             PageResult<Member> page = crudService.findAll(pageParam.getPageRequest(), param);
             return new ResponseEntity<>(page, HttpStatus.OK);
         }

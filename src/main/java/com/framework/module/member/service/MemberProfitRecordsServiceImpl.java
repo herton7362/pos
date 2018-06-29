@@ -395,6 +395,22 @@ public class MemberProfitRecordsServiceImpl extends AbstractCrudService<MemberPr
         }
     }
 
+    @Override
+    public void membersIncreaseLevel() {
+        Map<String, Tree> allMemberMap = new HashMap<>();
+        Iterable<Member> allMembers = repository.findAll();
+        Iterator<Member> iterator = allMembers.iterator();
+        while (iterator.hasNext()) {
+            Member m = iterator.next();
+            Tree node = new Tree(m);
+            Map<String, Double> transactionAmount = shopRepository.staticTotalTransaction(m.getId());
+            node.addTransactionAmount(transactionAmount.get("totalTransactionAmount") == null ? 0 : transactionAmount.get("totalTransactionAmount"));
+            allMemberMap.put(m.getId(), node);
+        }
+//        for(allMemberMap.entrySet())
+
+    }
+
     /**
      * 再Excel中获取数据并校验，校验通过后加入到实体中
      *

@@ -4,6 +4,7 @@ import com.framework.module.auth.MemberThread;
 import com.framework.module.member.domain.Member;
 import com.framework.module.member.domain.MemberCard;
 import com.framework.module.member.domain.MemberRepository;
+import com.framework.module.member.domain.Tree;
 import com.framework.module.record.domain.OperationRecord;
 import com.framework.module.record.service.OperationRecordService;
 import com.kratos.common.AbstractCrudService;
@@ -20,10 +21,7 @@ import javax.persistence.criteria.CriteriaQuery;
 import javax.persistence.criteria.Predicate;
 import javax.persistence.criteria.Root;
 import java.math.BigDecimal;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 @Component("memberService")
 @Transactional
@@ -134,8 +132,28 @@ public class MemberServiceImpl extends AbstractCrudService<Member> implements Me
     }
 
     @Override
-    public void membersIncreaseLevel() {
-
+    public Map<String, Integer> getAllyNum(String memberId) {
+        List<Member> allSons = repository.findMembersByFatherId(memberId, new Date().getTime());
+        List<Member> allGrandson = new ArrayList<>();
+        for (Member m : allSons) {
+            allGrandson.addAll(repository.findMembersByFatherId(m.getId(), new Date().getTime()));
+        }
+        Integer totalSize = allGrandson.size();
+        Integer startPos = 0;
+        while (true) {
+            for (int i = startPos; i < totalSize; i++) {
+                allGrandson.addAll(repository.findMembersByFatherId(allGrandson.get(i).getId(), new Date().getTime()));
+            }
+            startPos = totalSize;
+            totalSize = allGrandson.size();
+            if (totalSize == startPos) {
+                break;
+            }
+        }
+        Map<String, Integer> result = new HashMap<>();
+        result.put("sonNum", allSons.size());
+        result.put("grandSonNum", allGrandson.size());
+        return result;
     }
 
     private Integer increaseNumber(Integer sourcePoint, Integer point) {

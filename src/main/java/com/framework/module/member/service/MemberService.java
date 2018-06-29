@@ -3,6 +3,8 @@ package com.framework.module.member.service;
 import com.framework.module.member.domain.Member;
 import com.kratos.common.CrudService;
 
+import java.util.Map;
+
 public interface MemberService extends CrudService<Member> {
     /**
      * 根据登录名获取会员
@@ -45,7 +47,9 @@ public interface MemberService extends CrudService<Member> {
     Long count();
 
     /**
-     * 每月1号凌晨对所有会员进行升级
+     * 获取儿子和孙子的数量
+     * @param memberId
+     * @return
      */
-    void membersIncreaseLevel();
+    Map<String, Integer> getAllyNum(String memberId);
 }
