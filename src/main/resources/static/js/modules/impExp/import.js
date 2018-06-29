@@ -29,7 +29,6 @@ require(['jquery', 'vue', 'utils'], function($, Vue, utils) {
                     type: 'POST',
                     data: new FormData(this.$refs['uploadForm']),
                     success: function(data) {
-                        debugger;
                         require(['messager'], function(messager) {
                             messager.bubble(data.responseText);
                         });
@@ -37,7 +36,6 @@ require(['jquery', 'vue', 'utils'], function($, Vue, utils) {
                         self.changeValue();
                     },
                     error: function(data) {
-                        debugger;
                         require(['messager'], function(messager) {
                             messager.bubble(data.responseText);
                         });
