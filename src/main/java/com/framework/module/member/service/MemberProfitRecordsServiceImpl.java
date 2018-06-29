@@ -385,7 +385,9 @@ public class MemberProfitRecordsServiceImpl extends AbstractCrudService<MemberPr
             fatherProfit.setProfitType(Constant.PROFIT_TYPE_GUANLI);
             fatherProfit.setMemberId(fatherMember.getId());
             MemberLevelParam fatherMemberParam = memberLevelParamService.getParamByLevel(fatherMember.getMemberLevel());
-            fatherProfit.setProfit(new BigDecimal((fatherMemberParam.getmPosProfit() - profitRate) * importProfit.getTransactionAmount()).setScale(2, BigDecimal.ROUND_HALF_UP).doubleValue());
+            double fatherProfitRate = fatherMemberParam.getmPosProfit() - profitRate;
+            fatherProfitRate = fatherProfitRate < 0 ? 0 : fatherProfitRate;
+            fatherProfit.setProfit(new BigDecimal(fatherProfitRate * importProfit.getTransactionAmount()).setScale(2, BigDecimal.ROUND_HALF_UP).doubleValue());
             memberProfitRecordsList.add(fatherProfit);
             if (StringUtils.isBlank(fatherMember.getFatherId())) {
                 fatherMember = null;
@@ -423,14 +425,14 @@ public class MemberProfitRecordsServiceImpl extends AbstractCrudService<MemberPr
         }
         // 从叶子节点开始遍历
         List<Member> leafMember = repository.getAllLeafMembers();
-        for (Member member : leafMember){
+        for (Member member : leafMember) {
             MemberLevelParam fatherMemberParam = memberLevelParamService.getParamByLevel(member.getMemberLevel());
             Tree cNode = allMemberNodeMap.get(member.getId());
-            if (cNode.getTransactionAmount() < fatherMemberParam.getmPosProfit()){
+            if (cNode.getTransactionAmount() < fatherMemberParam.getmPosProfit()) {
                 continue;
             }
             String[] scale = fatherMemberParam.getTeamScale().split("|");
-            for (int i = 0; i < scale.length; i++){
+            for (int i = 0; i < scale.length; i++) {
 
             }
         }
