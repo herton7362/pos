@@ -1,10 +1,10 @@
 package com.framework.module.member.service;
 
 import com.framework.module.auth.MemberThread;
+import com.framework.module.member.domain.AllyMembers;
 import com.framework.module.member.domain.Member;
 import com.framework.module.member.domain.MemberCard;
 import com.framework.module.member.domain.MemberRepository;
-import com.framework.module.member.domain.Tree;
 import com.framework.module.record.domain.OperationRecord;
 import com.framework.module.record.service.OperationRecordService;
 import com.kratos.common.AbstractCrudService;
@@ -132,7 +132,7 @@ public class MemberServiceImpl extends AbstractCrudService<Member> implements Me
     }
 
     @Override
-    public Map<String, Integer> getAllyNum(String memberId) {
+    public AllyMembers getAllyNum(String memberId) {
         List<Member> allSons = repository.findMembersByFatherId(memberId, new Date().getTime());
         List<Member> allGrandson = new ArrayList<>();
         for (Member m : allSons) {
@@ -150,10 +150,10 @@ public class MemberServiceImpl extends AbstractCrudService<Member> implements Me
                 break;
             }
         }
-        Map<String, Integer> result = new HashMap<>();
-        result.put("sonNum", allSons.size());
-        result.put("grandSonNum", allGrandson.size());
-        return result;
+        AllyMembers allyMembers  = new AllyMembers();
+        allyMembers.setGrandSonList(allGrandson);
+        allyMembers.setSonList(allSons);
+        return allyMembers;
     }
 
     private Integer increaseNumber(Integer sourcePoint, Integer point) {

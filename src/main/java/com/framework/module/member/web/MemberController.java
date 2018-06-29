@@ -1,6 +1,7 @@
 package com.framework.module.member.web;
 
 import com.framework.module.auth.MemberThread;
+import com.framework.module.member.domain.AllyMembers;
 import com.framework.module.member.domain.Member;
 import com.framework.module.member.domain.MemberLevel;
 import com.framework.module.member.service.MemberLevelService;
@@ -105,7 +106,11 @@ public class MemberController extends AbstractCrudController<Member> {
     @RequestMapping(value = "/allyNum", method = RequestMethod.GET)
     public ResponseEntity<Map<String, Integer>> allyNum() {
         String memberId = UserThread.getInstance().get().getId();
-        return new ResponseEntity<>(memberService.getAllyNum(memberId), HttpStatus.OK);
+        AllyMembers allyMembers = memberService.getAllyNum(memberId);
+        Map<String, Integer> result = new HashMap<>();
+        result.put("sons", allyMembers.getSonList() == null ? 0 : allyMembers.getSonList().size());
+        result.put("grandSons", allyMembers.getGrandSonList() == null ? 0 : allyMembers.getGrandSonList().size());
+        return new ResponseEntity<>(result, HttpStatus.OK);
     }
 
     /**

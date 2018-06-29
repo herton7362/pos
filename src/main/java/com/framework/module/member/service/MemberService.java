@@ -1,9 +1,8 @@
 package com.framework.module.member.service;
 
+import com.framework.module.member.domain.AllyMembers;
 import com.framework.module.member.domain.Member;
 import com.kratos.common.CrudService;
-
-import java.util.Map;
 
 public interface MemberService extends CrudService<Member> {
     /**
@@ -51,5 +50,5 @@ public interface MemberService extends CrudService<Member> {
      * @param memberId
      * @return
      */
-    Map<String, Integer> getAllyNum(String memberId);
+    AllyMembers getAllyNum(String memberId);
 }
