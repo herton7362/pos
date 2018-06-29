@@ -2,6 +2,14 @@
     display: none;
 }
 
+.weui-vcode-btn {
+    color: #17b0ec !important;
+}
+
+.weui-btn_primary {
+    background-color: #17b0ec !important;
+}
+
 .h5-layout .weui-cells p {
     margin: 0;
 }

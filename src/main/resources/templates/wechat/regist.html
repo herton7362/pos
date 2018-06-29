@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <template th:include="wechat/common/header_statics :: header('登录')" th:remove="tag"></template>
+    <link rel="stylesheet" th:href="@{/static/css/wechat.css}"/>
+</head>
+<!-- ADD THE CLASS layout-top-nav TO REMOVE THE SIDEBAR. -->
+<body class="layout-top-nav skin-yellow h5-layout" style="height: auto; min-height: 100%;">
+<div class="wrapper login" style="height: auto; min-height: 100%;">
+
+    <!-- Full Width Column -->
+    <div class="content-wrapper">
+        <div class="container">
+            <!-- Main content -->
+            <section id="content" class="content" v-cloak>
+                <div class="header">
+                    <h3 class="page__title">开通用户</h3>
+                </div>
+
+                <div class="weui-cells" >
+                    <div class="weui-cell">
+                        <div class="weui-cell__hd">
+                            <label class="weui-label">邀请人手机号</label>
+                        </div>
+                        <div class="weui-cell__bd">
+                            <input class="weui-input" type="tel" maxlength="11" v-model="invitePersonMobile" readonly>
+                        </div>
+                    </div>
+                    <div class="weui-cell weui-cell_vcode">
+                        <div class="weui-cell__hd">
+                            <label class="weui-label">手机号</label>
+                        </div>
+                        <div class="weui-cell__bd">
+                            <input class="weui-input" type="tel" maxlength="11" v-model="username" placeholder="请输入手机号">
+                        </div>
+                        <div class="weui-cell__ft">
+                            <button class="weui-vcode-btn"
+                                    :class="{'weui-btn_default weui-btn_disabled': countDownSecond > 0}"
+                                    :disabled="countDownSecond > 0"
+                                    @click="sendVerifyCode">{{countDownSecond?countDownSecond:''}} 获取验证码</button>
+                        </div>
+                    </div>
+                    <div class="weui-cell">
+                        <div class="weui-cell__hd"><label class="weui-label">验证码</label></div>
+                        <div class="weui-cell__bd">
+                            <input class="weui-input" type="number" pattern="[0-9]*" v-model="verifyCode" placeholder="请输接收到的验证码">
+                        </div>
+                    </div>
+                    <div class="weui-cell">
+                        <div class="weui-cell__hd"><label class="weui-label">设置密码</label></div>
+                        <div class="weui-cell__bd">
+                            <input class="weui-input" type="password" v-model="password" placeholder="6-20位数字，字母组成">
+                        </div>
+                    </div>
+                </div>
+                <div class="weui-btn-area">
+                    <button type="button" class="weui-btn weui-btn_primary" @click="register">确定</button>
+                </div>
+
+            </section>
+            <!-- /.content -->
+        </div>
+        <!-- /.container -->
+    </div>
+    <aside th:replace="wechat/common/aside"></aside>
+    <!-- /.content-wrapper -->
+</div>
+<!-- ./wrapper -->
+<footer th:replace="wechat/common/footer_statics"></footer>
+<script th:src="@{/static/js/wechat/regist.js}"></script>
+</body>
+</html>
