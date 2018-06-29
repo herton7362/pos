@@ -133,6 +133,11 @@ public class MemberServiceImpl extends AbstractCrudService<Member> implements Me
         );
     }
 
+    @Override
+    public void membersIncreaseLevel() {
+
+    }
+
     private Integer increaseNumber(Integer sourcePoint, Integer point) {
         if (sourcePoint == null) {
             sourcePoint = 0;
