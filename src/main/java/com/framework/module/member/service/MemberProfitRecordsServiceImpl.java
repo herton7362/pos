@@ -10,7 +10,9 @@ import com.framework.module.shop.domain.Shop;
 import com.framework.module.shop.domain.ShopRepository;
 import com.kratos.common.AbstractCrudService;
 import com.kratos.exceptions.BusinessException;
+import org.apache.commons.lang.RandomStringUtils;
 import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang.time.DateFormatUtils;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.Row;
@@ -302,7 +304,9 @@ public class MemberProfitRecordsServiceImpl extends AbstractCrudService<MemberPr
             if (row == null) {
                 continue;
             }
+            String note = DateFormatUtils.format(System.currentTimeMillis(), "yyyyMMddHHmmssSSS") + RandomStringUtils.randomNumeric(4);
             MemberProfitRecords importProfit = getAllParamFromExcel(row, r);
+            importProfit.setNote(note);
             Shop shop = shopRepository.findOneBySn(importProfit.getSn());
             if (shop == null) {
                 throw new BusinessException(String.format("第" + r + "行数据机不合法,SN对应商户不存在SN为:[%s]", importProfit.getSn()));
@@ -324,14 +328,14 @@ public class MemberProfitRecordsServiceImpl extends AbstractCrudService<MemberPr
             memberProfitRecordsList.add(importProfit);
             // 如果父节点不为空，设置父节点的收益
             if (StringUtils.isNotBlank(member.getFatherId())) {
-                setParamProfitRecords(memberProfitRecordsList, importProfit, member, profitRate);
+                setParamProfitRecords(memberProfitRecordsList, importProfit, member, profitRate, note);
             }
             // 设置激活奖励
             double transactionAmountInDb = shop.getTransactionAmount() == null ? 0 : shop.getTransactionAmount();
             double addedTransactionAmount = transactionAmountInDb + importProfit.getTransactionAmount();
             shop.setTransactionAmount(new BigDecimal(addedTransactionAmount).setScale(2, BigDecimal.ROUND_HALF_UP).doubleValue());
             // 设置激活奖励
-            setActiveRewardProfit(activeRules, shop);
+            setActiveRewardProfit(activeRules, shop, note);
             shopRepository.save(shop);
         }
         // 将数据都插入到数据库中
@@ -341,7 +345,7 @@ public class MemberProfitRecordsServiceImpl extends AbstractCrudService<MemberPr
         return importSize;
     }
 
-    private void setActiveRewardProfit(List<ActiveRule> activeRules, Shop shop) throws Exception {
+    private void setActiveRewardProfit(List<ActiveRule> activeRules, Shop shop, String note) throws Exception {
         if ((null == shop.getStatus() || shop.getStatus().equals(Shop.Status.UN_ACTIVE)) && shop.getTransactionAmount() >= activeRules.get(0).getConditionValue()) {
             shop.setStatus(Shop.Status.ACTIVE);
             Long rewardCount = shopRepository.count(
@@ -354,6 +358,7 @@ public class MemberProfitRecordsServiceImpl extends AbstractCrudService<MemberPr
             if (rewardCount == 0) {
                 shop.setActivationReward(Constant.ACTIVATION_REWARD_YES);
                 MemberProfitRecords activationRewardProfit = new MemberProfitRecords();
+                activationRewardProfit.setNote(note);
                 activationRewardProfit.setProfitType(Constant.PROFIT_TYPE_FANXIAN);
                 activationRewardProfit.setProfit(activeRules.get(0).getAwardMoney());
                 activationRewardProfit.setMemberId(shop.getMemberId());
@@ -370,17 +375,14 @@ public class MemberProfitRecordsServiceImpl extends AbstractCrudService<MemberPr
      * @param importProfit            当前用户的收益情况
      * @param member                  当前用户
      * @param profitRate              当前用户的收益
+     * @param note
      * @throws Exception 异常
      */
-    private void setParamProfitRecords(List<MemberProfitRecords> memberProfitRecordsList, MemberProfitRecords importProfit, Member member, double profitRate) throws Exception {
+    private void setParamProfitRecords(List<MemberProfitRecords> memberProfitRecordsList, MemberProfitRecords importProfit, Member member, double profitRate, String note) throws Exception {
         Member fatherMember = repository.findOne(member.getFatherId());
         while (fatherMember != null) {
             MemberProfitRecords fatherProfit = new MemberProfitRecords();
-            fatherProfit.setOrganizationNo(importProfit.getOrganizationNo());
-            fatherProfit.setOrganizationName(importProfit.getOrganizationName());
-            fatherProfit.setUserNo(importProfit.getUserNo());
-            fatherProfit.setUserName(importProfit.getUserName());
-            fatherProfit.setSn(importProfit.getSn());
+            fatherProfit.setNote(note);
             fatherProfit.setTransactionDate(importProfit.getTransactionDate());
             fatherProfit.setProfitType(Constant.PROFIT_TYPE_GUANLI);
             fatherProfit.setMemberId(fatherMember.getId());
