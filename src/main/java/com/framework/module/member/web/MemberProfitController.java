@@ -13,7 +13,6 @@ import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.util.CollectionUtils;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -135,20 +134,24 @@ public class MemberProfitController extends AbstractCrudController<MemberProfitR
 
     @ApiOperation(value = "今日盟友登记商户")
     @RequestMapping(value = "/getAllyNewShopToday", method = RequestMethod.GET)
-    public ResponseEntity<Integer> getAllyNewShopToday() {
+    public ResponseEntity<Map<String, Integer>> getAllyNewShopToday() {
+        Map<String, Integer> result = new HashMap<>();
         try {
             String memberId = UserThread.getInstance().get().getId();
-            return new ResponseEntity<>(memberProfitService.getAllyNewShopToday(memberId), HttpStatus.OK);
+            result.put("NewShopNum", memberProfitService.getAllyNewShopToday(memberId));
+            return new ResponseEntity<>(result, HttpStatus.OK);
         } catch (ParseException e) {
-            return new ResponseEntity<>(0, HttpStatus.OK);
+            return new ResponseEntity<>(result, HttpStatus.OK);
         }
     }
 
     @ApiOperation(value = "获取历史总收益")
     @RequestMapping(value = "/getTotalProfit", method = RequestMethod.GET)
-    public ResponseEntity<Double> getTotalProfit() {
+    public ResponseEntity<Map<String, Double>> getTotalProfit() {
+        Map<String, Double> result = new HashMap<>();
         String memberId = UserThread.getInstance().get().getId();
-        return new ResponseEntity<>(memberProfitService.getTotalProfit(memberId), HttpStatus.OK);
+        result.put("TotalProfit", memberProfitService.getTotalProfit(memberId));
+        return new ResponseEntity<>(result, HttpStatus.OK);
     }
 
 

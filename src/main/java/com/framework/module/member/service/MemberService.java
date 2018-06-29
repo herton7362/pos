@@ -43,4 +43,9 @@ public interface MemberService extends CrudService<Member> {
      * @return 会员总数
      */
     Long count();
+
+    /**
+     * 每月1号凌晨对所有会员进行升级
+     */
+    void membersIncreaseLevel();
 }
