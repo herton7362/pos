@@ -106,7 +106,7 @@ public class MemberController extends AbstractCrudController<Member> {
     @RequestMapping(value = "/allyNum", method = RequestMethod.GET)
     public ResponseEntity<Map<String, Integer>> allyNum() {
         String memberId = UserThread.getInstance().get().getId();
-        AllyMembers allyMembers = memberService.getAllyNum(memberId);
+        AllyMembers allyMembers = memberService.getAlliesByMemberId(memberId);
         Map<String, Integer> result = new HashMap<>();
         result.put("sons", allyMembers.getSonList() == null ? 0 : allyMembers.getSonList().size());
         result.put("grandSons", allyMembers.getGrandSonList() == null ? 0 : allyMembers.getGrandSonList().size());

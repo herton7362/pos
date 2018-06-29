@@ -46,9 +46,9 @@ public interface MemberService extends CrudService<Member> {
     Long count();
 
     /**
-     * 获取儿子和孙子的数量
-     * @param memberId
-     * @return
+     * 查询会员对应的盟友
+     * @param memberId 会员ID
+     * @return 儿子和孙子的实体集合
      */
-    AllyMembers getAllyNum(String memberId);
+    AllyMembers getAlliesByMemberId(String memberId);
 }
