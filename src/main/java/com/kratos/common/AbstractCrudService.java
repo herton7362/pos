@@ -101,12 +101,12 @@ public abstract class AbstractCrudService<T extends BaseEntity> implements CrudS
      * 5、当属性类型为数字时并且value为两个是则用between判断
      */
     @SuppressWarnings("unchecked")
-    class SimpleSpecification implements Specification<T> {
-        Map<String, String[]> params;
-        String currentKey;
-        Attribute currentAttribute;
-        Boolean allEntities;
-        SimpleSpecification(Map<String, String[]> params, Boolean allEntities) {
+    protected class SimpleSpecification implements Specification<T> {
+        protected Map<String, String[]> params;
+        protected String currentKey;
+        protected Attribute currentAttribute;
+        protected Boolean allEntities;
+        public SimpleSpecification(Map<String, String[]> params, Boolean allEntities) {
             this.params = params;
             this.allEntities = allEntities;
         }
