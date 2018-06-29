@@ -79,10 +79,6 @@ public class MemberLevelParam extends BaseEntity {
         this.mPosProfit = mPosProfit;
     }
 
-    public Double getBigPosProfit() {
-        return bigPosProfit;
-    }
-
     public void setBigPosProfit(Double bigPosProfit) {
         this.bigPosProfit = bigPosProfit;
     }

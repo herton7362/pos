@@ -48,9 +48,9 @@ public class MemberProfitController extends AbstractCrudController<MemberProfitR
         try {
             insertSize = memberProfitService.batchImport(fileName, profitFile);
         } catch (Exception e) {
-            return new ResponseEntity<>(e.getMessage(), HttpStatus.BAD_REQUEST);
+            return new ResponseEntity<>("upload failed.reason:" + e.getMessage(), HttpStatus.OK);
         }
-        return new ResponseEntity<>(insertSize + " data has been handled.", HttpStatus.OK);
+        return new ResponseEntity<>("upload success." + insertSize + " data has been handled.", HttpStatus.OK);
     }
 
     /**
@@ -153,6 +153,4 @@ public class MemberProfitController extends AbstractCrudController<MemberProfitR
         result.put("TotalProfit", memberProfitService.getTotalProfit(memberId));
         return new ResponseEntity<>(result, HttpStatus.OK);
     }
-
-
 }

@@ -396,18 +396,45 @@ public class MemberProfitRecordsServiceImpl extends AbstractCrudService<MemberPr
     }
 
     @Override
-    public void membersIncreaseLevel() {
-        Map<String, Tree> allMemberMap = new HashMap<>();
+    public void membersIncreaseLevel() throws Exception {
+        Map<String, Tree> allMemberNodeMap = new HashMap<>();
         Iterable<Member> allMembers = repository.findAll();
         Iterator<Member> iterator = allMembers.iterator();
+        // 获取所有会员信息，计算交易额
         while (iterator.hasNext()) {
             Member m = iterator.next();
             Tree node = new Tree(m);
             Map<String, Double> transactionAmount = shopRepository.staticTotalTransaction(m.getId());
             node.addTransactionAmount(transactionAmount.get("totalTransactionAmount") == null ? 0 : transactionAmount.get("totalTransactionAmount"));
-            allMemberMap.put(m.getId(), node);
+            allMemberNodeMap.put(m.getId(), node);
         }
-//        for(allMemberMap.entrySet())
+        // 建立树
+        for (String key : allMemberNodeMap.keySet()) {
+            Member currentMember = allMemberNodeMap.get(key).getRootData();
+            String fatherId = currentMember.getFatherId();
+            if (StringUtils.isBlank(fatherId)) {
+                continue;
+            } else {
+                Tree fatherTree = allMemberNodeMap.get(fatherId);
+                fatherTree.addNode(allMemberNodeMap.get(key));
+                Integer currentNum = fatherTree.getChildLevelMap().get(currentMember.getMemberLevel()) == null ? 0 : fatherTree.getChildLevelMap().get(currentMember.getMemberLevel());
+                fatherTree.getChildLevelMap().put(currentMember.getMemberLevel(), currentNum + 1);
+            }
+        }
+        // 从叶子节点开始遍历
+        List<Member> leafMember = repository.getAllLeafMembers();
+        for (Member member : leafMember){
+            MemberLevelParam fatherMemberParam = memberLevelParamService.getParamByLevel(member.getMemberLevel());
+            Tree cNode = allMemberNodeMap.get(member.getId());
+            if (cNode.getTransactionAmount() < fatherMemberParam.getmPosProfit()){
+                continue;
+            }
+            String[] scale = fatherMemberParam.getTeamScale().split("|");
+            for (int i = 0; i < scale.length; i++){
+
+            }
+        }
+
 
     }
 

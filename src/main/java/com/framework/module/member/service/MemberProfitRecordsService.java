@@ -84,5 +84,5 @@ public interface MemberProfitRecordsService extends CrudService<MemberProfitReco
     /**
      * 每月1号凌晨对所有会员进行升级
      */
-    void membersIncreaseLevel();
+    void membersIncreaseLevel() throws Exception;
 }
