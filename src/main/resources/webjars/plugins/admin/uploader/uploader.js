@@ -9,13 +9,14 @@ define(['jquery', 'utils'], function($, utils) {
                 type: Boolean,
                 default: false
             },
-            value: [Array, Object]
+            value: [Array, Object],
+            uploading: false
         },
         template: '<div class="uploader">\n' +
         '              <form class="margin-bottom" ref="uploadForm">\n' +
         '                  <input ref="fileInput" type="file" name="attachments" :accept="accept" :multiple="multiple" @change="upload"  style="display: none;"/>\n' +
-        '                  <button type="button" class="btn btn-flat btn-success btn-sm" @click="choseFile">\n' +
-        '                      <i class="fa fa-paperclip"></i> 上传附件\n' +
+        '                  <button type="button" class="btn btn-flat btn-success btn-sm" @click="choseFile" :disabled="uploading" :class="{\'disabled\': uploading}">\n' +
+        '                      <i class="fa fa-paperclip"></i> <span v-if="!uploading">上传附件</span><span v-if="uploading">上传中</span>\n' +
         '                  </button>\n' +
         '                  <button type="button" class="btn btn-flat btn-sm" @click="openModal">\n' +
         '                      <i class="fa fa-fw fa-list"></i> 选择附件\n' +
@@ -132,6 +133,7 @@ define(['jquery', 'utils'], function($, utils) {
                 if(event.srcElement.files.length <= 0) {
                     return;
                 }
+                this.uploading = true;
                 $.ajax({
                     url: utils.patchUrl('/attachment/upload'),
                     contentType: false,
@@ -142,6 +144,7 @@ define(['jquery', 'utils'], function($, utils) {
                         require(['messager'], function(messager) {
                             messager.bubble('上传完毕');
                         });
+                        self.uploading = false;
                         self.add(data);
                         self.changeValue();
                         self.$emit('uploaded', data);
