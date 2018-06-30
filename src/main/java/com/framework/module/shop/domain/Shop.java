@@ -4,10 +4,7 @@ import com.kratos.entity.BaseEntity;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.EnumType;
-import javax.persistence.Enumerated;
+import javax.persistence.*;
 
 @Entity
 @ApiModel("商户")
@@ -30,6 +27,16 @@ public class Shop extends BaseEntity {
     @ApiModelProperty(value = "是否领取激活奖励")
     @Column(length = 1)
     private Integer activationReward;
+    @Transient
+    private Integer activity;
+
+    public Integer getActivity() {
+        return activity;
+    }
+
+    public void setActivity(Integer activity) {
+        this.activity = activity;
+    }
 
     public Integer getActivationReward() {
         return activationReward;
@@ -91,9 +98,11 @@ public class Shop extends BaseEntity {
         ACTIVE("已激活"),
         UN_ACTIVE("未激活");
         private String displayName;
+
         Status(String displayName) {
             this.displayName = displayName;
         }
+
         public String getDisplayName() {
             return displayName;
         }
