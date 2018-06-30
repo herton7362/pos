@@ -11,6 +11,7 @@ import java.util.List;
 public class AllyMembers {
     List<Member> sonList;
     List<Member> grandSonList;
+    Integer totalNum;
 
     public List<Member> getSonList() {
         return sonList;
@@ -26,5 +27,13 @@ public class AllyMembers {
 
     public void setGrandSonList(List<Member> grandSonList) {
         this.grandSonList = grandSonList;
+    }
+
+    public Integer getTotalNum() {
+        return totalNum;
+    }
+
+    public void setTotalNum(Integer totalNum) {
+        this.totalNum = totalNum;
     }
 }

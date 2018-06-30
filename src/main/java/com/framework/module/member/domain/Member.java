@@ -85,9 +85,19 @@ public class Member extends BaseUser implements Comparable {
     @Transient
     @JsonIgnore
     private Integer sortType;
+    @Transient
+    private Integer allyNumber;
 
     public void setSortType(Integer sortType) {
         this.sortType = sortType;
+    }
+
+    public void setAllyNumber(Integer allyNumber) {
+        this.allyNumber = allyNumber;
+    }
+
+    public Integer getAllyNumber() {
+        return allyNumber;
     }
 
     public String getMemberLevel() {
@@ -273,6 +283,12 @@ public class Member extends BaseUser implements Comparable {
         }
         if (sortType == Constant.SORT_TYPE_PROFIT) {
             return Double.compare(((Member) m).balance, balance);
+        }
+        if (sortType == Constant.SORT_TYPE_ALLY_NUM_HIGH_LOW) {
+            return Integer.compare(((Member) m).allyNumber, allyNumber);
+        }
+        if (sortType == Constant.SORT_TYPE_ALLY_NUM_LOW_HIGH) {
+            return Integer.compare(allyNumber, ((Member) m).allyNumber);
         }
 
         return 0;

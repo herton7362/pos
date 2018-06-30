@@ -136,8 +136,8 @@ public class MemberController extends AbstractCrudController<Member> {
         for (Member m : result) {
             m.setSortType(sortType);
             Map<String, Double> totalProfit = memberProfitRecordsRepository.staticTotalProfit(m.getId());
-
             m.setBalance(totalProfit.get("totalProfit") == null ? 0d : totalProfit.get("totalProfit"));
+            m.setAllyNumber(memberService.getAlliesByMemberId(m.getId()).getTotalNum());
         }
         Collections.sort(result);
         return new ResponseEntity<>(result, HttpStatus.OK);

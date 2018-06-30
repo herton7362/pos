@@ -45,4 +45,12 @@ public abstract class Constant {
      * 盟友排行方式-收益
      */
     public static final int SORT_TYPE_PROFIT = 3;
+    /**
+     * 盟友排行方式-盟友规模从多到少
+     */
+    public static final int SORT_TYPE_ALLY_NUM_HIGH_LOW = 4;
+    /**
+     * 盟友排行方式-盟友规模从少到多
+     */
+    public static final int SORT_TYPE_ALLY_NUM_LOW_HIGH = 5;
 }
