@@ -1,10 +1,7 @@
 package com.framework.module.member.web;
 
 import com.framework.module.auth.MemberThread;
-import com.framework.module.member.domain.AllyMembers;
-import com.framework.module.member.domain.Member;
-import com.framework.module.member.domain.MemberLevel;
-import com.framework.module.member.domain.MemberProfitRecordsRepository;
+import com.framework.module.member.domain.*;
 import com.framework.module.member.service.MemberLevelService;
 import com.framework.module.member.service.MemberService;
 import com.kratos.common.AbstractCrudController;
@@ -33,6 +30,7 @@ public class MemberController extends AbstractCrudController<Member> {
     private final MemberService memberService;
     private final MemberLevelService memberLevelService;
     private final MemberProfitRecordsRepository memberProfitRecordsRepository;
+    private final RealIdentityAuditRepository realIdentityAuditRepository;
 
     @Override
     protected CrudService<Member> getService() {
@@ -138,6 +136,12 @@ public class MemberController extends AbstractCrudController<Member> {
             Map<String, Double> totalProfit = memberProfitRecordsRepository.staticTotalProfit(m.getId());
             m.setBalance(totalProfit.get("totalProfit") == null ? 0d : totalProfit.get("totalProfit"));
             m.setAllyNumber(memberService.getAlliesByMemberId(m.getId()).getTotalNum());
+            RealIdentityAudit realIdentityAudit = realIdentityAuditRepository.findByMemberId(m.getId());
+            if (realIdentityAudit != null && RealIdentityAudit.Status.PASS.equals(realIdentityAudit.getStatus())){
+                m.setRealIdentity(1);
+            }else {
+                m.setRealIdentity(0);
+            }
         }
         Collections.sort(result);
         return new ResponseEntity<>(result, HttpStatus.OK);
@@ -178,9 +182,10 @@ public class MemberController extends AbstractCrudController<Member> {
     @Autowired
     public MemberController(
             MemberService memberService,
-            MemberLevelService memberLevelService, MemberProfitRecordsRepository memberProfitRecordsRepository) {
+            MemberLevelService memberLevelService, MemberProfitRecordsRepository memberProfitRecordsRepository, RealIdentityAuditRepository realIdentityAuditRepository) {
         this.memberService = memberService;
         this.memberLevelService = memberLevelService;
         this.memberProfitRecordsRepository = memberProfitRecordsRepository;
+        this.realIdentityAuditRepository = realIdentityAuditRepository;
     }
 }

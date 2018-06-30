@@ -87,6 +87,8 @@ public class Member extends BaseUser implements Comparable {
     private Integer sortType;
     @Transient
     private Integer allyNumber;
+    @Transient
+    private Integer realIdentity;
 
     public void setSortType(Integer sortType) {
         this.sortType = sortType;
@@ -98,6 +100,14 @@ public class Member extends BaseUser implements Comparable {
 
     public Integer getAllyNumber() {
         return allyNumber;
+    }
+
+    public Integer getRealIdentity() {
+        return realIdentity;
+    }
+
+    public void setRealIdentity(Integer realIdentity) {
+        this.realIdentity = realIdentity;
     }
 
     public String getMemberLevel() {
