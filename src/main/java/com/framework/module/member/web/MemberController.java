@@ -4,6 +4,7 @@ import com.framework.module.auth.MemberThread;
 import com.framework.module.member.domain.AllyMembers;
 import com.framework.module.member.domain.Member;
 import com.framework.module.member.domain.MemberLevel;
+import com.framework.module.member.domain.MemberProfitRecordsRepository;
 import com.framework.module.member.service.MemberLevelService;
 import com.framework.module.member.service.MemberService;
 import com.kratos.common.AbstractCrudController;
@@ -19,13 +20,11 @@ import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.util.CollectionUtils;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 @Api(value = "会员管理")
 @RestController
@@ -33,6 +32,7 @@ import java.util.Map;
 public class MemberController extends AbstractCrudController<Member> {
     private final MemberService memberService;
     private final MemberLevelService memberLevelService;
+    private final MemberProfitRecordsRepository memberProfitRecordsRepository;
 
     @Override
     protected CrudService<Member> getService() {
@@ -114,6 +114,37 @@ public class MemberController extends AbstractCrudController<Member> {
     }
 
     /**
+     * 查询盟友
+     *
+     * @return
+     * @throws Exception
+     */
+    @ApiOperation(value = "查询盟友总数")
+    @RequestMapping(value = "/myAllies/{sortType}", method = RequestMethod.GET)
+    public ResponseEntity<List<Member>> myAllies(@PathVariable Integer sortType) {
+        String memberId = UserThread.getInstance().get().getId();
+        AllyMembers allyMembers = memberService.getAlliesByMemberId(memberId);
+        List<Member> result = new ArrayList<>();
+        result.addAll(allyMembers.getSonList());
+        result.addAll(allyMembers.getGrandSonList());
+        if (CollectionUtils.isEmpty(result)) {
+            return new ResponseEntity<>(result, HttpStatus.OK);
+        }
+        if (sortType == null) {
+            sortType = 1;
+        }
+        for (Member m : result) {
+            m.setSortType(sortType);
+            Map<String, Double> totalProfit = memberProfitRecordsRepository.staticTotalProfit(m.getId());
+
+            m.setBalance(totalProfit.get("totalProfit") == null ? 0d : totalProfit.get("totalProfit"));
+        }
+        Collections.sort(result);
+        return new ResponseEntity<>(result, HttpStatus.OK);
+    }
+
+
+    /**
      * 查询总数
      */
     @ApiOperation(value = "查询总数")
@@ -147,9 +178,9 @@ public class MemberController extends AbstractCrudController<Member> {
     @Autowired
     public MemberController(
             MemberService memberService,
-            MemberLevelService memberLevelService
-    ) {
+            MemberLevelService memberLevelService, MemberProfitRecordsRepository memberProfitRecordsRepository) {
         this.memberService = memberService;
         this.memberLevelService = memberLevelService;
+        this.memberProfitRecordsRepository = memberProfitRecordsRepository;
     }
 }

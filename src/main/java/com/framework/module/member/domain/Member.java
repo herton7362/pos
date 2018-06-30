@@ -2,6 +2,7 @@ package com.framework.module.member.domain;
 
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.framework.module.common.Constant;
 import com.kratos.common.utils.StringUtils;
 import com.kratos.entity.BaseUser;
 import com.kratos.module.attachment.domain.Attachment;
@@ -10,6 +11,7 @@ import io.swagger.annotations.ApiModelProperty;
 import org.hibernate.annotations.Where;
 
 import javax.persistence.*;
+import java.util.Comparator;
 import java.util.List;
 
 /**
@@ -20,7 +22,7 @@ import java.util.List;
  */
 @Entity
 @ApiModel("会员")
-public class Member extends BaseUser {
+public class Member extends BaseUser implements Comparable {
     @ApiModelProperty(value = "姓名")
     @Column(length = 50)
     private String name;
@@ -80,9 +82,16 @@ public class Member extends BaseUser {
     @ApiModelProperty(value = "支行网点")
     @Column(length = 500)
     private String openAccountSubbranch;
+    @Transient
+    @JsonIgnore
+    private Integer sortType;
+
+    public void setSortType(Integer sortType) {
+        this.sortType = sortType;
+    }
 
     public String getMemberLevel() {
-        if (StringUtils.isBlank(memberLevel)){
+        if (StringUtils.isBlank(memberLevel)) {
             return "1";
         }
         return memberLevel;
@@ -246,6 +255,27 @@ public class Member extends BaseUser {
 
     public void setOpenAccountSubbranch(String openAccountSubbranch) {
         this.openAccountSubbranch = openAccountSubbranch;
+    }
+
+    @Override
+    public int compareTo(Object m) {
+        if (sortType == Constant.SORT_TYPE_DEFAULT) {
+            return 0;
+        }
+        if (sortType == Constant.SORT_TYPE_LEVEL) {
+            if (StringUtils.isEmpty(memberLevel)) {
+                return 1;
+            }
+            if (StringUtils.isEmpty(((Member) m).memberLevel)) {
+                return -1;
+            }
+            return Integer.compare((Integer.valueOf(((Member) m).memberLevel)), Integer.valueOf(memberLevel));
+        }
+        if (sortType == Constant.SORT_TYPE_PROFIT) {
+            return Double.compare(((Member) m).balance, balance);
+        }
+
+        return 0;
     }
 
     public enum Status {

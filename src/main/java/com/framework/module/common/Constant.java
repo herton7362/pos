@@ -27,9 +27,22 @@ public abstract class Constant {
     /**
      * 是否领取激活奖励-未领取
      */
-    public static final int ACTIVATION_REWARD_NO =0;
+    public static final int ACTIVATION_REWARD_NO = 0;
     /**
      * 是否领取激活奖励-领取
      */
     public static final int ACTIVATION_REWARD_YES = 1;
+
+    /**
+     * 盟友排行方式-默认
+     */
+    public static final int SORT_TYPE_DEFAULT = 1;
+    /**
+     * 盟友排行方式-级别
+     */
+    public static final int SORT_TYPE_LEVEL = 2;
+    /**
+     * 盟友排行方式-收益
+     */
+    public static final int SORT_TYPE_PROFIT = 3;
 }
