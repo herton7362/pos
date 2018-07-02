@@ -8,6 +8,7 @@ import org.springframework.boot.web.servlet.MultipartConfigFactory;
 import org.springframework.boot.web.servlet.ServletComponentScan;
 import org.springframework.context.annotation.Bean;
 import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
+import org.springframework.scheduling.annotation.EnableScheduling;
 
 import javax.servlet.MultipartConfigElement;
 
@@ -15,6 +16,7 @@ import javax.servlet.MultipartConfigElement;
 @EnableJpaRepositories(repositoryBaseClass = ExtendedJpaRepository.class, basePackages = {"com.kratos", "com.framework"})
 @ServletComponentScan
 @EntityScan({"com.kratos", "com.framework"})
+@EnableScheduling //允许支持schedule定时任务
 public class Application {
     public static void main(String[] args) {
         SpringApplication.run(Application.class, args);
