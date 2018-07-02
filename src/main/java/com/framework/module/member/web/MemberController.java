@@ -168,7 +168,7 @@ public class MemberController extends AbstractCrudController<Member> {
             @ApiImplicitParam(name = "order", value = "排序方向，多个用逗号隔开", dataType = "String", paramType = "query")
     })
     @RequestMapping(value = "/allies", method = RequestMethod.GET)
-    public ResponseEntity<?> searchPagedList(@ModelAttribute PageParam pageParam, HttpServletRequest request) throws Exception {
+    public ResponseEntity<?> searchAlliesPagedList(@ModelAttribute PageParam pageParam, HttpServletRequest request) throws Exception {
         Map<String, String[]> param = new HashMap<>(request.getParameterMap());
         param.put("fatherId", new String[]{MemberThread.getInstance().get().getId()});
         if (pageParam.isPageAble()) {
