@@ -3,6 +3,8 @@ package com.framework.module.shop.service;
 import com.framework.module.shop.domain.Shop;
 import com.kratos.common.AbstractCrudService;
 import com.kratos.common.PageResult;
+import com.kratos.common.utils.StringUtils;
+import com.kratos.exceptions.BusinessException;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
@@ -12,12 +14,28 @@ import javax.persistence.criteria.CriteriaQuery;
 import javax.persistence.criteria.Predicate;
 import javax.persistence.criteria.Root;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
 @Component
 @Transactional
 public class ShopServiceImpl extends AbstractCrudService<Shop> implements ShopService {
+
+    @Override
+    public Shop save(Shop shop) throws Exception {
+        if(StringUtils.isNotBlank(shop.getMobile())) {
+            Map<String, String[]> param = new HashMap<>();
+            param.put("mobile", new String[]{ shop.getMobile() });
+            List<Shop> shops = findAll(param);
+            if(shops != null && !shops.isEmpty()) {
+                throw new BusinessException("手机号【"+shop.getMobile()+"】不能重复");
+            }
+        }
+
+        return super.save(shop);
+    }
+
     @Override
     public List<Shop> findAll(Map<String, String[]> param) throws Exception {
         return pageRepository.findAll(new MySpecification(param, true));
