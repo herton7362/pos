@@ -14,4 +14,7 @@ public interface MemberRepository extends PageRepository<Member> {
 
     @Query("select m from Member m where m.id NOT in (select t.fatherId from Member t where t.fatherId is not NULL)")
     List<Member> getAllLeafMembers();
+
+    @Query("select m from Member m order by m.createdDate DESC")
+    List<Member> findAllOrderByCreatedDate();
 }
