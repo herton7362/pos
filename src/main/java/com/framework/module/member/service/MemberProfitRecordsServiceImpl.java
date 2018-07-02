@@ -401,43 +401,100 @@ public class MemberProfitRecordsServiceImpl extends AbstractCrudService<MemberPr
 
     @Override
     public void membersIncreaseLevel() throws Exception {
-        Map<String, Tree> allMemberNodeMap = new HashMap<>();
-        Iterable<Member> allMembers = repository.findAll();
-        Iterator<Member> iterator = allMembers.iterator();
-        // 获取所有会员信息，计算交易额
-        while (iterator.hasNext()) {
-            Member m = iterator.next();
-            Tree node = new Tree(m);
-            Map<String, Double> transactionAmount = shopRepository.staticTotalTransaction(m.getId());
-            node.addTransactionAmount(transactionAmount.get("totalTransactionAmount") == null ? 0 : transactionAmount.get("totalTransactionAmount"));
-            allMemberNodeMap.put(m.getId(), node);
-        }
-        // 建立树
-        for (String key : allMemberNodeMap.keySet()) {
-            Member currentMember = allMemberNodeMap.get(key).getRootData();
-            String fatherId = currentMember.getFatherId();
-            if (StringUtils.isBlank(fatherId)) {
-                continue;
-            } else {
-                Tree fatherTree = allMemberNodeMap.get(fatherId);
-                fatherTree.addNode(allMemberNodeMap.get(key));
-                Integer currentNum = fatherTree.getChildLevelMap().get(currentMember.getMemberLevel()) == null ? 0 : fatherTree.getChildLevelMap().get(currentMember.getMemberLevel());
-                fatherTree.getChildLevelMap().put(currentMember.getMemberLevel(), currentNum + 1);
+        Iterable<Member> allMembers = repository.findAllOrderByCreatedDate();
+        int s = 0;
+        while (true) {
+            if (s + 1 == ((List<Member>) allMembers).size()) {
+                break;
             }
-        }
-        // 从叶子节点开始遍历
-        List<Member> leafMember = repository.getAllLeafMembers();
-        for (Member member : leafMember) {
-            MemberLevelParam fatherMemberParam = memberLevelParamService.getParamByLevel(member.getMemberLevel());
-            Tree cNode = allMemberNodeMap.get(member.getId());
-            if (cNode.getTransactionAmount() < fatherMemberParam.getmPosProfit()) {
+            Member member = ((List<Member>) allMembers).get(s);
+            String memberLevel = member.getMemberLevel() == null ? "1" : member.getMemberLevel();
+            // 获得下一级别的升级要求
+            MemberLevelParam memberLevelParam = memberLevelParamService.getParamByLevel(String.valueOf(Integer.valueOf(memberLevel) + 1));
+            List<Member> sons = repository.findMembersByFatherId(member.getId(), new Date().getTime());
+            Map<String, Double> transactionAmount = shopRepository.staticTotalTransaction(member.getId());
+            double totalTransactionAmount = transactionAmount.get("totalTransactionAmount") == null ? 0 : transactionAmount.get("totalTransactionAmount");
+            if (totalTransactionAmount < memberLevelParam.getTotalTransactionVolume()) {
+                s++;
                 continue;
             }
-            String[] scale = fatherMemberParam.getTeamScale().split("|");
+            Map<String, Integer> sonsLevelNum = new HashMap<>();
+            for (Member m : sons) {
+                String mLevel = m.getMemberLevel() == null ? "1" : m.getMemberLevel();
+                if (sonsLevelNum.get(mLevel) == null) {
+                    sonsLevelNum.put(mLevel, 0);
+                }
+                sonsLevelNum.put(mLevel, (sonsLevelNum.get(mLevel) + 1));
+            }
+            String[] scale = memberLevelParam.getTeamScale().split("\\|");
+            boolean scaleRequired = true;
             for (int i = 0; i < scale.length; i++) {
+                // 升级需要的级别人数。
+                int scaleNum = Integer.valueOf(scale[i]);
+                // 当前已经有的人数
+                int currentNum = 0;
+                if (scaleNum == 0) {
+                    continue;
+                }
+                for (int j = i + 1; j <= 12; j++) {
+                    currentNum += (sonsLevelNum.get(String.valueOf(j)) == null ? 0 : sonsLevelNum.get(String.valueOf(j)));
+                }
+                if (currentNum < scaleNum) {
+                    scaleRequired = false;
+                    break;
+                }
+            }
 
+            if (scaleRequired) {
+                // 如果用户升级，看一下是否符合下一级别的要求
+                member.setMemberLevel(String.valueOf(Integer.valueOf(memberLevel) + 1));
+                repository.save(member);
+            } else {
+                s++;
             }
         }
+
+//        Map<String, Tree> allMemberNodeMap = new HashMap<>();
+//        Iterable<Member> allMembers = repository.findAll();
+//        Iterator<Member> iterator = allMembers.iterator();
+//        // 获取所有会员信息，计算交易额
+//        while (iterator.hasNext()) {
+//            Member m = iterator.next();
+//            Tree node = new Tree(m);
+//            Map<String, Double> transactionAmount = shopRepository.staticTotalTransaction(m.getId());
+//            node.addTransactionAmount(transactionAmount.get("totalTransactionAmount") == null ? 0 : transactionAmount.get("totalTransactionAmount"));
+//            allMemberNodeMap.put(m.getId(), node);
+//        }
+//        // 建立树
+//        for (String key : allMemberNodeMap.keySet()) {
+//            Member currentMember = allMemberNodeMap.get(key).getRootData();
+//            String fatherId = currentMember.getFatherId();
+//            if (StringUtils.isBlank(fatherId)) {
+//                continue;
+//            } else {
+//                Tree fatherTree = allMemberNodeMap.get(fatherId);
+//                fatherTree.addNode(allMemberNodeMap.get(key));
+//                Integer currentNum = fatherTree.getChildLevelMap().get(currentMember.getMemberLevel()) == null ? 0 : fatherTree.getChildLevelMap().get(currentMember.getMemberLevel());
+//                fatherTree.getChildLevelMap().put(currentMember.getMemberLevel(), currentNum + 1);
+//            }
+//        }
+//        // 从叶子节点开始遍历
+//        List<Member> leafMember = repository.getAllLeafMembers();
+//        for (Member member : leafMember) {
+//            MemberLevelParam fatherMemberParam = memberLevelParamService.getParamByLevel(member.getMemberLevel());
+//            Tree cNode = allMemberNodeMap.get(member.getId());
+//            if (cNode.getTransactionAmount() < fatherMemberParam.getmPosProfit()) {
+//                continue;
+//            }
+//            String[] scale = fatherMemberParam.getTeamScale().split("|");
+//            for (int i = 0; i < scale.length; i++) {
+//                int scaleNum = Integer.valueOf(scale[i]);
+//                if (scaleNum == 0) {
+//                    continue;
+//                }
+//                if (scaleNum)
+//            }
+//        }
 
 
     }
