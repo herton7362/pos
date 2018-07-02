@@ -5,9 +5,7 @@ import com.kratos.module.attachment.domain.Attachment;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.ManyToOne;
+import javax.persistence.*;
 
 @Entity
 @ApiModel("实名认证")
@@ -29,6 +27,7 @@ public class RealIdentityAudit extends BaseEntity {
     private Attachment idCardBack;
     @ApiModelProperty(value = "认证状态")
     @Column(length = 20)
+    @Enumerated(EnumType.STRING)
     private Status status;
     @ApiModelProperty(required = true, value = "未通过原因")
     @Column(length = 500)
