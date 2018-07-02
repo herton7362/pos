@@ -89,6 +89,50 @@ public class Member extends BaseUser implements Comparable {
     private Integer allyNumber;
     @Transient
     private Integer realIdentity;
+    @Transient
+    @ApiModelProperty(value = "所有一级盟友")
+    private Integer allySonNumber;
+    @Transient
+    @ApiModelProperty(value = "所有盟友")
+    private Integer allyAllNumber;
+    @Transient
+    @ApiModelProperty(value = "上级名称")
+    private String fatherName;
+    @Transient
+    @ApiModelProperty(value = "上级手机号")
+    private String fatherMobile;
+
+    public Integer getAllySonNumber() {
+        return allySonNumber;
+    }
+
+    public void setAllySonNumber(Integer allySonNumber) {
+        this.allySonNumber = allySonNumber;
+    }
+
+    public Integer getAllyAllNumber() {
+        return allyAllNumber;
+    }
+
+    public void setAllyAllNumber(Integer allyAllNumber) {
+        this.allyAllNumber = allyAllNumber;
+    }
+
+    public String getFatherName() {
+        return fatherName;
+    }
+
+    public void setFatherName(String fatherName) {
+        this.fatherName = fatherName;
+    }
+
+    public String getFatherMobile() {
+        return fatherMobile;
+    }
+
+    public void setFatherMobile(String fatherMobile) {
+        this.fatherMobile = fatherMobile;
+    }
 
     public void setSortType(Integer sortType) {
         this.sortType = sortType;

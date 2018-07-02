@@ -1,11 +1,16 @@
 package com.kratos.common;
 
+import com.framework.module.member.domain.AllyMembers;
+import com.framework.module.member.domain.Member;
+import com.framework.module.member.service.MemberService;
+import com.kratos.common.utils.StringUtils;
 import com.kratos.entity.BaseUser;
 import com.kratos.exceptions.BusinessException;
 import com.kratos.module.auth.UserThread;
 import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiImplicitParams;
 import io.swagger.annotations.ApiOperation;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.oauth2.common.OAuth2AccessToken;
@@ -20,6 +25,8 @@ import org.springframework.web.bind.annotation.RequestParam;
  */
 public abstract class AbstractLoginController {
     private final AbstractLoginService loginService;
+    @Autowired
+    private MemberService memberService;
     /**
      * 发送短信验证码
      */
@@ -228,7 +235,26 @@ public abstract class AbstractLoginController {
     @ApiOperation(value="查询登录用户")
     @RequestMapping(value = "/user/info", method = RequestMethod.GET)
     public ResponseEntity<BaseUser> getOne() throws Exception {
-        return new ResponseEntity<>(UserThread.getInstance().get(), HttpStatus.OK);
+        BaseUser user = UserThread.getInstance().get();
+        if(user instanceof Member) {
+            Member member = (Member) user;
+            if(StringUtils.isNotBlank(member.getFatherId())) {
+                Member father = memberService.findOne(member.getFatherId());
+                if(father != null) {
+                    member.setFatherMobile(father.getLoginName());
+                    member.setFatherName(father.getName());
+                }
+
+                AllyMembers allyMembers = memberService.getAlliesByMemberId(member.getId());
+                if(allyMembers != null) {
+                    member.setAllySonNumber(allyMembers.getSonList().size());
+                    member.setAllyAllNumber(allyMembers.getTotalNum());
+                }
+            }
+
+            return new ResponseEntity<>(member, HttpStatus.OK);
+        }
+        return new ResponseEntity<>(user, HttpStatus.OK);
     }
 
     /**
