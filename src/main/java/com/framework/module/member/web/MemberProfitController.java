@@ -155,12 +155,11 @@ public class MemberProfitController extends AbstractCrudController<MemberProfitR
     }
 
     @ApiOperation(value = "查询提现金额")
-    @RequestMapping(value = "/getCashInAmount", method = RequestMethod.GET)
-    public ResponseEntity<Map<String, Double>> getCashInAmount() {
+    @RequestMapping(value = "/getAllowCashInAmount", method = RequestMethod.GET)
+    public ResponseEntity<Map<String, Double>> getAllowCashInAmount() throws Exception {
         Map<String, Double> result = new HashMap<>();
         String memberId = UserThread.getInstance().get().getId();
-        result.put("TotalProfit", memberProfitService.getTotalProfit(memberId));
+        result.put("CashInAmount", memberProfitService.cashOnAmount(memberId));
         return new ResponseEntity<>(result, HttpStatus.OK);
     }
-
 }

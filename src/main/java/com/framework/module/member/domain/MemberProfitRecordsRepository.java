@@ -4,6 +4,7 @@ import com.kratos.common.PageRepository;
 import org.springframework.data.jpa.repository.Query;
 
 import java.sql.Date;
+import java.util.List;
 import java.util.Map;
 
 public interface MemberProfitRecordsRepository extends PageRepository<MemberProfitRecords> {
@@ -22,4 +23,7 @@ public interface MemberProfitRecordsRepository extends PageRepository<MemberProf
 
         @Query("SELECT sum(p.profit) AS totalProfit FROM MemberProfitRecords p where p.memberId=?1 AND p.transactionDate<=?2")
         Map<String, Double> staticTotalProfitByDate(String memberId, long end);
+
+        @Query("SELECT sum(p.profit) AS totalProfit FROM MemberProfitRecords p where p.memberId=?1 AND p.transactionDate>=?2 AND p.profitType in (?3)")
+        Map<String, Double> staticThisProfit(String memberId, long start, List<Integer> statisProfitType);
 }

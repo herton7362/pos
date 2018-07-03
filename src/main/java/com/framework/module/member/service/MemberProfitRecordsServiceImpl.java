@@ -10,6 +10,11 @@ import com.framework.module.shop.domain.Shop;
 import com.framework.module.shop.domain.ShopRepository;
 import com.kratos.common.AbstractCrudService;
 import com.kratos.exceptions.BusinessException;
+import com.kratos.module.dictionary.domain.Dictionary;
+import com.kratos.module.dictionary.domain.DictionaryCategory;
+import com.kratos.module.dictionary.service.DictionaryCategoryService;
+import com.kratos.module.dictionary.service.DictionaryService;
+import com.kratos.module.dictionary.web.DictionaryController;
 import org.apache.commons.lang.RandomStringUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.time.DateFormatUtils;
@@ -46,6 +51,8 @@ public class MemberProfitRecordsServiceImpl extends AbstractCrudService<MemberPr
     private final GroupBuildDrawRuleService groupBuildDrawRuleService;
     private final ActiveRuleService activeRuleService;
     private final MemberProfitRecordsRepository memberProfitRecordsRepository;
+    private final DictionaryService dictionaryService;
+    private final DictionaryCategoryService dictionaryCategoryService;
 
     @Override
     public void setTeamBuildProfit(String fatherId) throws Exception {
@@ -500,19 +507,38 @@ public class MemberProfitRecordsServiceImpl extends AbstractCrudService<MemberPr
     }
 
     @Override
-    public double cashOnAmount(String memberId) throws ParseException {
+    public double cashOnAmount(String memberId) throws Exception {
         SimpleDateFormat sdf1 = new SimpleDateFormat("yyyy-MM-dd");
         SimpleDateFormat sdf2 = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
         Calendar calendar = Calendar.getInstance();
-        calendar.add(Calendar.MONTH, 1);
         calendar.set(Calendar.DAY_OF_MONTH, 0);
         String lastDay = sdf1.format(calendar.getTime()) + " 23:59:59";
         Date lastDate = sdf2.parse(lastDay);
         Map<String, Double> resultMap = memberProfitRecordsRepository.staticTotalProfitByDate(memberId, lastDate.getTime());
-        double untilLastMonthProfit = resultMap.get("totalProfit") == null ? 0d : resultMap.get("totalProfit");
+        double tilLastMonthProfit = resultMap.get("totalProfit") == null ? 0d : resultMap.get("totalProfit");
+        calendar.add(Calendar.DAY_OF_MONTH, 1);
+        String thisMonthStart = sdf1.format(calendar.getTime()) + " 00:00:00";
+        Date thisMonthStartDate = sdf2.parse(thisMonthStart);
 
+        Map<String, String[]> params = new HashMap<>();
+        params.put("code", new String[]{"DailyProfitType"});
+        List<DictionaryCategory> dictionaryCategories = dictionaryCategoryService.findAll(params);
+        List<Dictionary> dictionaries = new ArrayList<>();
+        dictionaries = DictionaryController.getDictionaries(params, dictionaryCategories, dictionaries, dictionaryService);
 
-        return 0;
+        List<Integer> profitTypeParam = new ArrayList<>();
+        for (Dictionary d : dictionaries) {
+            if (!d.getLogicallyDeleted()) {
+                profitTypeParam.add(Integer.valueOf(d.getCode()));
+            }
+        }
+        if (CollectionUtils.isEmpty(profitTypeParam)){
+            throw new BusinessException("未配置日结算类型，请联系管理员。");
+        }
+
+        resultMap = memberProfitRecordsRepository.staticThisProfit(memberId, thisMonthStartDate.getTime(), profitTypeParam);
+        double currentMonthProfit = resultMap.get("totalProfit") == null ? 0d : resultMap.get("totalProfit");
+        return new BigDecimal(tilLastMonthProfit + currentMonthProfit).setScale(2, BigDecimal.ROUND_HALF_UP).doubleValue();
     }
 
     /**
@@ -586,7 +612,7 @@ public class MemberProfitRecordsServiceImpl extends AbstractCrudService<MemberPr
             MemberRepository repository,
             MemberService memberService,
             MemberLevelParamService memberLevelParamService,
-            ShopRepository shopRepository, GroupBuildDrawRuleService groupBuildDrawRuleService, ActiveRuleService activeRuleService, MemberProfitRecordsRepository memberProfitRecordsRepository) {
+            ShopRepository shopRepository, GroupBuildDrawRuleService groupBuildDrawRuleService, ActiveRuleService activeRuleService, MemberProfitRecordsRepository memberProfitRecordsRepository, DictionaryService dictionaryService, DictionaryCategoryService dictionaryCategoryService) {
         this.repository = repository;
         this.memberService = memberService;
         this.memberLevelParamService = memberLevelParamService;
@@ -594,5 +620,7 @@ public class MemberProfitRecordsServiceImpl extends AbstractCrudService<MemberPr
         this.groupBuildDrawRuleService = groupBuildDrawRuleService;
         this.activeRuleService = activeRuleService;
         this.memberProfitRecordsRepository = memberProfitRecordsRepository;
+        this.dictionaryService = dictionaryService;
+        this.dictionaryCategoryService = dictionaryCategoryService;
     }
 }

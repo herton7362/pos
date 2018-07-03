@@ -86,5 +86,11 @@ public interface MemberProfitRecordsService extends CrudService<MemberProfitReco
      */
     void membersIncreaseLevel() throws Exception;
 
-    double cashOnAmount(String memberId) throws ParseException;
+    /**
+     *  查询可提现金额
+     * @param memberId 会员ID
+     * @return 返回数据
+     * @throws Exception 异常
+     */
+    double cashOnAmount(String memberId) throws Exception;
 }
