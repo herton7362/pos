@@ -73,6 +73,9 @@ public class Member extends BaseUser implements Comparable {
     @ApiModelProperty(value = "银行卡号")
     @Column(length = 50)
     private String bankCardNumber;
+    @ApiModelProperty(value = "银行卡姓名")
+    @Column(length = 50)
+    private String bankCardUserName;
     @ApiModelProperty(value = "开户银行")
     @Column(length = 200)
     private String openAccountBank;
@@ -295,6 +298,14 @@ public class Member extends BaseUser implements Comparable {
 
     public void setBankCardNumber(String bankCardNumber) {
         this.bankCardNumber = bankCardNumber;
+    }
+
+    public String getBankCardUserName() {
+        return bankCardUserName;
+    }
+
+    public void setBankCardUserName(String bankCardUserName) {
+        this.bankCardUserName = bankCardUserName;
     }
 
     public String getOpenAccountBank() {
