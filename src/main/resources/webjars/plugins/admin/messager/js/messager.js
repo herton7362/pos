@@ -67,6 +67,13 @@ define(['jquery', 'vue'], function($, Vue){
                     left: event.clientX + width > $win.width()? $win.width() - 320: event.clientX
                 });
             }
+            if(!event) {
+                var $dialog = $(this.vueAlert.$el).find('.modal-dialog');
+                $dialog.css({
+                    margin: '0 auto',
+                    'margin-top': '20%'
+                });
+            }
             if(typeof event === 'function') {
                 callback = event;
             }
