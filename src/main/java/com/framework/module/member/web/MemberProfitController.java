@@ -4,11 +4,15 @@ import com.framework.module.member.domain.Achievement;
 import com.framework.module.member.domain.AchievementDetail;
 import com.framework.module.member.domain.MemberProfitRecords;
 import com.framework.module.member.domain.ProfitMonthDetail;
+import com.framework.module.member.service.MemberCashInRecordsService;
 import com.framework.module.member.service.MemberProfitRecordsService;
 import com.kratos.common.AbstractCrudController;
 import com.kratos.common.CrudService;
+import com.kratos.exceptions.BusinessException;
 import com.kratos.module.auth.UserThread;
 import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiImplicitParam;
+import io.swagger.annotations.ApiImplicitParams;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -25,6 +29,7 @@ import java.util.*;
 @RequestMapping("/api/memberprofit")
 public class MemberProfitController extends AbstractCrudController<MemberProfitRecords> {
     private final MemberProfitRecordsService memberProfitService;
+    private final MemberCashInRecordsService memberCashInRecordsService;
 
     @Override
     protected CrudService<MemberProfitRecords> getService() {
@@ -33,8 +38,9 @@ public class MemberProfitController extends AbstractCrudController<MemberProfitR
 
     @Autowired
     public MemberProfitController(
-            MemberProfitRecordsService memberProfitService) {
+            MemberProfitRecordsService memberProfitService, MemberCashInRecordsService memberCashInRecordsService) {
         this.memberProfitService = memberProfitService;
+        this.memberCashInRecordsService = memberCashInRecordsService;
     }
 
     /**
@@ -161,5 +167,28 @@ public class MemberProfitController extends AbstractCrudController<MemberProfitR
         String memberId = UserThread.getInstance().get().getId();
         result.put("CashInAmount", memberProfitService.cashOnAmount(memberId));
         return new ResponseEntity<>(result, HttpStatus.OK);
+    }
+
+    @ApiOperation(value = "用户提现")
+    @RequestMapping(value = "/userCashIn", method = RequestMethod.POST, produces = "application/json; charset=utf-8")
+    @ApiImplicitParams({@ApiImplicitParam(name = "amount", value = "提现金额", dataType = "double", paramType = "query", required = true)})
+    public ResponseEntity<String> userCashIn(@RequestParam(value = "amount", required = true) double amount) throws Exception {
+        Map<String, Double> result = new HashMap<>();
+        String memberId = UserThread.getInstance().get().getId();
+        double allowCashInAmout = memberProfitService.cashOnAmount(memberId);
+        if (amount > allowCashInAmout) {
+            return new ResponseEntity<>("提现金额超出允许提现范围", HttpStatus.BAD_REQUEST);
+        }
+        try {
+            if (memberCashInRecordsService.cashIn(memberId, amount)) {
+                return new ResponseEntity<>("提现成功，等待审核", HttpStatus.OK);
+            } else {
+                return new ResponseEntity<>("提现失败，请联系管理员", HttpStatus.NOT_ACCEPTABLE);
+            }
+        } catch (BusinessException exception) {
+            return new ResponseEntity<>(exception.getMessage(), HttpStatus.NOT_ACCEPTABLE);
+        }
+
+
     }
 }
