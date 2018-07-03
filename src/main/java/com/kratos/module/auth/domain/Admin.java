@@ -1,6 +1,7 @@
 package com.kratos.module.auth.domain;
 
 import com.kratos.entity.BaseUser;
+import com.kratos.module.attachment.domain.Attachment;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 
@@ -18,6 +19,9 @@ public class Admin extends BaseUser {
     @ApiModelProperty(required = true, value = "姓名")
     @Column(length = 20)
     private String name;
+    @ApiModelProperty(value = "头像")
+    @ManyToOne
+    private Attachment headPhoto;
     @ApiModelProperty(required = true, value = "角色")
     @ManyToMany(fetch = FetchType.EAGER)
     @JoinTable(name="admin_roles",joinColumns={@JoinColumn(name="admin_id")},inverseJoinColumns={@JoinColumn(name="role_id")})
@@ -33,6 +37,14 @@ public class Admin extends BaseUser {
 
     public void setName(String name) {
         this.name = name;
+    }
+
+    public Attachment getHeadPhoto() {
+        return headPhoto;
+    }
+
+    public void setHeadPhoto(Attachment headPhoto) {
+        this.headPhoto = headPhoto;
     }
 
     public List<Role> getRoles() {
