@@ -55,6 +55,11 @@ public class DictionaryController extends AbstractCrudController<Dictionary> {
         params.put("code", new String[]{code});
         List<DictionaryCategory> dictionaryCategories  =  dictionaryCategoryService.findAll(params);
         List<Dictionary> dictionaries = new ArrayList<>();
+        dictionaries = getDictionaries(params, dictionaryCategories, dictionaries, dictionaryService);
+        return new ResponseEntity<>(dictionaries, HttpStatus.OK);
+    }
+
+    public static List<Dictionary> getDictionaries(Map<String, String[]> params, List<DictionaryCategory> dictionaryCategories, List<Dictionary> dictionaries, DictionaryService dictionaryService) throws Exception {
         if(dictionaryCategories != null && !dictionaryCategories.isEmpty()) {
             params.clear();
             params.put("sort", new String[]{"sortNumber,updatedDate"});
@@ -62,7 +67,7 @@ public class DictionaryController extends AbstractCrudController<Dictionary> {
             params.put("dictionaryCategory.id", new String[]{dictionaryCategories.get(0).getId()});
             dictionaries = dictionaryService.findAll(params);
         }
-        return new ResponseEntity<>(dictionaries, HttpStatus.OK);
+        return dictionaries;
     }
 
     @Autowired
