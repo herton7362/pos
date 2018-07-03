@@ -9,6 +9,7 @@ import com.kratos.exceptions.BusinessException;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -50,5 +51,10 @@ public class MemberCashInRecordsServiceImpl extends AbstractCrudService<MemberCa
     public Double getCashInAmount(String memberId) {
         Map<String, Double> result = memberCashInRecordsRepository.staticCashOnAmount(memberId);
         return result.get("totalAmount") == null ? 0d : result.get("totalAmount");
+    }
+
+    @Override
+    public List<MemberCashInRecords> getAllCashInRecords(String memberId) {
+        return memberCashInRecordsRepository.findAllByMemberIdOrderByCreatedDateDesc(memberId);
     }
 }

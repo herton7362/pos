@@ -1,9 +1,6 @@
 package com.framework.module.member.service;
 
-import com.framework.module.member.domain.Achievement;
-import com.framework.module.member.domain.AchievementDetail;
-import com.framework.module.member.domain.MemberProfitRecords;
-import com.framework.module.member.domain.ProfitMonthDetail;
+import com.framework.module.member.domain.*;
 import com.kratos.common.CrudService;
 import org.springframework.web.multipart.MultipartFile;
 

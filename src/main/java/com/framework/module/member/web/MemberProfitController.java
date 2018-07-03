@@ -1,9 +1,6 @@
 package com.framework.module.member.web;
 
-import com.framework.module.member.domain.Achievement;
-import com.framework.module.member.domain.AchievementDetail;
-import com.framework.module.member.domain.MemberProfitRecords;
-import com.framework.module.member.domain.ProfitMonthDetail;
+import com.framework.module.member.domain.*;
 import com.framework.module.member.service.MemberCashInRecordsService;
 import com.framework.module.member.service.MemberProfitRecordsService;
 import com.kratos.common.AbstractCrudController;
@@ -188,7 +185,12 @@ public class MemberProfitController extends AbstractCrudController<MemberProfitR
         } catch (BusinessException exception) {
             return new ResponseEntity<>(exception.getMessage(), HttpStatus.NOT_ACCEPTABLE);
         }
+    }
 
-
+    @ApiOperation(value = "用户提现历史记录")
+    @RequestMapping(value = "/getUserCashInHistory", method = RequestMethod.GET)
+    public ResponseEntity<List<MemberCashInRecords>> getUserCashInHistory() {
+        String memberId = UserThread.getInstance().get().getId();
+        return new ResponseEntity<>(memberCashInRecordsService.getAllCashInRecords(memberId), HttpStatus.OK);
     }
 }

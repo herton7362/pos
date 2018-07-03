@@ -28,4 +28,11 @@ public interface MemberCashInRecordsService extends CrudService<MemberCashInReco
      * @return
      */
     Double getCashInAmount(String memberId);
+
+    /**
+     * 查询所有提现记录
+     * @param memberId 会员ID
+     * @return  提现记录
+     */
+    List<MemberCashInRecords> getAllCashInRecords(String memberId);
 }
