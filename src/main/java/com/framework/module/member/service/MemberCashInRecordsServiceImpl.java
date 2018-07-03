@@ -2,11 +2,14 @@ package com.framework.module.member.service;
 
 import com.framework.module.member.domain.Member;
 import com.framework.module.member.domain.MemberCashInRecords;
+import com.framework.module.member.domain.MemberCashInRecordsRepository;
 import com.kratos.common.AbstractCrudService;
 import com.kratos.common.utils.StringUtils;
 import com.kratos.exceptions.BusinessException;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
+
+import java.util.Map;
 
 /**
  * 提现业务实现类
@@ -15,9 +18,11 @@ import org.springframework.transaction.annotation.Transactional;
 @Transactional
 public class MemberCashInRecordsServiceImpl extends AbstractCrudService<MemberCashInRecords> implements MemberCashInRecordsService {
     private final MemberService memberService;
+    private final MemberCashInRecordsRepository memberCashInRecordsRepository;
 
-    public MemberCashInRecordsServiceImpl(MemberService memberService) {
+    public MemberCashInRecordsServiceImpl(MemberService memberService, MemberCashInRecordsRepository memberCashInRecordsRepository) {
         this.memberService = memberService;
+        this.memberCashInRecordsRepository = memberCashInRecordsRepository;
     }
 
     @Override
@@ -39,5 +44,11 @@ public class MemberCashInRecordsServiceImpl extends AbstractCrudService<MemberCa
         save(record);
 
         return true;
+    }
+
+    @Override
+    public Double getCashInAmount(String memberId) {
+        Map<String, Double> result = memberCashInRecordsRepository.staticCashOnAmount(memberId);
+        return result.get("totalAmount") == null ? 0d : result.get("totalAmount");
     }
 }

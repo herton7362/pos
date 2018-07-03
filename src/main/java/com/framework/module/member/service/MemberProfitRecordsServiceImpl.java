@@ -53,6 +53,7 @@ public class MemberProfitRecordsServiceImpl extends AbstractCrudService<MemberPr
     private final MemberProfitRecordsRepository memberProfitRecordsRepository;
     private final DictionaryService dictionaryService;
     private final DictionaryCategoryService dictionaryCategoryService;
+    private final MemberCashInRecordsService memberCashInRecordsService;
 
     @Override
     public void setTeamBuildProfit(String fatherId) throws Exception {
@@ -532,13 +533,16 @@ public class MemberProfitRecordsServiceImpl extends AbstractCrudService<MemberPr
                 profitTypeParam.add(Integer.valueOf(d.getCode()));
             }
         }
-        if (CollectionUtils.isEmpty(profitTypeParam)){
+        if (CollectionUtils.isEmpty(profitTypeParam)) {
             throw new BusinessException("未配置日结算类型，请联系管理员。");
         }
 
         resultMap = memberProfitRecordsRepository.staticThisProfit(memberId, thisMonthStartDate.getTime(), profitTypeParam);
         double currentMonthProfit = resultMap.get("totalProfit") == null ? 0d : resultMap.get("totalProfit");
-        return new BigDecimal(tilLastMonthProfit + currentMonthProfit).setScale(2, BigDecimal.ROUND_HALF_UP).doubleValue();
+
+        double cashInAmount = memberCashInRecordsService.getCashInAmount(memberId);
+
+        return new BigDecimal(tilLastMonthProfit + currentMonthProfit - cashInAmount).setScale(2, BigDecimal.ROUND_HALF_UP).doubleValue();
     }
 
     /**
@@ -612,7 +616,7 @@ public class MemberProfitRecordsServiceImpl extends AbstractCrudService<MemberPr
             MemberRepository repository,
             MemberService memberService,
             MemberLevelParamService memberLevelParamService,
-            ShopRepository shopRepository, GroupBuildDrawRuleService groupBuildDrawRuleService, ActiveRuleService activeRuleService, MemberProfitRecordsRepository memberProfitRecordsRepository, DictionaryService dictionaryService, DictionaryCategoryService dictionaryCategoryService) {
+            ShopRepository shopRepository, GroupBuildDrawRuleService groupBuildDrawRuleService, ActiveRuleService activeRuleService, MemberProfitRecordsRepository memberProfitRecordsRepository, DictionaryService dictionaryService, DictionaryCategoryService dictionaryCategoryService, MemberCashInRecordsService memberCashInRecordsService) {
         this.repository = repository;
         this.memberService = memberService;
         this.memberLevelParamService = memberLevelParamService;
@@ -622,5 +626,6 @@ public class MemberProfitRecordsServiceImpl extends AbstractCrudService<MemberPr
         this.memberProfitRecordsRepository = memberProfitRecordsRepository;
         this.dictionaryService = dictionaryService;
         this.dictionaryCategoryService = dictionaryCategoryService;
+        this.memberCashInRecordsService = memberCashInRecordsService;
     }
 }

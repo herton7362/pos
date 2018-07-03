@@ -13,5 +13,19 @@ import java.util.List;
  */
 public interface MemberCashInRecordsService extends CrudService<MemberCashInRecords>  {
 
+    /**
+     * 提现功能
+     * @param memberId
+     * @param cashOnAmount
+     * @return
+     * @throws Exception
+     */
     boolean cashIn(String memberId, Double cashOnAmount) throws Exception;
+
+    /**
+     *  查询已经提现的金额
+     * @param memberId
+     * @return
+     */
+    Double getCashInAmount(String memberId);
 }
