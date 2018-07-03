@@ -42,17 +42,16 @@
                 <!-- User Account: style can be found in dropdown.less -->
                 <li class="dropdown user user-menu">
                     <a href="#" class="dropdown-toggle" data-toggle="dropdown">
-                        <img th:src="@{/static/image/default_user.jpg}" class="user-image" alt="User Image">
-                        <span class="hidden-xs">超级管理员</span>
+                        <img :src="admin.headPhoto.id | imgPath" class="user-image" alt="User Image">
+                        <span class="hidden-xs">{{admin.name}}</span>
                     </a>
                     <ul class="dropdown-menu">
                         <!-- User image -->
                         <li class="user-header">
-                            <img th:src="@{/static/image/default_user.jpg}" class="img-circle" alt="User Image">
+                            <img :src="admin.headPhoto.id | imgPath" class="img-circle" alt="User Image">
 
                             <p style="font-size: 15px">
-                                超级管理员 - 系统管理员
-                                <small>注册时间 9月 2017</small>
+                                {{admin.name}} - {{admin.roles[0].name}}
                             </p>
                         </li>
                         <!-- Menu Footer-->

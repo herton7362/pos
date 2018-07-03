@@ -8,6 +8,14 @@ require(['jquery', 'vue', 'messager', 'utils'], function($, Vue, messager, utils
                     name: ''
                 },
                 columns: [
+                    {field:'headPhoto', title:'头像', formatter: function(value) {
+                            if(value) {
+                                return '<img width="50" src="'+utils.patchUrl('/attachment/download/' + value.id)+'">';
+                            } else {
+                                return '无';
+                            }
+
+                        }},
                     {field:'loginName', title:'登录名'},
                     {field:'name', title:'姓名'},
                     {field:'roles', title:'角色', formatter: function(value) {
@@ -25,6 +33,7 @@ require(['jquery', 'vue', 'messager', 'utils'], function($, Vue, messager, utils
             formData: {
                 id: null,
                 loginName: null,
+                headPhoto: null,
                 name: null,
                 password: null,
                 setPassword: false,
@@ -43,7 +52,8 @@ require(['jquery', 'vue', 'messager', 'utils'], function($, Vue, messager, utils
                 url: utils.patchUrl('/api/role'),
                 data: {
                     sort: 'sortNumber,updatedDate',
-                    order: 'asc,desc'
+                    order: 'asc,desc',
+                    logicallyDeleted: false
                 },
                 success: function(data) {
                     self.role.data = data.content;

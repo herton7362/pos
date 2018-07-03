@@ -22,6 +22,21 @@ require(['jquery', 'vue', 'utils', 'adminlte'], function ($, Vue, utils){
         // header
         new Vue({
             el: '.main-header',
+            data: {
+                admin: {
+                    headPhoto: {},
+                    roles: [{}]
+                }
+            },
+            filters: {
+                imgPath: function (id) {
+                    if(id) {
+                        return utils.patchUrl('/attachment/download/' + id);
+                    } else {
+                        return null;
+                    }
+                }
+            },
             methods: {
                 logout: function() {
                     window.localStorage.accessToken = null;
@@ -29,6 +44,16 @@ require(['jquery', 'vue', 'utils', 'adminlte'], function ($, Vue, utils){
                     window.localStorage.refreshToken = null;
                     window.top.location.href = utils.patchUrlPrefixUrl(window._appConf.ctx + window._appConf.loginUrl);
                 }
+            },
+            mounted: function () {
+                var self = this;
+                $.ajax({
+                    url: utils.patchUrl('/user/info'),
+                    cache: false,
+                    success: function (user) {
+                        self.admin = user;
+                    }
+                })
             }
         });
 
