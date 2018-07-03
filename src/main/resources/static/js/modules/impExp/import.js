@@ -10,7 +10,7 @@ require(['jquery', 'vue', 'utils'], function($, Vue, utils) {
             },
             changeValue: function () {
                 this.mutedInput = true;
-                if(!this.multiple) {
+                if(!this.multiple && this.files>0) {
                     this.$emit('input', this.files[0])
                 } else {
                     this.$emit('input', this.files)
@@ -30,14 +30,16 @@ require(['jquery', 'vue', 'utils'], function($, Vue, utils) {
                     data: new FormData(this.$refs['uploadForm']),
                     success: function(data) {
                         require(['messager'], function(messager) {
-                            messager.bubble(data.responseText);
+                            // messager.bubble(data.responseText);
+                            alert(data.responseText)
                         });
                         self.uploading = false;
                         self.changeValue();
                     },
                     error: function(data) {
                         require(['messager'], function(messager) {
-                            messager.bubble(data.responseText);
+                            // messager.bubble(data.responseText);
+                            alert(data.responseText)
                         });
                         self.uploading = false;
                         self.changeValue();

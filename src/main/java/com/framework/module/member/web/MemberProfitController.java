@@ -48,9 +48,9 @@ public class MemberProfitController extends AbstractCrudController<MemberProfitR
         try {
             insertSize = memberProfitService.batchImport(fileName, profitFile);
         } catch (Exception e) {
-            return new ResponseEntity<>("upload failed.reason:" + e.getMessage(), HttpStatus.OK);
+            return new ResponseEntity<>("上传失败，原因是:" + e.getMessage(), HttpStatus.OK);
         }
-        return new ResponseEntity<>("upload success." + insertSize + " data has been handled.", HttpStatus.OK);
+        return new ResponseEntity<>("上传成功." + insertSize + "条数据被上传.", HttpStatus.OK);
     }
 
     /**
@@ -153,4 +153,14 @@ public class MemberProfitController extends AbstractCrudController<MemberProfitR
         result.put("TotalProfit", memberProfitService.getTotalProfit(memberId));
         return new ResponseEntity<>(result, HttpStatus.OK);
     }
+
+    @ApiOperation(value = "查询提现金额")
+    @RequestMapping(value = "/getCashInAmount", method = RequestMethod.GET)
+    public ResponseEntity<Map<String, Double>> getCashInAmount() {
+        Map<String, Double> result = new HashMap<>();
+        String memberId = UserThread.getInstance().get().getId();
+        result.put("TotalProfit", memberProfitService.getTotalProfit(memberId));
+        return new ResponseEntity<>(result, HttpStatus.OK);
+    }
+
 }

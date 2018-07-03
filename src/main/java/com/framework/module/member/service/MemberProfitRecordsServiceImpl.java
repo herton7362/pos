@@ -499,6 +499,22 @@ public class MemberProfitRecordsServiceImpl extends AbstractCrudService<MemberPr
 
     }
 
+    @Override
+    public double cashOnAmount(String memberId) throws ParseException {
+        SimpleDateFormat sdf1 = new SimpleDateFormat("yyyy-MM-dd");
+        SimpleDateFormat sdf2 = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+        Calendar calendar = Calendar.getInstance();
+        calendar.add(Calendar.MONTH, 1);
+        calendar.set(Calendar.DAY_OF_MONTH, 0);
+        String lastDay = sdf1.format(calendar.getTime()) + " 23:59:59";
+        Date lastDate = sdf2.parse(lastDay);
+        Map<String, Double> resultMap = memberProfitRecordsRepository.staticTotalProfitByDate(memberId, lastDate.getTime());
+        double untilLastMonthProfit = resultMap.get("totalProfit") == null ? 0d : resultMap.get("totalProfit");
+
+
+        return 0;
+    }
+
     /**
      * 再Excel中获取数据并校验，校验通过后加入到实体中
      *
@@ -506,6 +522,9 @@ public class MemberProfitRecordsServiceImpl extends AbstractCrudService<MemberPr
      * @return 收益数据
      */
     private MemberProfitRecords getAllParamFromExcel(Row row, int r) throws BusinessException {
+        if (row.getCell(0) == null || row.getCell(1) == null || row.getCell(2) == null || row.getCell(3) == null || row.getCell(4) == null || row.getCell(5) == null || row.getCell(6) == null) {
+            throw new BusinessException("导入文档不符合模板要求");
+        }
         row.getCell(0).setCellType(Cell.CELL_TYPE_STRING);
         String organizationNo = row.getCell(0).getStringCellValue();
         if (StringUtils.isBlank(organizationNo)) {
