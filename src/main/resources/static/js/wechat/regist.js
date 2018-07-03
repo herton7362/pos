@@ -40,6 +40,30 @@ require(['jquery', 'vue', 'utils', 'messager'], function ($, Vue, utils, message
                     },
                     type: 'POST',
                     success: function () {
+                        function setupWebViewJavascriptBridge(callback) {
+                            var bridge = window.WebViewJavascriptBridge || window.WKWebViewJavascriptBridge;
+                            if (bridge) { return callback(bridge); }
+                            var callbacks = window.WVJBCallbacks || window.WKWVJBCallbacks;
+                            if (callbacks) { return callbacks.push(callback); }
+                            window.WVJBCallbacks = window.WKWVJBCallbacks = [callback];
+                            if (window.WKWebViewJavascriptBridge) {
+                                //for https://github.com/Lision/WKWebViewJavascriptBridge
+                                window.webkit.messageHandlers.iOS_Native_InjectJavascript.postMessage(null);
+                            } else {
+                                //for https://github.com/marcuswestin/WebViewJavascriptBridge
+                                var WVJBIframe = document.createElement('iframe');
+                                WVJBIframe.style.display = 'none';
+                                WVJBIframe.src = 'https://__bridge_loaded__';
+                                document.documentElement.appendChild(WVJBIframe);
+                                setTimeout(function() { document.documentElement.removeChild(WVJBIframe) }, 0);
+                            }
+                        }
+
+                        setupWebViewJavascriptBridge(function(bridge) {
+
+                            /* Initialize your app here */
+                            bridge.callHandler('RegistResult', 'ok');
+                        });
                         messager.bubble('注册成功，前往登录');
                         self.pageType = '使用手机号密码登录';
                     }
