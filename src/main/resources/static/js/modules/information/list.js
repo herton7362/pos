@@ -9,7 +9,13 @@ require(['jquery', 'vue', 'messager', 'utils'], function($, Vue, messager, utils
                 },
                 columns: [
                     {field:'title', title:'标题'},
-                    {field:'content', title:'内容'}
+                    {field:'content', title:'内容', width: '65%', formatter: function(value) {
+                        if(value.length > 50) {
+                            return '<span title="'+value+'">' + value.substring(0, 40) + '...</span>';
+                        } else {
+                            return value;
+                        }
+                        }}
                 ]
             },
             formData: {

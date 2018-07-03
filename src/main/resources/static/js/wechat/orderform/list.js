@@ -111,16 +111,36 @@ require(['jquery', 'vue', 'utils', 'weui', 'messager'], function ($, Vue, utils,
         },
         mounted: function () {
             var self = this;
-            utils.getLoginMember(function (member) {
-                self.member = member;
-                self.tabClick(self.activeId);
-            }, true);
-            $.ajax({
-                url: utils.patchUrl('/api/orderForm/status'),
-                success: function (data) {
-                    self.orderStatus = data;
-                }
-            })
+            var username, token;
+            token = utils.getQueryString("token");
+            username = utils.getQueryString("username");
+            if(token && username) {
+                $.ajax({
+                    url: utils.patchUrlPrefixUrl('/token/login'),
+                    data: {
+                        appId: 'tonr',
+                        appSecret: 'secret',
+                        username: username,
+                        token: token
+                    },
+                    type: 'POST',
+                    success: function(data) {
+                        window.localStorage.accessToken = data['access_token'];
+                        window.localStorage.refreshToken = data['refresh_token'];
+                        window.localStorage.expiration = new Date().getTime() + ((data['expires_in'] / 2) * 1000);
+                        utils.getLoginMember(function (member) {
+                            self.member = member;
+                            self.tabClick(self.activeId);
+                        }, true);
+                        $.ajax({
+                            url: utils.patchUrl('/api/orderForm/status'),
+                            success: function (data) {
+                                self.orderStatus = data;
+                            }
+                        })
+                    }
+                })
+            }
         }
     });
 });
