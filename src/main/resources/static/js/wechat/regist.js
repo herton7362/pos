@@ -62,7 +62,7 @@ require(['jquery', 'vue', 'utils', 'messager'], function ($, Vue, utils, message
                         setupWebViewJavascriptBridge(function(bridge) {
 
                             /* Initialize your app here */
-                            bridge.callHandler('RegistResult', 'ok');
+                            bridge.callHandler('RegistResult', self.username);
                         });
                         messager.bubble('注册成功，前往登录');
                         self.pageType = '使用手机号密码登录';
