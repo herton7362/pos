@@ -10,11 +10,13 @@ require(['jquery', 'vue', 'utils'], function($, Vue, utils) {
             },
             changeValue: function () {
                 var file = $(this.$refs['fileInput'])[0];
-                // for IE, Opera, Safari, Chrome
-                if (file.outerHTML) {
-                    file.outerHTML = file.outerHTML;
-                } else { // FF(包括3.5)
-                    file.value = "";
+                var ie = (navigator.appVersion.indexOf("MSIE")!=-1);
+                if( ie ){
+                    var file2= file.cloneNode(false);
+                    file2.onchange= file.onchange;
+                    file.parentNode.replaceChild(file2,file);
+                }else{
+                    $(file).val("");
                 }
             },
             upload: function(event) {
