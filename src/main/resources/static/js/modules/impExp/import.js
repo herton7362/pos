@@ -21,7 +21,7 @@ require(['jquery', 'vue', 'utils'], function($, Vue, utils) {
             },
             upload: function(event) {
                 var self = this;
-                if(event.srcElement.files.length <= 0) {
+                if((event.srcElement || event.target).files.length <= 0) {
                     return;
                 }
                 this.uploading = true;
