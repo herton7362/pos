@@ -31,7 +31,8 @@
         <section id="content" class="content" v-cloak>
             <div class="row">
                 <div class="col-md-12">
-                    <form class="margin-bottom" ref="uploadForm">
+                    <span style="font-size: 15px; margin-top: 21px; display: inline-block;">请按模板要求上传收益文件</span>
+                    <form class="margin-bottom" ref="uploadForm" style="margin-top: 20px">
                         <input ref="fileInput" type="file" name="profitFile" :multiple="false" @change="upload"  style="display: none;"/>
                         <button type="button" class="btn btn-flat btn-success btn-sm" @click="choseFile">
                             <i class="fa fa-paperclip"></i> 上传附件
