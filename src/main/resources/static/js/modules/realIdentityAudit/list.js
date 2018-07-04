@@ -42,12 +42,22 @@ require(['jquery', 'vue', 'messager', 'utils'], function($, Vue, messager, utils
                 idCardBack: null,
                 status: null,
                 reason: null
-            }
+            },
+            searchStatus: 'PENDING'
         },
         methods: {
         },
+        watch: {
+            searchStatus: function (val) {
+                this.crudgrid.$instance.load({
+                    status: val
+                });
+            }
+        },
         mounted: function() {
-            this.crudgrid.$instance.load();
+            this.crudgrid.$instance.load({
+                status: 'PENDING'
+            });
         }
     });
 });

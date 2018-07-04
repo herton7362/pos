@@ -34,24 +34,25 @@
                     <div style="background: #fff; margin-bottom: 10px; padding: 10px">
                         <label>认证状态：</label>
                         <label style="margin-right: 5px">
-                            <radio name="searchStatus" value="PENDING" ></radio> 待审核
+                            <radio name="searchStatus" value="PENDING" v-model="searchStatus"></radio> 待审核
                         </label>
                         <label style="margin-right: 5px">
-                            <radio name="searchStatus" value="PASS" ></radio> 已通过
+                            <radio name="searchStatus" value="PASS" v-model="searchStatus"></radio> 已通过
                         </label>
                         <label style="margin-right: 5px">
-                            <radio name="searchStatus" value="UN_PASS" ></radio> 未通过
+                            <radio name="searchStatus" value="UN_PASS" v-model="searchStatus"></radio> 未通过
                         </label>
                     </div>
                     <crudgrid
                             domain="memberCashInRecords"
                             :columns="crudgrid.columns"
+                            :table-transform-response="tableTransformResponse"
                             :form-data="formData"
                             :instance="crudgrid"
                     >
                         <template slot="form-body" scope="props">
                             <div class="form-group">
-                                <label>姓名：</label>
+                                <label>会员：</label>
                                 <combobox
                                         class="form-control"
                                         required
