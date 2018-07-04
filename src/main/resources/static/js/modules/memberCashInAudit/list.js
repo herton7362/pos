@@ -71,6 +71,11 @@ require(['jquery', 'vue', 'messager', 'utils'], function($, Vue, messager, utils
                     logicallyDeleted: false
                 },
                 success: function(data) {
+                    $.each(data.content, function () {
+                        if(!this.name) {
+                            this.name = this.loginName;
+                        }
+                    });
                     self.member.data = data.content;
                     self.crudgrid.$instance.load({
                         status: 'PENDING'
