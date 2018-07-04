@@ -26,7 +26,7 @@
                 fn.success(data, textStatus, jqXHR);
             },
             error: function(XMLHttpRequest, textStatus, errorThrown) {
-                if(fn.error(XMLHttpRequest, textStatus, errorThrown) !== false) {
+                if(!settings.undoError && fn.error(XMLHttpRequest, textStatus, errorThrown) !== false) {
                     if(500=== XMLHttpRequest.status) {
                         require(['messager'], function(messager) {
                             messager.bubble('系统内部错误，请联系系统管理员！', 'danger');

@@ -37,6 +37,7 @@ require(['jquery', 'vue', 'utils', 'messager'], function ($, Vue, utils, message
                         username: this.username,
                         password: this.password
                     },
+                    undoError: true,
                     type: 'POST',
                     success: function(data) {
                         window.localStorage.accessToken = data['access_token'];
@@ -45,6 +46,11 @@ require(['jquery', 'vue', 'utils', 'messager'], function ($, Vue, utils, message
                         setTimeout(function () {
                             window.location.href = document.referrer;
                         }, 500);
+                    },
+                    error: function(XMLHttpRequest) {
+                        if(406 === XMLHttpRequest.status) {
+                            messager.bubble('账号或密码错误', 'warning');
+                        }
                     }
                 })
             },
