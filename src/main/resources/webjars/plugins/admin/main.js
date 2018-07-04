@@ -2,12 +2,33 @@ require(['jquery', 'vue', 'utils', 'adminlte'], function ($, Vue, utils){
     if($('.sidebar-menu').length > 0) {
         // menu
         var vueSideBar = new Vue({
-            el: '.sidebar-menu',
+            el: '.sidebar',
             data: {
-                list: []
+                list: [],
+                admin: {
+                    headPhoto: {},
+                    roles: [{}]
+                }
+            },
+            filters: {
+                imgPath: function (id) {
+                    if(id) {
+                        return utils.patchUrl('/attachment/download/' + id);
+                    } else {
+                        return null;
+                    }
+                }
             },
             mounted: function() {
                 $('.sidebar-menu').tree();
+                var self = this;
+                $.ajax({
+                    url: utils.patchUrl('/user/info'),
+                    cache: false,
+                    success: function (user) {
+                        self.admin = user;
+                    }
+                })
             },
             methods: {
                 logout: function() {
