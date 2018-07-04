@@ -64,7 +64,7 @@ public class Member extends BaseUser implements Comparable {
     private Attachment headPhoto;
     @ApiModelProperty(value = "父节点ID")
     private String fatherId;
-    @ApiModelProperty(value = "会员级别")
+    @ApiModelProperty(value = "盟友级别")
     private Integer memberLevel = 1;
     @ApiModelProperty(value = "激活状态")
     @Column(length = 20)
