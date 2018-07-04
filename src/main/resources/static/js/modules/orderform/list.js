@@ -4,8 +4,8 @@ require(['jquery', 'vue', 'messager', 'utils'], function($, Vue, messager, utils
         data: {
             data: [],
             queryParams: {
-                createdDate: [new Date(new Date().format('yyyy-MM-dd')).getTime(), new Date().getTime()],
-                createdDateRadio: 1
+                createdDate: [],
+                createdDateRadio: 0
             },
             currentPage: 1,
             pagerSize: 7,
