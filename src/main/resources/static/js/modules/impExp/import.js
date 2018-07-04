@@ -9,11 +9,12 @@ require(['jquery', 'vue', 'utils'], function($, Vue, utils) {
                 $(this.$refs['fileInput']).trigger('click');
             },
             changeValue: function () {
-                this.mutedInput = true;
-                if(!this.multiple && this.files>0) {
-                    this.$emit('input', this.files[0])
-                } else {
-                    this.$emit('input', this.files)
+                var file = $(this.$refs['fileInput'])[0];
+                // for IE, Opera, Safari, Chrome
+                if (file.outerHTML) {
+                    file.outerHTML = file.outerHTML;
+                } else { // FF(包括3.5)
+                    file.value = "";
                 }
             },
             upload: function(event) {
@@ -45,7 +46,7 @@ require(['jquery', 'vue', 'utils'], function($, Vue, utils) {
                         self.changeValue();
                     }
                 });
-            },
+            }
         },
         mounted: function() {
         }
