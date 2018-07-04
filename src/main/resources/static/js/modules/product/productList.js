@@ -68,7 +68,8 @@ require(['jquery', 'vue', 'messager', 'utils'], function($, Vue, messager, utils
                     url: utils.patchUrl('/api/productCategory'),
                     data: {
                         sort:'sortNumber,updatedDate',
-                        order: 'asc,desc'
+                        order: 'asc,desc',
+                        logicallyDeleted: false
                     },
                     success: function(data) {
                         self.sidebar.data = data.content;
@@ -116,7 +117,8 @@ require(['jquery', 'vue', 'messager', 'utils'], function($, Vue, messager, utils
                 url: utils.patchUrl('/api/productCategory'),
                 data: {
                     sort: 'sortNumber,updatedDate',
-                    order: 'asc,desc'
+                    order: 'asc,desc',
+                    logicallyDeleted: false
                 },
                 success: function(data) {
                     self.productCategory.data = data.content;

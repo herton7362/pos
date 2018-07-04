@@ -324,10 +324,10 @@ public class MemberProfitRecordsServiceImpl extends AbstractCrudService<MemberPr
                 throw new BusinessException(String.format("第" + r + "行数据机不合法,用户编号不存在:[%s]", importProfit.getUserNo()));
             }
             importProfit.setMemberId(member.getId());
-            if (StringUtils.isBlank(member.getMemberLevel())) {
+            if (member.getMemberLevel() == null) {
                 throw new BusinessException(String.format("第" + r + "行数据机不合法,用户等级信息不存在:[%s]", importProfit.getUserNo()));
             }
-            MemberLevelParam param = memberLevelParamService.getParamByLevel(member.getMemberLevel());
+            MemberLevelParam param = memberLevelParamService.getParamByLevel(String.valueOf(member.getMemberLevel()));
             if (param == null) {
                 throw new BusinessException(String.format("第" + r + "行数据机不合法,用户等级信息不合法:[%s]", importProfit.getUserNo()));
             }
@@ -394,7 +394,7 @@ public class MemberProfitRecordsServiceImpl extends AbstractCrudService<MemberPr
             fatherProfit.setTransactionDate(importProfit.getTransactionDate());
             fatherProfit.setProfitType(Constant.PROFIT_TYPE_GUANLI);
             fatherProfit.setMemberId(fatherMember.getId());
-            MemberLevelParam fatherMemberParam = memberLevelParamService.getParamByLevel(fatherMember.getMemberLevel());
+            MemberLevelParam fatherMemberParam = memberLevelParamService.getParamByLevel(String.valueOf(fatherMember.getMemberLevel()));
             double fatherProfitRate = fatherMemberParam.getmPosProfit() - profitRate;
             fatherProfitRate = fatherProfitRate < 0 ? 0 : fatherProfitRate;
             fatherProfit.setProfit(new BigDecimal(fatherProfitRate * importProfit.getTransactionAmount()).setScale(2, BigDecimal.ROUND_HALF_UP).doubleValue());
@@ -416,9 +416,9 @@ public class MemberProfitRecordsServiceImpl extends AbstractCrudService<MemberPr
                 break;
             }
             Member member = ((List<Member>) allMembers).get(s);
-            String memberLevel = member.getMemberLevel() == null ? "1" : member.getMemberLevel();
+            Integer memberLevel = member.getMemberLevel() == null ? 1 : member.getMemberLevel();
             // 获得下一级别的升级要求
-            MemberLevelParam memberLevelParam = memberLevelParamService.getParamByLevel(String.valueOf(Integer.valueOf(memberLevel) + 1));
+            MemberLevelParam memberLevelParam = memberLevelParamService.getParamByLevel(String.valueOf(memberLevel + 1));
             List<Member> sons = repository.findMembersByFatherId(member.getId(), new Date().getTime());
             Map<String, Double> transactionAmount = shopRepository.staticTotalTransaction(member.getId());
             double totalTransactionAmount = transactionAmount.get("totalTransactionAmount") == null ? 0 : transactionAmount.get("totalTransactionAmount");
@@ -428,11 +428,11 @@ public class MemberProfitRecordsServiceImpl extends AbstractCrudService<MemberPr
             }
             Map<String, Integer> sonsLevelNum = new HashMap<>();
             for (Member m : sons) {
-                String mLevel = m.getMemberLevel() == null ? "1" : m.getMemberLevel();
-                if (sonsLevelNum.get(mLevel) == null) {
-                    sonsLevelNum.put(mLevel, 0);
+                Integer mLevel = m.getMemberLevel() == null ? 1 : m.getMemberLevel();
+                if (sonsLevelNum.get(String.valueOf(mLevel)) == null) {
+                    sonsLevelNum.put(String.valueOf(mLevel), 0);
                 }
-                sonsLevelNum.put(mLevel, (sonsLevelNum.get(mLevel) + 1));
+                sonsLevelNum.put(String.valueOf(mLevel), (sonsLevelNum.get(String.valueOf(mLevel)) + 1));
             }
             String[] scale = memberLevelParam.getTeamScale().split("\\|");
             boolean scaleRequired = true;
@@ -455,7 +455,7 @@ public class MemberProfitRecordsServiceImpl extends AbstractCrudService<MemberPr
 
             if (scaleRequired) {
                 // 如果用户升级，看一下是否符合下一级别的要求
-                member.setMemberLevel(String.valueOf(Integer.valueOf(memberLevel) + 1));
+                member.setMemberLevel(memberLevel + 1);
                 repository.save(member);
             } else {
                 s++;
