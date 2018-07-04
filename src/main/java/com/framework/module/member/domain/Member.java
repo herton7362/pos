@@ -65,7 +65,7 @@ public class Member extends BaseUser implements Comparable {
     @ApiModelProperty(value = "父节点ID")
     private String fatherId;
     @ApiModelProperty(value = "会员级别")
-    private String memberLevel;
+    private Integer memberLevel = 1;
     @ApiModelProperty(value = "激活状态")
     @Column(length = 20)
     @Enumerated(EnumType.STRING)
@@ -157,14 +157,14 @@ public class Member extends BaseUser implements Comparable {
         this.realIdentity = realIdentity;
     }
 
-    public String getMemberLevel() {
-        if (StringUtils.isBlank(memberLevel)) {
-            return "1";
+    public Integer getMemberLevel() {
+        if (memberLevel == null) {
+            return 1;
         }
         return memberLevel;
     }
 
-    public void setMemberLevel(String memberLevel) {
+    public void setMemberLevel(Integer memberLevel) {
         this.memberLevel = memberLevel;
     }
 
@@ -338,13 +338,13 @@ public class Member extends BaseUser implements Comparable {
             return 0;
         }
         if (sortType == Constant.SORT_TYPE_LEVEL) {
-            if (StringUtils.isEmpty(memberLevel)) {
+            if (memberLevel == null) {
                 return 1;
             }
-            if (StringUtils.isEmpty(((Member) m).memberLevel)) {
+            if (((Member) m).memberLevel == null) {
                 return -1;
             }
-            return Integer.compare((Integer.valueOf(((Member) m).memberLevel)), Integer.valueOf(memberLevel));
+            return Integer.compare(((Member) m).memberLevel, memberLevel);
         }
         if (sortType == Constant.SORT_TYPE_PROFIT) {
             return Double.compare(((Member) m).balance, balance);

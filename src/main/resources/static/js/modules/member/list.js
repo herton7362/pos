@@ -79,6 +79,7 @@ require(['jquery', 'vue', 'messager', 'utils'], function($, Vue, messager, utils
                 id: null,
                 name: null,
                 headPhoto: null,
+                memberLevel: null,
                 mobile: null,
                 gender: '1',
                 birthday: null,
