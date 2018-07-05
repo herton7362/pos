@@ -159,14 +159,14 @@ public class MemberProfitController extends AbstractCrudController<MemberProfitR
         String memberId = UserThread.getInstance().get().getId();
         double allowCashInAmout = memberProfitService.cashOnAmount(memberId);
         if (amount > allowCashInAmout) {
-            result.put("msg", "提现金额超出允许提现范围");
+            result.put("message", "提现金额超出允许提现范围");
             return new ResponseEntity<>(result, HttpStatus.BAD_REQUEST);
         }
         if (memberCashInRecordsService.cashIn(memberId, amount)) {
-            result.put("msg", "提现成功，等待审核");
+            result.put("message", "提现成功，等待审核");
             return new ResponseEntity<>(result, HttpStatus.OK);
         } else {
-            result.put("msg", "提现失败，请联系管理员");
+            result.put("message", "提现失败，请联系管理员");
             return new ResponseEntity<>(result, HttpStatus.NOT_ACCEPTABLE);
         }
     }
