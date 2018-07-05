@@ -577,9 +577,21 @@ public class MemberProfitRecordsServiceImpl extends AbstractCrudService<MemberPr
         if (StringUtils.isBlank(userName)) {
             throw new BusinessException(String.format("第" + r + "行数据机不合法,[%s]为空", "用户姓名"));
         }
-
-        row.getCell(4).setCellType(Cell.CELL_TYPE_NUMERIC);
-        Double transactionAmount = row.getCell(4).getNumericCellValue();
+        Double transactionAmount = 0d;
+        try {
+            if (row.getCell(4).getCellType() == Cell.CELL_TYPE_NUMERIC) {
+                transactionAmount = row.getCell(4).getNumericCellValue();
+            }
+            if (row.getCell(4).getCellType() == Cell.CELL_TYPE_STRING) {
+                String stringCellValue = row.getCell(4).getStringCellValue();
+                if (stringCellValue.indexOf(",") > 0) {
+                    stringCellValue = stringCellValue.replace(",", "");
+                }
+                transactionAmount = Double.valueOf(stringCellValue);
+            }
+        } catch (Exception e) {
+            throw new BusinessException(String.format("第" + r + "行数据机不合法,交易金额Excel单元格式需要为【数值型】并且不能为空"));
+        }
         if (transactionAmount == 0) {
             throw new BusinessException(String.format("第" + r + "行数据机不合法,[%s]数据不合法", "交易金额"));
         }
@@ -593,9 +605,14 @@ public class MemberProfitRecordsServiceImpl extends AbstractCrudService<MemberPr
         if (StringUtils.isBlank(transactionType)) {
             throw new BusinessException(String.format("第" + r + "行数据机不合法,[%s]为空", "交易类型"));
         }
-        Date transactionDate = row.getCell(7).getDateCellValue();
+        Date transactionDate;
+        try {
+            transactionDate = row.getCell(7).getDateCellValue();
+        } catch (Exception e) {
+            throw new BusinessException(String.format("第" + r + "行数据机不合法,交易金额Excel单元格式需要为【日期】并且不能为空"));
+        }
         if (transactionDate == null) {
-            transactionDate = new Date();
+            throw new BusinessException(String.format("第" + r + "行数据机不合法,[%s]为空", "交易日期"));
         }
         MemberProfitRecords importProfit = new MemberProfitRecords();
         importProfit.setOrganizationNo(organizationNo);

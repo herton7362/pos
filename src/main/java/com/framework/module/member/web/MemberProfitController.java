@@ -170,7 +170,6 @@ public class MemberProfitController extends AbstractCrudController<MemberProfitR
     @RequestMapping(value = "/userCashIn", method = RequestMethod.POST, produces = "application/json; charset=utf-8")
     @ApiImplicitParams({@ApiImplicitParam(name = "amount", value = "提现金额", dataType = "double", paramType = "query", required = true)})
     public ResponseEntity<String> userCashIn(@RequestParam(value = "amount", required = true) double amount) throws Exception {
-        Map<String, Double> result = new HashMap<>();
         String memberId = UserThread.getInstance().get().getId();
         double allowCashInAmout = memberProfitService.cashOnAmount(memberId);
         if (amount > allowCashInAmout) {
