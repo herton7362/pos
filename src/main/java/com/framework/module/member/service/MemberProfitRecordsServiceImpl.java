@@ -317,19 +317,22 @@ public class MemberProfitRecordsServiceImpl extends AbstractCrudService<MemberPr
             importProfit.setNote(note);
             Shop shop = shopRepository.findOneBySn(importProfit.getSn());
             if (shop == null) {
-                throw new BusinessException(String.format("第" + r + "行数据机不合法,SN对应商户不存在SN为:[%s]", importProfit.getSn()));
+                throw new BusinessException(String.format("第" + r + "行数据不合法,SN对应商户不存在。SN为:[%s]", importProfit.getSn()));
+            }
+            if (StringUtils.isBlank(shop.getMemberId() )) {
+                throw new BusinessException(String.format("第" + r + "行数据不合法,SN对应商户会员信息不存在。SN为:[%s]", importProfit.getSn()));
             }
             Member member = memberService.findOne(shop.getMemberId());
             if (member == null) {
-                throw new BusinessException(String.format("第" + r + "行数据机不合法,用户编号不存在:[%s]", importProfit.getUserNo()));
+                throw new BusinessException(String.format("第" + r + "行数据不合法,用户编号不存在:[%s]", importProfit.getUserNo()));
             }
             importProfit.setMemberId(member.getId());
             if (member.getMemberLevel() == null) {
-                throw new BusinessException(String.format("第" + r + "行数据机不合法,用户等级信息不存在:[%s]", importProfit.getUserNo()));
+                throw new BusinessException(String.format("第" + r + "行数据不合法,用户等级信息不存在:[%s]", importProfit.getUserNo()));
             }
             MemberLevelParam param = memberLevelParamService.getParamByLevel(String.valueOf(member.getMemberLevel()));
             if (param == null) {
-                throw new BusinessException(String.format("第" + r + "行数据机不合法,用户等级信息不合法:[%s]", importProfit.getUserNo()));
+                throw new BusinessException(String.format("第" + r + "行数据不合法,用户等级信息不合法:[%s]", importProfit.getUserNo()));
             }
             double profitRate = param.getmPosProfit();
             importProfit.setProfit(new BigDecimal(profitRate * importProfit.getTransactionAmount()).setScale(2, BigDecimal.ROUND_HALF_UP).doubleValue());
@@ -558,24 +561,24 @@ public class MemberProfitRecordsServiceImpl extends AbstractCrudService<MemberPr
         row.getCell(0).setCellType(Cell.CELL_TYPE_STRING);
         String organizationNo = row.getCell(0).getStringCellValue();
         if (StringUtils.isBlank(organizationNo)) {
-            throw new BusinessException(String.format("第" + r + "行数据机不合法,[%s]为空", "机构编码"));
+            throw new BusinessException(String.format("第" + r + "行数据不合法,[%s]为空", "机构编码"));
         }
         row.getCell(1).setCellType(Cell.CELL_TYPE_STRING);
         String organizationName = row.getCell(1).getStringCellValue();
         if (StringUtils.isBlank(organizationName)) {
-            throw new BusinessException(String.format("第" + r + "行数据机不合法,[%s]为空", "机构名称"));
+            throw new BusinessException(String.format("第" + r + "行数据不合法,[%s]为空", "机构名称"));
         }
 
         row.getCell(2).setCellType(Cell.CELL_TYPE_STRING);
         String userNo = row.getCell(2).getStringCellValue();
         if (StringUtils.isBlank(userNo)) {
-            throw new BusinessException(String.format("第" + r + "行数据机不合法,[%s]为空", "用户编号"));
+            throw new BusinessException(String.format("第" + r + "行数据不合法,[%s]为空", "用户编号"));
         }
 
         row.getCell(3).setCellType(Cell.CELL_TYPE_STRING);
         String userName = row.getCell(3).getStringCellValue();
         if (StringUtils.isBlank(userName)) {
-            throw new BusinessException(String.format("第" + r + "行数据机不合法,[%s]为空", "用户姓名"));
+            throw new BusinessException(String.format("第" + r + "行数据不合法,[%s]为空", "用户姓名"));
         }
         Double transactionAmount = 0d;
         try {
@@ -590,29 +593,29 @@ public class MemberProfitRecordsServiceImpl extends AbstractCrudService<MemberPr
                 transactionAmount = Double.valueOf(stringCellValue);
             }
         } catch (Exception e) {
-            throw new BusinessException(String.format("第" + r + "行数据机不合法,交易金额Excel单元格式需要为【数值型】并且不能为空"));
+            throw new BusinessException(String.format("第" + r + "行数据不合法,文件中交易金额单元格 格式需要为【数值型】并且不能为空"));
         }
         if (transactionAmount == 0) {
-            throw new BusinessException(String.format("第" + r + "行数据机不合法,[%s]数据不合法", "交易金额"));
+            throw new BusinessException(String.format("第" + r + "行数据不合法,[%s]数据不合法", "交易金额"));
         }
         row.getCell(5).setCellType(Cell.CELL_TYPE_STRING);
         String sn = row.getCell(5).getStringCellValue();
         if (StringUtils.isBlank(sn)) {
-            throw new BusinessException(String.format("第" + r + "行数据机不合法,[%s]为空", "SN"));
+            throw new BusinessException(String.format("第" + r + "行数据不合法,[%s]为空", "SN"));
         }
         row.getCell(6).setCellType(Cell.CELL_TYPE_STRING);
         String transactionType = row.getCell(6).getStringCellValue();
         if (StringUtils.isBlank(transactionType)) {
-            throw new BusinessException(String.format("第" + r + "行数据机不合法,[%s]为空", "交易类型"));
+            throw new BusinessException(String.format("第" + r + "行数据不合法,[%s]为空", "交易类型"));
         }
         Date transactionDate;
         try {
             transactionDate = row.getCell(7).getDateCellValue();
         } catch (Exception e) {
-            throw new BusinessException(String.format("第" + r + "行数据机不合法,交易金额Excel单元格式需要为【日期】并且不能为空"));
+            throw new BusinessException(String.format("第" + r + "行数据不合法,文件中交易日期单元格 格式需要为【日期】并且不能为空"));
         }
         if (transactionDate == null) {
-            throw new BusinessException(String.format("第" + r + "行数据机不合法,[%s]为空", "交易日期"));
+            throw new BusinessException(String.format("第" + r + "行数据不合法,[%s]为空", "交易日期"));
         }
         MemberProfitRecords importProfit = new MemberProfitRecords();
         importProfit.setOrganizationNo(organizationNo);
