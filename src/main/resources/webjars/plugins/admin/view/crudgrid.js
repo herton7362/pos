@@ -3,6 +3,10 @@ define(['jquery', 'utils'], function($, utils) {
         props: {
             columns: Array,
             domain: String,
+            addAble: {
+                type: Boolean,
+                default: true
+            },
             formData: {
                 type: Object,
                 default: Object
@@ -36,7 +40,7 @@ define(['jquery', 'utils'], function($, utils) {
         '                  <div class="row">\n' +
         '                      <div class="col-md-8">\n' +
         '                          <button type="button" class="btn btn-flat btn-primary" @click="refresh"><i class="fa fa-refresh"></i> </button>\n' +
-        '                          <button class="btn btn-flat btn-success" @click="add"><i class="fa fa-plus-square"></i> 添加</button>\n' +
+        '                          <button v-if="addAble" class="btn btn-flat btn-success" @click="add"><i class="fa fa-plus-square"></i> 添加</button>\n' +
         '                          <button\n' +
         '                                  class="btn btn-flat btn-success"\n' +
         '                                  :disabled="datagrid.$instance.selectedRows <= 0"\n' +
