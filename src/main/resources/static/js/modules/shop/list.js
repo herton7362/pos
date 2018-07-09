@@ -23,7 +23,8 @@ require(['jquery', 'vue', 'messager', 'utils'], function($, Vue, messager, utils
                 sn: null,
                 mobile: null,
                 transactionAmount: null,
-                status: null
+                status: null,
+                memberId: null
             }
         },
         methods: {
