@@ -15,10 +15,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.util.Calendar;
-import java.util.Date;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 @Api("商户维护")
 @RestController
@@ -36,23 +33,40 @@ public class ShopController extends AbstractCrudController<Shop> {
     @ApiOperation(value = "获取商户信息")
     @RequestMapping(value = "/getMyShops", method = RequestMethod.GET)
     public ResponseEntity<List<Shop>> getMyShops() throws ParseException {
-
-        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM");
-        SimpleDateFormat sdf1 = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-        String dateStr = sdf.format(new Date()) + "-01 00:00:00";
-
+        Calendar calendar = Calendar.getInstance();
+        calendar.add(Calendar.MONTH, -2);
         String memberId = UserThread.getInstance().get().getId();
+        List<Shop> resultList = new ArrayList<>();
         List<Shop> list = shopRepository.findAllByMemberId(memberId, 0, new Date().getTime());
         if (list != null) {
             for (Shop s : list) {
-                Map<String, Double> result = memberProfitRecordsRepository.staticProfitsBySnMonth(s.getSn(), sdf1.parse(dateStr).getTime(), new Date().getTime());
-                if (result.get("directlyAward") != null && result.get("directlyAward") > 0) {
-                    s.setActivity(1);
-                } else {
+                Map<String, Double> result = memberProfitRecordsRepository.staticTransactionAmountBySnMonth(s.getSn(), calendar.getTime().getTime(), new Date().getTime());
+                if (result.get("directlyAward") == null || result.get("directlyAward") == 0) {
                     s.setActivity(0);
+                    resultList.add(s);
+                } else {
+                    calendar.add(Calendar.MONTH, 1);
+                    SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM");
+                    SimpleDateFormat sdf1 = new SimpleDateFormat("yyyy-MM-dd");
+                    SimpleDateFormat sdf2 = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+                    String source = sdf.format(calendar.getTime()) + "-01 00:00:00";
+                    Date startDate = sdf1.parse(source);
+                    long start = startDate.getTime();
+                    calendar.setTime(startDate);
+                    // 获取前一个月最后一天
+                    calendar.add(Calendar.MONTH, 1);
+                    calendar.set(Calendar.DAY_OF_MONTH, 0);
+                    String lastDay = sdf1.format(calendar.getTime()) + " 23:59:59";
+                    long end = sdf2.parse(lastDay).getTime();
+
+                    Map<String, Double> lastMonth = memberProfitRecordsRepository.staticTransactionAmountBySnMonth(s.getSn(), start, end);
+                    if (lastMonth.get("directlyAward") != null && lastMonth.get("directlyAward") > 200000) {
+                        s.setActivity(1);
+                        resultList.add(s);
+                    }
                 }
             }
         }
-        return new ResponseEntity<>(list, HttpStatus.OK);
+        return new ResponseEntity<>(resultList, HttpStatus.OK);
     }
 }

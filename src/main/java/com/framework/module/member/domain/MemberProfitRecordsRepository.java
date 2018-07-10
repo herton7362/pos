@@ -26,4 +26,7 @@ public interface MemberProfitRecordsRepository extends PageRepository<MemberProf
 
         @Query("SELECT sum(p.profit) AS totalProfit FROM MemberProfitRecords p where p.memberId=?1 AND p.transactionDate>=?2 AND p.profitType in (?3)")
         Map<String, Double> staticThisProfit(String memberId, long start, List<Integer> statisProfitType);
+
+        @Query("SELECT sum(CASE p.profitType WHEN 2 THEN p.transactionAmount ELSE 0 END) AS directlyAward FROM MemberProfitRecords p where p.sn=?1 AND p.transactionDate>=?2 AND p.transactionDate<=?3")
+        Map<String, Double> staticTransactionAmountBySnMonth(String sn, long start, long end);
 }
