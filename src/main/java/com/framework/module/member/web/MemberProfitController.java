@@ -20,6 +20,9 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.*;
 
+import static org.springframework.http.HttpStatus.BAD_REQUEST;
+import static org.springframework.http.HttpStatus.NOT_ACCEPTABLE;
+
 @Api(value = "会员管理")
 @RestController
 @RequestMapping("/api/memberprofit")
@@ -93,10 +96,9 @@ public class MemberProfitController extends AbstractCrudController<MemberProfitR
     @RequestMapping(value = "/getProfit", method = RequestMethod.GET)
     public ResponseEntity<List<ProfitMonthDetail>> getProfit() throws Exception {
         String memberId = UserThread.getInstance().get().getId();
-        List<ProfitMonthDetail> result = null;
         SimpleDateFormat sdf = new SimpleDateFormat("yyyyMM");
         Calendar calendar = Calendar.getInstance();
-        result = memberProfitService.getProfitByMonth(memberId, sdf.format(calendar.getTime()), 1);
+        List<ProfitMonthDetail> result = memberProfitService.getProfitByMonth(memberId, sdf.format(calendar.getTime()), 1);
         return new ResponseEntity<>(result, HttpStatus.OK);
     }
 
@@ -104,11 +106,11 @@ public class MemberProfitController extends AbstractCrudController<MemberProfitR
     @RequestMapping(value = "/getMonthAchievement/{startMonth}/{size}", method = RequestMethod.GET)
     public ResponseEntity<List<AchievementDetail>> getMonthAchievement(@PathVariable String startMonth, @PathVariable Integer size) {
         String memberId = UserThread.getInstance().get().getId();
-        List<AchievementDetail> result = null;
+        List<AchievementDetail> result = new ArrayList<>();
         try {
             result = memberProfitService.getAchievementByMonth(memberId, startMonth, size);
         } catch (Exception e) {
-            return new ResponseEntity<>(result, HttpStatus.BAD_REQUEST);
+            return new ResponseEntity<>(result, BAD_REQUEST);
         }
         return new ResponseEntity<>(result, HttpStatus.OK);
     }
@@ -129,7 +131,7 @@ public class MemberProfitController extends AbstractCrudController<MemberProfitR
         try {
             result = memberProfitService.getAchievement(memberId);
         } catch (ParseException e) {
-            return new ResponseEntity<>(result, HttpStatus.BAD_REQUEST);
+            return new ResponseEntity<>(result, BAD_REQUEST);
         }
         return new ResponseEntity<>(result, HttpStatus.OK);
     }
@@ -168,20 +170,20 @@ public class MemberProfitController extends AbstractCrudController<MemberProfitR
     @ApiOperation(value = "用户提现")
     @RequestMapping(value = "/userCashIn", method = RequestMethod.POST, produces = "application/json; charset=utf-8")
     @ApiImplicitParams({@ApiImplicitParam(name = "amount", value = "提现金额", dataType = "double", paramType = "query", required = true)})
-    public ResponseEntity<Map<String, String>> userCashIn(@RequestParam(value = "amount", required = true) double amount) throws Exception {
+    public ResponseEntity<Map<String, String>> userCashIn(@RequestParam(value = "amount") double amount) throws Exception {
         Map<String, String> result = new HashMap<>();
         String memberId = UserThread.getInstance().get().getId();
         double allowCashInAmout = memberProfitService.cashOnAmount(memberId);
         if (amount > allowCashInAmout) {
             result.put("message", "提现金额超出允许提现范围");
-            return new ResponseEntity<>(result, HttpStatus.BAD_REQUEST);
+            return new ResponseEntity<>(result, BAD_REQUEST);
         }
         if (memberCashInRecordsService.cashIn(memberId, amount)) {
             result.put("message", "提现成功，等待审核");
             return new ResponseEntity<>(result, HttpStatus.OK);
         } else {
             result.put("message", "提现失败，请联系管理员");
-            return new ResponseEntity<>(result, HttpStatus.NOT_ACCEPTABLE);
+            return new ResponseEntity<>(result, NOT_ACCEPTABLE);
         }
     }
 
