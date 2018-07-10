@@ -2,6 +2,7 @@ package com.framework.module.member.service;
 
 import com.framework.module.member.domain.*;
 import com.kratos.common.CrudService;
+import com.kratos.exceptions.BusinessException;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.text.ParseException;
@@ -90,4 +91,11 @@ public interface MemberProfitRecordsService extends CrudService<MemberProfitReco
      * @throws Exception 异常
      */
     double cashOnAmount(String memberId) throws Exception;
+
+    /**
+     * 审核收入信息
+     * @param operateTransactionId
+     */
+    void examineImportProfit(String operateTransactionId) throws Exception;
+
 }

@@ -24,6 +24,7 @@ import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
+import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Component;
@@ -286,10 +287,6 @@ public class MemberProfitRecordsServiceImpl extends AbstractCrudService<MemberPr
 
     @Override
     public Integer batchImport(String fileName, MultipartFile file) throws Exception {
-        List<ActiveRule> activeRules = activeRuleService.findAll(new HashMap<>());
-        if (CollectionUtils.isEmpty(activeRules) || activeRules.get(0).getConditionValue() == null) {
-            throw new BusinessException("设备激活奖励未设置");
-        }
         if (!fileName.matches("^.+\\.(?i)(xls)$") && !fileName.matches("^.+\\.(?i)(xlsx)$")) {
             throw new BusinessException("输入文件格式不正确");
         }
@@ -319,7 +316,7 @@ public class MemberProfitRecordsServiceImpl extends AbstractCrudService<MemberPr
             if (shop == null) {
                 throw new BusinessException(String.format("第" + r + "行数据不合法,SN对应商户不存在。SN为:[%s]", importProfit.getSn()));
             }
-            if (StringUtils.isBlank(shop.getMemberId() )) {
+            if (StringUtils.isBlank(shop.getMemberId())) {
                 throw new BusinessException(String.format("第" + r + "行数据不合法,SN对应商户会员信息不存在。SN为:[%s]", importProfit.getSn()));
             }
             Member member = memberService.findOne(shop.getMemberId());
@@ -341,50 +338,52 @@ public class MemberProfitRecordsServiceImpl extends AbstractCrudService<MemberPr
             if (StringUtils.isNotBlank(member.getFatherId())) {
                 setParamProfitRecords(memberProfitTmpRecordsList, importProfit, member, profitRate, operateTransactionId);
             }
-//            // 设置激活奖励
-//            double transactionAmountInDb = shop.getTransactionAmount() == null ? 0 : shop.getTransactionAmount();
-//            double addedTransactionAmount = transactionAmountInDb + importProfit.getTransactionAmount();
-//            shop.setTransactionAmount(new BigDecimal(addedTransactionAmount).setScale(2, BigDecimal.ROUND_HALF_UP).doubleValue());
-//            // 设置激活奖励
-//            setActiveRewardProfit(activeRules, shop, note, importProfit.getTransactionDate());
-//            shopRepository.save(shop);
         }
         // 将数据都插入到数据库中
         memberProfitTmpRecordsRepository.save(memberProfitTmpRecordsList);
         return importSize;
     }
 
-//    private void setActiveRewardProfit(List<ActiveRule> activeRules, Shop shop, String operatTransactionId, Long transactionDate) throws Exception {
-//        if ((null == shop.getStatus() || shop.getStatus().equals(Shop.Status.UN_ACTIVE)) && shop.getTransactionAmount() >= activeRules.get(0).getConditionValue()) {
-//            shop.setStatus(Shop.Status.ACTIVE);
-//            Long rewardCount = shopRepository.count(
-//                    (Root<Shop> root, CriteriaQuery<?> criteriaQuery, CriteriaBuilder criteriaBuilder) -> {
-//                        List<Predicate> predicate = new ArrayList<>();
-//                        predicate.add(criteriaBuilder.equal(root.get("memberId"), shop.getMemberId()));
-//                        predicate.add(criteriaBuilder.equal(root.get("activationReward"), Constant.ACTIVATION_REWARD_YES));
-//                        return criteriaBuilder.and(predicate.toArray(new Predicate[]{}));
-//                    });
-//            if (rewardCount == 0) {
-//                shop.setActivationReward(Constant.ACTIVATION_REWARD_YES);
-//                MemberProfitRecords activationRewardProfit = new MemberProfitRecords();
-//                activationRewardProfit.setOperateTransactionId(operatTransactionId);
-//                activationRewardProfit.setProfitType(Constant.PROFIT_TYPE_FANXIAN);
-//                activationRewardProfit.setProfit(activeRules.get(0).getAwardMoney());
-//                activationRewardProfit.setMemberId(shop.getMemberId());
-//                activationRewardProfit.setTransactionDate(transactionDate);
-//                save(activationRewardProfit);
-//            }
-//        }
-//    }
+    /**
+     * 设置激活奖励
+     *
+     * @param activeRules         激活规则
+     * @param shop                商户实体
+     * @param operatTransactionId 操作流水号
+     * @param transactionDate     操作日期
+     * @throws Exception 异常
+     */
+    private void setActiveRewardProfit(List<ActiveRule> activeRules, Shop shop, String operatTransactionId, Long transactionDate) throws Exception {
+        if ((null == shop.getStatus() || shop.getStatus().equals(Shop.Status.UN_ACTIVE)) && shop.getTransactionAmount() >= activeRules.get(0).getConditionValue()) {
+            shop.setStatus(Shop.Status.ACTIVE);
+            Long rewardCount = shopRepository.count(
+                    (Root<Shop> root, CriteriaQuery<?> criteriaQuery, CriteriaBuilder criteriaBuilder) -> {
+                        List<Predicate> predicate = new ArrayList<>();
+                        predicate.add(criteriaBuilder.equal(root.get("memberId"), shop.getMemberId()));
+                        predicate.add(criteriaBuilder.equal(root.get("activationReward"), Constant.ACTIVATION_REWARD_YES));
+                        return criteriaBuilder.and(predicate.toArray(new Predicate[]{}));
+                    });
+            if (rewardCount == 0) {
+                shop.setActivationReward(Constant.ACTIVATION_REWARD_YES);
+                MemberProfitRecords activationRewardProfit = new MemberProfitRecords();
+                activationRewardProfit.setOperateTransactionId(operatTransactionId);
+                activationRewardProfit.setProfitType(Constant.PROFIT_TYPE_FANXIAN);
+                activationRewardProfit.setProfit(activeRules.get(0).getAwardMoney());
+                activationRewardProfit.setMemberId(shop.getMemberId());
+                activationRewardProfit.setTransactionDate(transactionDate);
+                save(activationRewardProfit);
+            }
+        }
+    }
 
     /**
      * 设置上级的收益情况
      *
      * @param memberProfitTmpRecordsList 入库的list
-     * @param importProfit            当前用户的收益情况
-     * @param member                  当前用户
-     * @param profitRate              当前用户的收益
-     * @param operateTransactionId 操作流水号
+     * @param importProfit               当前用户的收益情况
+     * @param member                     当前用户
+     * @param profitRate                 当前用户的收益
+     * @param operateTransactionId       操作流水号
      * @throws Exception 异常
      */
     private void setParamProfitRecords(List<MemberProfitTmpRecords> memberProfitTmpRecordsList, MemberProfitTmpRecords importProfit, Member member, double profitRate, String operateTransactionId) throws Exception {
@@ -495,6 +494,37 @@ public class MemberProfitRecordsServiceImpl extends AbstractCrudService<MemberPr
         double cashInAmount = memberCashInRecordsService.getCashInAmount(memberId);
 
         return new BigDecimal(tilLastMonthProfit + currentMonthProfit - cashInAmount).setScale(2, BigDecimal.ROUND_HALF_UP).doubleValue();
+    }
+
+    @Override
+    public void examineImportProfit(String operateTransactionId) throws Exception {
+        List<MemberProfitTmpRecords> records = memberProfitTmpRecordsRepository.findAllByOperateTransactionId(operateTransactionId);
+        if (CollectionUtils.isEmpty(records)) {
+            throw new BusinessException("未找到对应数据的操作流水号" + operateTransactionId);
+        }
+        List<ActiveRule> activeRules = activeRuleService.findAll(new HashMap<>());
+        if (CollectionUtils.isEmpty(activeRules) || activeRules.get(0).getConditionValue() == null) {
+            throw new BusinessException("设备激活奖励未设置");
+        }
+        List<MemberProfitRecords> memberProfitRecordsList = new ArrayList<>();
+        for (MemberProfitTmpRecords record : records) {
+            MemberProfitRecords memberProfitRecord = new MemberProfitRecords();
+            BeanUtils.copyProperties(record, memberProfitRecord);
+            memberProfitRecord.setId(null);
+            memberProfitRecordsList.add(memberProfitRecord);
+            if (record.getProfitType() == Constant.PROFIT_TYPE_ZHIYING) {
+                // 设置激活奖励
+                Shop shop = shopRepository.findOneBySn(record.getSn());
+                double transactionAmountInDb = shop.getTransactionAmount() == null ? 0 : shop.getTransactionAmount();
+                double addedTransactionAmount = transactionAmountInDb + record.getTransactionAmount();
+                shop.setTransactionAmount(new BigDecimal(addedTransactionAmount).setScale(2, BigDecimal.ROUND_HALF_UP).doubleValue());
+                // 设置激活奖励
+                setActiveRewardProfit(activeRules, shop, operateTransactionId, record.getTransactionDate());
+                shopRepository.save(shop);
+            }
+        }
+        memberProfitRecordsRepository.save(memberProfitRecordsList);
+        memberProfitTmpRecordsRepository.delete(records);
     }
 
     /**
