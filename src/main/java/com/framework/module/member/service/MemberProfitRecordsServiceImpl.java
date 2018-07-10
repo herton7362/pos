@@ -497,10 +497,14 @@ public class MemberProfitRecordsServiceImpl extends AbstractCrudService<MemberPr
     }
 
     @Override
-    public void examineImportProfit(String operateTransactionId) throws Exception {
+    public void examineImportProfit(String operateTransactionId, boolean examineResult) throws Exception {
         List<MemberProfitTmpRecords> records = memberProfitTmpRecordsRepository.findAllByOperateTransactionId(operateTransactionId);
         if (CollectionUtils.isEmpty(records)) {
             throw new BusinessException("未找到对应数据的操作流水号" + operateTransactionId);
+        }
+        if (!examineResult){
+            memberProfitTmpRecordsRepository.delete(records);
+            return;
         }
         List<ActiveRule> activeRules = activeRuleService.findAll(new HashMap<>());
         if (CollectionUtils.isEmpty(activeRules) || activeRules.get(0).getConditionValue() == null) {

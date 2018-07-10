@@ -59,10 +59,10 @@ public class MemberProfitController extends AbstractCrudController<MemberProfitR
      * 审核收益信息
      */
     @ApiOperation(value = "审核收益信息")
-    @RequestMapping(value = "/examineImportProfit/{operateTransactionId}", method = RequestMethod.POST, produces = "application/json; charset=utf-8")
-    public ResponseEntity<String> examineImportProfit(@PathVariable String operateTransactionId) {
+    @RequestMapping(value = "/examineImportProfit/{operateTransactionId}/{examineResult}", method = RequestMethod.POST, produces = "application/json; charset=utf-8")
+    public ResponseEntity<String> examineImportProfit(@PathVariable String operateTransactionId, @PathVariable boolean examineResult) {
         try {
-            memberProfitService.examineImportProfit(operateTransactionId);
+            memberProfitService.examineImportProfit(operateTransactionId, examineResult);
         } catch (Exception e) {
             return new ResponseEntity<>("审核失败，原因是:" + e.getMessage(), HttpStatus.OK);
         }
