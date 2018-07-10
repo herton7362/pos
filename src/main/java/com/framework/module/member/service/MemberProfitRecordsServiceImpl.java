@@ -54,6 +54,7 @@ public class MemberProfitRecordsServiceImpl extends AbstractCrudService<MemberPr
     private final DictionaryService dictionaryService;
     private final DictionaryCategoryService dictionaryCategoryService;
     private final MemberCashInRecordsService memberCashInRecordsService;
+    private final MemberProfitTmpRecordsRepository memberProfitTmpRecordsRepository;
 
     @Override
     public void setTeamBuildProfit(String fatherId) throws Exception {
@@ -289,7 +290,6 @@ public class MemberProfitRecordsServiceImpl extends AbstractCrudService<MemberPr
         if (CollectionUtils.isEmpty(activeRules) || activeRules.get(0).getConditionValue() == null) {
             throw new BusinessException("设备激活奖励未设置");
         }
-
         if (!fileName.matches("^.+\\.(?i)(xls)$") && !fileName.matches("^.+\\.(?i)(xlsx)$")) {
             throw new BusinessException("输入文件格式不正确");
         }
@@ -298,23 +298,23 @@ public class MemberProfitRecordsServiceImpl extends AbstractCrudService<MemberPr
             isExcel2003 = false;
         }
         InputStream is = file.getInputStream();
-        Workbook wb = null;
+        Workbook wb;
         if (isExcel2003) {
             wb = new HSSFWorkbook(is);
         } else {
             wb = new XSSFWorkbook(is);
         }
         Sheet sheet = wb.getSheetAt(0);
-        List<MemberProfitRecords> memberProfitRecordsList = new ArrayList<>();
+        List<MemberProfitTmpRecords> memberProfitTmpRecordsList = new ArrayList<>();
         Integer importSize = sheet.getLastRowNum();
         for (int r = 1; r <= sheet.getLastRowNum(); r++) {
             Row row = sheet.getRow(r);
             if (row == null) {
                 continue;
             }
-            String note = DateFormatUtils.format(System.currentTimeMillis(), "yyyyMMddHHmmssSSS") + RandomStringUtils.randomNumeric(4);
-            MemberProfitRecords importProfit = getAllParamFromExcel(row, r);
-            importProfit.setNote(note);
+            String operateTransactionId = DateFormatUtils.format(System.currentTimeMillis(), "yyyyMMddHHmmssSSS") + RandomStringUtils.randomNumeric(8);
+            MemberProfitTmpRecords importProfit = getAllParamFromExcel(row, r);
+            importProfit.setOperateTransactionId(operateTransactionId);
             Shop shop = shopRepository.findOneBySn(importProfit.getSn());
             if (shop == null) {
                 throw new BusinessException(String.format("第" + r + "行数据不合法,SN对应商户不存在。SN为:[%s]", importProfit.getSn()));
@@ -336,64 +336,62 @@ public class MemberProfitRecordsServiceImpl extends AbstractCrudService<MemberPr
             }
             double profitRate = param.getmPosProfit();
             importProfit.setProfit(new BigDecimal(profitRate * importProfit.getTransactionAmount()).setScale(2, BigDecimal.ROUND_HALF_UP).doubleValue());
-            memberProfitRecordsList.add(importProfit);
+            memberProfitTmpRecordsList.add(importProfit);
             // 如果父节点不为空，设置父节点的收益
             if (StringUtils.isNotBlank(member.getFatherId())) {
-                setParamProfitRecords(memberProfitRecordsList, importProfit, member, profitRate, note);
+                setParamProfitRecords(memberProfitTmpRecordsList, importProfit, member, profitRate, operateTransactionId);
             }
-            // 设置激活奖励
-            double transactionAmountInDb = shop.getTransactionAmount() == null ? 0 : shop.getTransactionAmount();
-            double addedTransactionAmount = transactionAmountInDb + importProfit.getTransactionAmount();
-            shop.setTransactionAmount(new BigDecimal(addedTransactionAmount).setScale(2, BigDecimal.ROUND_HALF_UP).doubleValue());
-            // 设置激活奖励
-            setActiveRewardProfit(activeRules, shop, note, importProfit.getTransactionDate());
-            shopRepository.save(shop);
+//            // 设置激活奖励
+//            double transactionAmountInDb = shop.getTransactionAmount() == null ? 0 : shop.getTransactionAmount();
+//            double addedTransactionAmount = transactionAmountInDb + importProfit.getTransactionAmount();
+//            shop.setTransactionAmount(new BigDecimal(addedTransactionAmount).setScale(2, BigDecimal.ROUND_HALF_UP).doubleValue());
+//            // 设置激活奖励
+//            setActiveRewardProfit(activeRules, shop, note, importProfit.getTransactionDate());
+//            shopRepository.save(shop);
         }
         // 将数据都插入到数据库中
-        for (MemberProfitRecords t : memberProfitRecordsList) {
-            save(t);
-        }
+        memberProfitTmpRecordsRepository.save(memberProfitTmpRecordsList);
         return importSize;
     }
 
-    private void setActiveRewardProfit(List<ActiveRule> activeRules, Shop shop, String note, Long transactionDate) throws Exception {
-        if ((null == shop.getStatus() || shop.getStatus().equals(Shop.Status.UN_ACTIVE)) && shop.getTransactionAmount() >= activeRules.get(0).getConditionValue()) {
-            shop.setStatus(Shop.Status.ACTIVE);
-            Long rewardCount = shopRepository.count(
-                    (Root<Shop> root, CriteriaQuery<?> criteriaQuery, CriteriaBuilder criteriaBuilder) -> {
-                        List<Predicate> predicate = new ArrayList<>();
-                        predicate.add(criteriaBuilder.equal(root.get("memberId"), shop.getMemberId()));
-                        predicate.add(criteriaBuilder.equal(root.get("activationReward"), Constant.ACTIVATION_REWARD_YES));
-                        return criteriaBuilder.and(predicate.toArray(new Predicate[]{}));
-                    });
-            if (rewardCount == 0) {
-                shop.setActivationReward(Constant.ACTIVATION_REWARD_YES);
-                MemberProfitRecords activationRewardProfit = new MemberProfitRecords();
-                activationRewardProfit.setNote(note);
-                activationRewardProfit.setProfitType(Constant.PROFIT_TYPE_FANXIAN);
-                activationRewardProfit.setProfit(activeRules.get(0).getAwardMoney());
-                activationRewardProfit.setMemberId(shop.getMemberId());
-                activationRewardProfit.setTransactionDate(transactionDate);
-                save(activationRewardProfit);
-            }
-        }
-    }
+//    private void setActiveRewardProfit(List<ActiveRule> activeRules, Shop shop, String operatTransactionId, Long transactionDate) throws Exception {
+//        if ((null == shop.getStatus() || shop.getStatus().equals(Shop.Status.UN_ACTIVE)) && shop.getTransactionAmount() >= activeRules.get(0).getConditionValue()) {
+//            shop.setStatus(Shop.Status.ACTIVE);
+//            Long rewardCount = shopRepository.count(
+//                    (Root<Shop> root, CriteriaQuery<?> criteriaQuery, CriteriaBuilder criteriaBuilder) -> {
+//                        List<Predicate> predicate = new ArrayList<>();
+//                        predicate.add(criteriaBuilder.equal(root.get("memberId"), shop.getMemberId()));
+//                        predicate.add(criteriaBuilder.equal(root.get("activationReward"), Constant.ACTIVATION_REWARD_YES));
+//                        return criteriaBuilder.and(predicate.toArray(new Predicate[]{}));
+//                    });
+//            if (rewardCount == 0) {
+//                shop.setActivationReward(Constant.ACTIVATION_REWARD_YES);
+//                MemberProfitRecords activationRewardProfit = new MemberProfitRecords();
+//                activationRewardProfit.setOperateTransactionId(operatTransactionId);
+//                activationRewardProfit.setProfitType(Constant.PROFIT_TYPE_FANXIAN);
+//                activationRewardProfit.setProfit(activeRules.get(0).getAwardMoney());
+//                activationRewardProfit.setMemberId(shop.getMemberId());
+//                activationRewardProfit.setTransactionDate(transactionDate);
+//                save(activationRewardProfit);
+//            }
+//        }
+//    }
 
     /**
      * 设置上级的收益情况
      *
-     * @param memberProfitRecordsList 入库的list
+     * @param memberProfitTmpRecordsList 入库的list
      * @param importProfit            当前用户的收益情况
      * @param member                  当前用户
      * @param profitRate              当前用户的收益
-     * @param note
+     * @param operateTransactionId 操作流水号
      * @throws Exception 异常
      */
-    private void setParamProfitRecords(List<MemberProfitRecords> memberProfitRecordsList, MemberProfitRecords importProfit, Member member, double profitRate, String note) throws Exception {
+    private void setParamProfitRecords(List<MemberProfitTmpRecords> memberProfitTmpRecordsList, MemberProfitTmpRecords importProfit, Member member, double profitRate, String operateTransactionId) throws Exception {
         Member fatherMember = repository.findOne(member.getFatherId());
         while (fatherMember != null) {
-            MemberProfitRecords fatherProfit = new MemberProfitRecords();
-            fatherProfit.setNote(note);
+            MemberProfitTmpRecords fatherProfit = new MemberProfitTmpRecords();
+            fatherProfit.setOperateTransactionId(operateTransactionId);
             fatherProfit.setTransactionDate(importProfit.getTransactionDate());
             fatherProfit.setProfitType(Constant.PROFIT_TYPE_GUANLI);
             fatherProfit.setMemberId(fatherMember.getId());
@@ -401,7 +399,7 @@ public class MemberProfitRecordsServiceImpl extends AbstractCrudService<MemberPr
             double fatherProfitRate = fatherMemberParam.getmPosProfit() - profitRate;
             fatherProfitRate = fatherProfitRate < 0 ? 0 : fatherProfitRate;
             fatherProfit.setProfit(new BigDecimal(fatherProfitRate * importProfit.getTransactionAmount()).setScale(2, BigDecimal.ROUND_HALF_UP).doubleValue());
-            memberProfitRecordsList.add(fatherProfit);
+            memberProfitTmpRecordsList.add(fatherProfit);
             if (StringUtils.isBlank(fatherMember.getFatherId())) {
                 fatherMember = null;
             } else {
@@ -414,10 +412,7 @@ public class MemberProfitRecordsServiceImpl extends AbstractCrudService<MemberPr
     public void membersIncreaseLevel() throws Exception {
         Iterable<Member> allMembers = repository.findAllOrderByCreatedDate();
         int s = 0;
-        while (true) {
-            if (s + 1 == ((List<Member>) allMembers).size()) {
-                break;
-            }
+        while (s + 1 != ((List<Member>) allMembers).size()) {
             Member member = ((List<Member>) allMembers).get(s);
             Integer memberLevel = member.getMemberLevel() == null ? 1 : member.getMemberLevel();
             // 获得下一级别的升级要求
@@ -432,9 +427,7 @@ public class MemberProfitRecordsServiceImpl extends AbstractCrudService<MemberPr
             Map<String, Integer> sonsLevelNum = new HashMap<>();
             for (Member m : sons) {
                 Integer mLevel = m.getMemberLevel() == null ? 1 : m.getMemberLevel();
-                if (sonsLevelNum.get(String.valueOf(mLevel)) == null) {
-                    sonsLevelNum.put(String.valueOf(mLevel), 0);
-                }
+                sonsLevelNum.putIfAbsent(String.valueOf(mLevel), 0);
                 sonsLevelNum.put(String.valueOf(mLevel), (sonsLevelNum.get(String.valueOf(mLevel)) + 1));
             }
             String[] scale = memberLevelParam.getTeamScale().split("\\|");
@@ -464,50 +457,6 @@ public class MemberProfitRecordsServiceImpl extends AbstractCrudService<MemberPr
                 s++;
             }
         }
-
-//        Map<String, Tree> allMemberNodeMap = new HashMap<>();
-//        Iterable<Member> allMembers = repository.findAll();
-//        Iterator<Member> iterator = allMembers.iterator();
-//        // 获取所有会员信息，计算交易额
-//        while (iterator.hasNext()) {
-//            Member m = iterator.next();
-//            Tree node = new Tree(m);
-//            Map<String, Double> transactionAmount = shopRepository.staticTotalTransaction(m.getId());
-//            node.addTransactionAmount(transactionAmount.get("totalTransactionAmount") == null ? 0 : transactionAmount.get("totalTransactionAmount"));
-//            allMemberNodeMap.put(m.getId(), node);
-//        }
-//        // 建立树
-//        for (String key : allMemberNodeMap.keySet()) {
-//            Member currentMember = allMemberNodeMap.get(key).getRootData();
-//            String fatherId = currentMember.getFatherId();
-//            if (StringUtils.isBlank(fatherId)) {
-//                continue;
-//            } else {
-//                Tree fatherTree = allMemberNodeMap.get(fatherId);
-//                fatherTree.addNode(allMemberNodeMap.get(key));
-//                Integer currentNum = fatherTree.getChildLevelMap().get(currentMember.getMemberLevel()) == null ? 0 : fatherTree.getChildLevelMap().get(currentMember.getMemberLevel());
-//                fatherTree.getChildLevelMap().put(currentMember.getMemberLevel(), currentNum + 1);
-//            }
-//        }
-//        // 从叶子节点开始遍历
-//        List<Member> leafMember = repository.getAllLeafMembers();
-//        for (Member member : leafMember) {
-//            MemberLevelParam fatherMemberParam = memberLevelParamService.getParamByLevel(member.getMemberLevel());
-//            Tree cNode = allMemberNodeMap.get(member.getId());
-//            if (cNode.getTransactionAmount() < fatherMemberParam.getmPosProfit()) {
-//                continue;
-//            }
-//            String[] scale = fatherMemberParam.getTeamScale().split("|");
-//            for (int i = 0; i < scale.length; i++) {
-//                int scaleNum = Integer.valueOf(scale[i]);
-//                if (scaleNum == 0) {
-//                    continue;
-//                }
-//                if (scaleNum)
-//            }
-//        }
-
-
     }
 
     @Override
@@ -554,7 +503,7 @@ public class MemberProfitRecordsServiceImpl extends AbstractCrudService<MemberPr
      * @param row 行
      * @return 收益数据
      */
-    private MemberProfitRecords getAllParamFromExcel(Row row, int r) throws BusinessException {
+    private MemberProfitTmpRecords getAllParamFromExcel(Row row, int r) throws BusinessException {
         if (row.getCell(0) == null || row.getCell(1) == null || row.getCell(2) == null || row.getCell(3) == null || row.getCell(4) == null || row.getCell(5) == null || row.getCell(6) == null) {
             throw new BusinessException("导入文档不符合模板要求");
         }
@@ -593,7 +542,7 @@ public class MemberProfitRecordsServiceImpl extends AbstractCrudService<MemberPr
                 transactionAmount = Double.valueOf(stringCellValue);
             }
         } catch (Exception e) {
-            throw new BusinessException(String.format("第" + r + "行数据不合法,文件中交易金额单元格 格式需要为【数值型】并且不能为空"));
+            throw new BusinessException("第" + r + "行数据不合法,文件中交易金额单元格 格式需要为【数值型】并且不能为空");
         }
         if (transactionAmount == 0) {
             throw new BusinessException(String.format("第" + r + "行数据不合法,[%s]数据不合法", "交易金额"));
@@ -612,12 +561,12 @@ public class MemberProfitRecordsServiceImpl extends AbstractCrudService<MemberPr
         try {
             transactionDate = row.getCell(7).getDateCellValue();
         } catch (Exception e) {
-            throw new BusinessException(String.format("第" + r + "行数据不合法,文件中交易日期单元格 格式需要为【日期】并且不能为空"));
+            throw new BusinessException("第" + r + "行数据不合法,文件中交易日期单元格 格式需要为【日期】并且不能为空");
         }
         if (transactionDate == null) {
             throw new BusinessException(String.format("第" + r + "行数据不合法,[%s]为空", "交易日期"));
         }
-        MemberProfitRecords importProfit = new MemberProfitRecords();
+        MemberProfitTmpRecords importProfit = new MemberProfitTmpRecords();
         importProfit.setOrganizationNo(organizationNo);
         importProfit.setOrganizationName(organizationName);
         importProfit.setUserNo(userNo);
@@ -636,7 +585,7 @@ public class MemberProfitRecordsServiceImpl extends AbstractCrudService<MemberPr
             MemberRepository repository,
             MemberService memberService,
             MemberLevelParamService memberLevelParamService,
-            ShopRepository shopRepository, GroupBuildDrawRuleService groupBuildDrawRuleService, ActiveRuleService activeRuleService, MemberProfitRecordsRepository memberProfitRecordsRepository, DictionaryService dictionaryService, DictionaryCategoryService dictionaryCategoryService, MemberCashInRecordsService memberCashInRecordsService) {
+            ShopRepository shopRepository, GroupBuildDrawRuleService groupBuildDrawRuleService, ActiveRuleService activeRuleService, MemberProfitRecordsRepository memberProfitRecordsRepository, DictionaryService dictionaryService, DictionaryCategoryService dictionaryCategoryService, MemberCashInRecordsService memberCashInRecordsService, MemberProfitTmpRecordsRepository memberProfitTmpRecordsRepository) {
         this.repository = repository;
         this.memberService = memberService;
         this.memberLevelParamService = memberLevelParamService;
@@ -647,5 +596,6 @@ public class MemberProfitRecordsServiceImpl extends AbstractCrudService<MemberPr
         this.dictionaryService = dictionaryService;
         this.dictionaryCategoryService = dictionaryCategoryService;
         this.memberCashInRecordsService = memberCashInRecordsService;
+        this.memberProfitTmpRecordsRepository = memberProfitTmpRecordsRepository;
     }
 }

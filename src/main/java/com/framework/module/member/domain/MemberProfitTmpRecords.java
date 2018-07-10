@@ -1,12 +1,9 @@
 package com.framework.module.member.domain;
 
 import com.kratos.entity.BaseEntity;
-import io.swagger.annotations.ApiModelProperty;
-import org.hibernate.annotations.GenericGenerator;
 
-import javax.persistence.*;
-import java.io.Serializable;
-import java.util.Date;
+import javax.persistence.Column;
+import javax.persistence.Entity;
 
 /**
  * <p>Description: 导入收益的Excel实体类</p>
@@ -15,7 +12,7 @@ import java.util.Date;
  * @Date: 2018/6/23 11:30
  */
 @Entity
-public class MemberProfitRecords extends BaseEntity {
+public class MemberProfitTmpRecords extends BaseEntity {
     @Column(length = 50)
     private String organizationNo;
     @Column(length = 50)
