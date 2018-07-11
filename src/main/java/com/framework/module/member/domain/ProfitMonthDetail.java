@@ -28,16 +28,36 @@ public class ProfitMonthDetail {
     private String month;
     @ApiModelProperty(value = "秒到/云闪付/理财收益")
     private double profitMiaoDao;
-    @ApiModelProperty(value = "快捷支付扫码收益")
+    @ApiModelProperty(value = "扫码收益")
     private double profitSaoMa;
+    @ApiModelProperty(value = "快捷支付收益")
+    private double profitKuaiJie;
     @ApiModelProperty(value = "代还收益")
     private double profitDaiHuan;
     @ApiModelProperty(value = "秒到/云闪付/理财交易金额")
     private double transactionAmountMiaoDao;
-    @ApiModelProperty(value = "快捷支付扫码交易金额")
+    @ApiModelProperty(value = "扫码交易金额")
     private double transactionAmountSaoMa;
+    @ApiModelProperty(value = "快捷支付交易金额")
+    private double transactionAmountKuaiJie;
     @ApiModelProperty(value = "代还交易金额")
     private double transactionAmountDaiHuan;
+
+    public double getProfitKuaiJie() {
+        return profitKuaiJie;
+    }
+
+    public void setProfitKuaiJie(double profitKuaiJie) {
+        this.profitKuaiJie = profitKuaiJie;
+    }
+
+    public double getTransactionAmountKuaiJie() {
+        return transactionAmountKuaiJie;
+    }
+
+    public void setTransactionAmountKuaiJie(double transactionAmountKuaiJie) {
+        this.transactionAmountKuaiJie = transactionAmountKuaiJie;
+    }
 
     public double getProfitMiaoDao() {
         return profitMiaoDao;

@@ -120,12 +120,13 @@ public class MemberProfitRecordsServiceImpl extends AbstractCrudService<MemberPr
 
             resultMap = memberProfitRecordsRepository.staticDirectAwardByMonth(memberId, start, end);
             profitMonthDetail.setProfitMiaoDao(resultMap.get("profit1") == null ? 0 : resultMap.get("profit1"));
-            profitMonthDetail.setProfitSaoMa(resultMap.get("profit2") == null ? 0 : resultMap.get("profit2"));
-            profitMonthDetail.setProfitDaiHuan(resultMap.get("profit3") == null ? 0 : resultMap.get("profit3"));
+            profitMonthDetail.setProfitKuaiJie(resultMap.get("profit2") == null ? 0 : resultMap.get("profit2"));
+            profitMonthDetail.setProfitSaoMa(resultMap.get("profit3") == null ? 0 : resultMap.get("profit3"));
+            profitMonthDetail.setProfitDaiHuan(resultMap.get("profit4") == null ? 0 : resultMap.get("profit4"));
             profitMonthDetail.setTransactionAmountMiaoDao(resultMap.get("transaction1") == null ? 0 : resultMap.get("transaction1"));
-            profitMonthDetail.setTransactionAmountSaoMa(resultMap.get("transaction2") == null ? 0 : resultMap.get("transaction2"));
-            profitMonthDetail.setTransactionAmountDaiHuan(resultMap.get("transaction3") == null ? 0 : resultMap.get("transaction3"));
-
+            profitMonthDetail.setTransactionAmountKuaiJie(resultMap.get("transaction2") == null ? 0 : resultMap.get("transaction2"));
+            profitMonthDetail.setTransactionAmountSaoMa(resultMap.get("transaction3") == null ? 0 : resultMap.get("transaction3"));
+            profitMonthDetail.setTransactionAmountDaiHuan(resultMap.get("transaction4") == null ? 0 : resultMap.get("transaction4"));
             result.add(profitMonthDetail);
         }
         return result;

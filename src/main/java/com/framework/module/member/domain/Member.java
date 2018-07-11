@@ -104,6 +104,17 @@ public class Member extends BaseUser implements Comparable {
     @Transient
     @ApiModelProperty(value = "上级手机号")
     private String fatherMobile;
+    @Transient
+    @ApiModelProperty(value = "购买设备数量")
+    private String buyEquipmentNum;
+
+    public String getBuyEquipmentNum() {
+        return buyEquipmentNum;
+    }
+
+    public void setBuyEquipmentNum(String buyEquipmentNum) {
+        this.buyEquipmentNum = buyEquipmentNum;
+    }
 
     public Integer getAllySonNumber() {
         return allySonNumber;
