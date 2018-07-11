@@ -41,6 +41,27 @@
                     <div v-if="uploading">附件上传中请等待</div>
                 </div>
             </div>
+            <div class="box">
+                <div class="box-body">
+                    <div class="row">
+                        <div class="col-md-12">
+                            <button type="button" class="btn btn-flat btn-primary" @click="loadRecords">
+                                <i class="fa fa-refresh"></i>
+                            </button>
+                            <datagrid
+                                    :operator="true"
+                                    :columns="columns"
+                                    :data="memberProfitTmpRecords"
+                            >
+                                <template slot="operator" scope="props">
+                                    <a v-if="(memberProfitTmpRecords[props.index - 1] && memberProfitTmpRecords[props.index - 1].operateTransactionId) !== props.row.operateTransactionId" class="btn btn-xs bg-green" @click="audit(props.row, true)">审核通过</a>
+                                    <a v-if="(memberProfitTmpRecords[props.index - 1] && memberProfitTmpRecords[props.index - 1].operateTransactionId) !== props.row.operateTransactionId" class="btn btn-xs bg-red" @click="audit(props.row, false)">审核不通过</a>
+                                </template>
+                            </datagrid>
+                        </div>
+                    </div>
+                </div>
+            </div>
         </section>
         <!-- /.content -->
     </div>

@@ -20,7 +20,7 @@ public class Shop extends BaseEntity {
     @ApiModelProperty(value = "激活状态")
     @Column(length = 20)
     @Enumerated(EnumType.STRING)
-    private Status status;
+    private Status status = Status.UN_ACTIVE;
     @ApiModelProperty(value = "交易总额")
     @Column(length = 11, precision = 2)
     private Double transactionAmount;

@@ -3,6 +3,7 @@ package com.framework.module.member.web;
 import com.framework.module.member.domain.*;
 import com.framework.module.member.service.MemberCashInRecordsService;
 import com.framework.module.member.service.MemberProfitRecordsService;
+import com.framework.module.member.service.MemberProfitTmpRecordsService;
 import com.kratos.common.AbstractCrudController;
 import com.kratos.common.CrudService;
 import com.kratos.module.auth.UserThread;
@@ -29,6 +30,7 @@ import static org.springframework.http.HttpStatus.NOT_ACCEPTABLE;
 public class MemberProfitController extends AbstractCrudController<MemberProfitRecords> {
     private final MemberProfitRecordsService memberProfitService;
     private final MemberCashInRecordsService memberCashInRecordsService;
+    private final MemberProfitTmpRecordsService memberProfitTmpRecordsService;
 
     @Override
     protected CrudService<MemberProfitRecords> getService() {
@@ -37,9 +39,13 @@ public class MemberProfitController extends AbstractCrudController<MemberProfitR
 
     @Autowired
     public MemberProfitController(
-            MemberProfitRecordsService memberProfitService, MemberCashInRecordsService memberCashInRecordsService) {
+            MemberProfitRecordsService memberProfitService,
+            MemberCashInRecordsService memberCashInRecordsService,
+            MemberProfitTmpRecordsService memberProfitTmpRecordsService
+    ) {
         this.memberProfitService = memberProfitService;
         this.memberCashInRecordsService = memberCashInRecordsService;
+        this.memberProfitTmpRecordsService = memberProfitTmpRecordsService;
     }
 
     /**
@@ -63,12 +69,8 @@ public class MemberProfitController extends AbstractCrudController<MemberProfitR
      */
     @ApiOperation(value = "审核收益信息")
     @RequestMapping(value = "/examineImportProfit/{operateTransactionId}/{examineResult}", method = RequestMethod.POST, produces = "application/json; charset=utf-8")
-    public ResponseEntity<String> examineImportProfit(@PathVariable String operateTransactionId, @PathVariable boolean examineResult) {
-        try {
-            memberProfitService.examineImportProfit(operateTransactionId, examineResult);
-        } catch (Exception e) {
-            return new ResponseEntity<>("审核失败，原因是:" + e.getMessage(), HttpStatus.OK);
-        }
+    public ResponseEntity<String> examineImportProfit(@PathVariable String operateTransactionId, @PathVariable boolean examineResult) throws Exception {
+        memberProfitService.examineImportProfit(operateTransactionId, examineResult);
         return new ResponseEntity<>("审核成功.", HttpStatus.OK);
     }
 
@@ -192,5 +194,14 @@ public class MemberProfitController extends AbstractCrudController<MemberProfitR
     public ResponseEntity<List<MemberCashInRecords>> getUserCashInHistory() {
         String memberId = UserThread.getInstance().get().getId();
         return new ResponseEntity<>(memberCashInRecordsService.getAllCashInRecords(memberId), HttpStatus.OK);
+    }
+
+    @ApiOperation(value = "导入收益查询")
+    @RequestMapping(value = "/getMemberProfitTmpRecords", method = RequestMethod.GET)
+    public ResponseEntity<List<MemberProfitTmpRecords>> getMemberProfitTmpRecords() throws Exception {
+        Map<String, String[]> param = new HashMap<>();
+        param.put("sort", new String[] {"operateTransactionId"});
+        param.put("order", new String[] {"asc"});
+        return new ResponseEntity<>(memberProfitTmpRecordsService.findAll(param), HttpStatus.OK);
     }
 }

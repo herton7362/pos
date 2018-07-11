@@ -22,6 +22,12 @@ require(['jquery', 'vue', 'messager', 'utils'], function($, Vue, messager, utils
                         else
                             return '';
                         }},
+                    {field:'idCardInHand', title:'手持身份证', formatter: function(value) {
+                        if(value)
+                            return '<img width="50" src="'+utils.patchUrl('/attachment/download/' + value.id)+'">';
+                        else
+                            return '';
+                        }},
                     {field:'status', title:'认证状态' , formatter: function(value) {
                         if('PENDING' === value) {
                             return '待审核';
@@ -40,6 +46,7 @@ require(['jquery', 'vue', 'messager', 'utils'], function($, Vue, messager, utils
                 idCardNumber: null,
                 idCardFront: null,
                 idCardBack: null,
+                idCardInHand: null,
                 status: null,
                 reason: null
             },

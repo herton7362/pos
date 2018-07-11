@@ -67,6 +67,10 @@
                                 <img width="200" :src="'/attachment/download/' + (props.form.idCardBack && props.form.idCardBack.id)"/>
                             </div>
                             <div class="form-group">
+                                <label>手持身份证：</label>
+                                <img width="200" :src="'/attachment/download/' + (props.form.idCardInHand && props.form.idCardInHand.id)"/>
+                            </div>
+                            <div class="form-group">
                                 <label>认证状态：</label>
                                 <label style="margin-right: 5px">
                                     <radio name="status" value="PENDING" v-model="props.form.status"></radio> 待审核

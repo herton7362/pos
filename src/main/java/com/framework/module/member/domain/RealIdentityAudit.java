@@ -25,6 +25,9 @@ public class RealIdentityAudit extends BaseEntity {
     @ApiModelProperty(required = true, value = "身份证背面")
     @ManyToOne
     private Attachment idCardBack;
+    @ApiModelProperty(required = true, value = "手持身份证照片")
+    @ManyToOne
+    private Attachment idCardInHand;
     @ApiModelProperty(value = "认证状态")
     @Column(length = 20)
     @Enumerated(EnumType.STRING)
@@ -71,6 +74,14 @@ public class RealIdentityAudit extends BaseEntity {
 
     public void setIdCardBack(Attachment idCardBack) {
         this.idCardBack = idCardBack;
+    }
+
+    public Attachment getIdCardInHand() {
+        return idCardInHand;
+    }
+
+    public void setIdCardInHand(Attachment idCardInHand) {
+        this.idCardInHand = idCardInHand;
     }
 
     public Status getStatus() {

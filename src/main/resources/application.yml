@@ -1,0 +1,61 @@
+spring:
+  profiles:
+    active: dev
+  datasource:
+    type: com.alibaba.druid.pool.DruidDataSource
+    driverClassName: com.mysql.jdbc.Driver
+    initialSize: 5
+    minIdle: 5
+    maxActive: 20
+    maxWait: 60000 # 配置获取连接等待超时的时间
+    timeBetweenEvictionRunsMillis: 60000 # 配置间隔多久才进行一次检测，检测需要关闭的空闲连接，单位是毫秒
+    minEvictableIdleTimeMillis: 300000 # 配置一个连接在池中最小生存的时间，单位是毫秒
+    validationQuery: SELECT 1 FROM DUAL
+    testWhileIdle: true
+    testOnBorrow: false
+    testOnReturn: false
+    poolPreparedStatements: true # 打开PSCache，并且指定每个连接上PSCache的大小
+    maxPoolPreparedStatementPerConnectionSize: 20
+    filters: stat,wall,log4j # 配置监控统计拦截的filters，去掉后监控界面sql无法统计，'wall'用于防火墙
+    connectionProperties: druid.stat.mergeSql=true;druid.stat.slowSqlMillis=5000 # 通过connectProperties属性来打开mergeSql功能；慢SQL记录
+    useGlobalDataSourceStat: true
+  jpa:
+    database: MYSQL
+    show-sql: true
+    generate-ddl: true
+    hibernate:
+      ddl-auto: update
+    properties:
+      hibernate:
+        dialect: org.hibernate.dialect.MySQL5Dialect
+  thymeleaf:
+    content-type: text/html
+    mode: LEGACYHTML5
+    cache: false
+server:
+  port: 8080
+  context-path:
+service:
+  showAllEntities: false
+
+oauth2:
+  framework:
+    domain: http://localhost:8080
+    accessTokenUri: ${oauth2.framework.domain}/oauth/token
+    userAuthorizationUri: ${oauth2.framework.domain}/oauth/authorize
+    findMemberUrl: ${oauth2.framework.domain}/api/member/%s
+    saveMemberUrl: ${oauth2.framework.domain}/api/member
+---
+spring:
+  profiles: dev
+  datasource:
+    url: jdbc:mysql://localhost:3306/pos?autoReconnect=true&useSSL=false
+    username: root
+    password: root
+---
+spring:
+  profiles: production
+  datasource:
+    url: jdbc:mysql://localhost:3306/pos?autoReconnect=true&useSSL=false
+    username: root
+    password: PassW!orD@$$
