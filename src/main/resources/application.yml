@@ -32,9 +32,6 @@ spring:
     content-type: text/html
     mode: LEGACYHTML5
     cache: false
-server:
-  port: 8080
-  context-path:
 service:
   showAllEntities: false
 
@@ -52,6 +49,9 @@ spring:
     url: jdbc:mysql://localhost:3306/pos?autoReconnect=true&useSSL=false
     username: root
     password: root
+server:
+  port: 8080
+  context-path:
 ---
 spring:
   profiles: production
@@ -59,3 +59,6 @@ spring:
     url: jdbc:mysql://localhost:3306/pos?autoReconnect=true&useSSL=false
     username: root
     password: PassW!orD@$$
+server:
+  port: 80
+  context-path:

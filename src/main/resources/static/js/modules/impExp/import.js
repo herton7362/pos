@@ -49,12 +49,14 @@ require(['jquery', 'vue', 'utils', 'messager'], function($, Vue, utils, messager
                         alert(data.responseText)
                         self.uploading = false;
                         self.changeValue();
+                        self.loadRecords();
                     },
                     error: function(data) {
                         // messager.bubble(data.responseText);
                         alert(data.responseText)
                         self.uploading = false;
                         self.changeValue();
+                        self.loadRecords();
                     }
                 });
             },
@@ -81,6 +83,7 @@ require(['jquery', 'vue', 'utils', 'messager'], function($, Vue, utils, messager
             }
         },
         mounted: function() {
+            this.loadRecords();
         }
     });
 });

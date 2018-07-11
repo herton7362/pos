@@ -68,10 +68,10 @@ public class MemberProfitController extends AbstractCrudController<MemberProfitR
      * 审核收益信息
      */
     @ApiOperation(value = "审核收益信息")
-    @RequestMapping(value = "/examineImportProfit/{operateTransactionId}/{examineResult}", method = RequestMethod.POST, produces = "application/json; charset=utf-8")
-    public ResponseEntity<String> examineImportProfit(@PathVariable String operateTransactionId, @PathVariable boolean examineResult) throws Exception {
+    @RequestMapping(value = "/examineImportProfit/{operateTransactionId}/{examineResult}", method = RequestMethod.POST)
+    public ResponseEntity<?> examineImportProfit(@PathVariable String operateTransactionId, @PathVariable boolean examineResult) throws Exception {
         memberProfitService.examineImportProfit(operateTransactionId, examineResult);
-        return new ResponseEntity<>("审核成功.", HttpStatus.OK);
+        return new ResponseEntity<>(HttpStatus.OK);
     }
 
     /**
@@ -202,6 +202,7 @@ public class MemberProfitController extends AbstractCrudController<MemberProfitR
         Map<String, String[]> param = new HashMap<>();
         param.put("sort", new String[] {"operateTransactionId"});
         param.put("order", new String[] {"asc"});
+        param.put("profitType", new String[] {"2"});
         return new ResponseEntity<>(memberProfitTmpRecordsService.findAll(param), HttpStatus.OK);
     }
 }
