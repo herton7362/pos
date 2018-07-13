@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:include="admin/common/header_statics :: header('会员收益查询')"></head>
+<body class="hold-transition skin-yellow sidebar-mini">
+<!--[if lte IE 9]>
+<p class="browsehappy">你正在使用<strong>过时</strong>的浏览器，奎爷 暂不支持。 请 <a href="http://browsehappy.com/" target="_blank">升级浏览器</a>
+    以获得更好的体验！</p>
+<![endif]-->
+<!-- Site wrapper -->
+<div class="wrapper">
+    <header th:include="admin/common/header_html"></header>
+    <!-- =============================================== -->
+    <aside th:include="admin/common/aside"></aside>
+    <!-- =============================================== -->
+
+    <!-- Content Wrapper. Contains page content -->
+    <div class="content-wrapper">
+        <!-- Content Header (Page header) -->
+        <section class="content-header">
+            <h1>
+                会员收益查询
+                <small>会员收益的查询</small>
+            </h1>
+            <ol class="breadcrumb">
+                <li>导入导出</li>
+                <li class="active">会员收益查询</li>
+            </ol>
+        </section>
+
+        <!-- Main content -->
+        <section id="content" class="content" v-cloak>
+            <div class="row">
+                <div class="col-md-12">
+                    <div class="box">
+                        <div class="box-header">
+                            <div class="row">
+                                <div class="col-md-4">
+                                    <input
+                                            class="form-control"
+                                            type="text"
+                                            placeholder="机构编号"
+                                            v-model="crudgrid.queryParams.organizationNo"
+                                    >
+                                </div>
+                                <div class="col-md-4">
+                                    <input
+                                            class="form-control"
+                                            type="text"
+                                            placeholder="机构名称"
+                                            v-model="crudgrid.queryParams.organizationName"
+                                    >
+                                </div>
+                                <div class="col-md-4">
+                                    <input
+                                            class="form-control"
+                                            type="text"
+                                            placeholder="用户编号"
+                                            v-model="crudgrid.queryParams.userNo"
+                                    >
+                                </div>
+                            </div>
+                            <div class="row" style="margin-top: 8px">
+                                <div class="col-md-4">
+                                    <input
+                                            class="form-control"
+                                            type="text"
+                                            placeholder="用户名称"
+                                            v-model="crudgrid.queryParams.userName"
+                                    >
+                                </div>
+                                <div class="col-md-4">
+                                    <input
+                                            class="form-control"
+                                            type="text"
+                                            placeholder="机器码"
+                                            v-model="crudgrid.queryParams.sn"
+                                    >
+                                </div>
+                                <div class="col-md-4">
+                                    <input
+                                            class="form-control"
+                                            type="text"
+                                            placeholder="交易类型"
+                                            v-model="crudgrid.queryParams.transactionType"
+                                    >
+                                </div>
+                            </div>
+                            <button type="button" class="btn btn-flat btn-primary" @click="search" style="margin-top: 8px">
+                                <i class="fa fa-refresh"></i> 查询
+                            </button>
+                        </div>
+                        <div class="box-body">
+                            <datagrid
+                                    url="/api/memberProfitRecords"
+                                    :columns="crudgrid.columns"
+                                    :instance="crudgrid"
+                                    :pagination="true"
+                            >
+                            </datagrid>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+        </section>
+        <!-- /.content -->
+    </div>
+    <!-- /.content-wrapper -->
+    <footer th:include="admin/common/footer_html"></footer>
+</div>
+<!-- ./wrapper -->
+<footer th:include="admin/common/footer_statics"></footer>
+<script th:src="@{/static/js/modules/memberProfitRecords/list.js}"></script>
+</body>
+</html>

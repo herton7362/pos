@@ -196,7 +196,7 @@ public class MemberProfitController extends AbstractCrudController<MemberProfitR
         return new ResponseEntity<>(memberCashInRecordsService.getAllCashInRecords(memberId), HttpStatus.OK);
     }
 
-    @ApiOperation(value = "导入收益查询")
+    @ApiOperation(value = "临时导入收益查询")
     @RequestMapping(value = "/getMemberProfitTmpRecords", method = RequestMethod.GET)
     public ResponseEntity<List<MemberProfitTmpRecords>> getMemberProfitTmpRecords() throws Exception {
         Map<String, String[]> param = new HashMap<>();
