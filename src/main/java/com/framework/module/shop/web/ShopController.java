@@ -3,15 +3,15 @@ package com.framework.module.shop.web;
 import com.framework.module.member.domain.MemberProfitRecordsRepository;
 import com.framework.module.shop.domain.Shop;
 import com.framework.module.shop.domain.ShopRepository;
+import com.framework.module.shop.service.ShopExchangeRecordsService;
 import com.kratos.common.AbstractCrudController;
+import com.kratos.exceptions.BusinessException;
 import com.kratos.module.auth.UserThread;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -24,10 +24,12 @@ public class ShopController extends AbstractCrudController<Shop> {
 
     private final ShopRepository shopRepository;
     private final MemberProfitRecordsRepository memberProfitRecordsRepository;
+    private final ShopExchangeRecordsService shopExchangeRecordsService;
 
-    public ShopController(ShopRepository shopRepository, MemberProfitRecordsRepository memberProfitRecordsRepository) {
+    public ShopController(ShopRepository shopRepository, MemberProfitRecordsRepository memberProfitRecordsRepository, ShopExchangeRecordsService shopExchangeRecordsService) {
         this.shopRepository = shopRepository;
         this.memberProfitRecordsRepository = memberProfitRecordsRepository;
+        this.shopExchangeRecordsService = shopExchangeRecordsService;
     }
 
     @ApiOperation(value = "获取商户信息")
@@ -93,4 +95,23 @@ public class ShopController extends AbstractCrudController<Shop> {
         result.put("alreadyExchangeNum", alreadyExchangeNum);
         return new ResponseEntity<>(result, HttpStatus.OK);
     }
+
+    @ApiOperation(value = "兑换机器")
+    @RequestMapping(value = "/exchangeMachine", method = RequestMethod.POST)
+    public ResponseEntity<?> exchangeMachine(@RequestParam String shopIds) throws BusinessException {
+        String memberId = UserThread.getInstance().get().getId();
+        shopExchangeRecordsService.exchangeMachine(shopIds, memberId);
+        return new ResponseEntity<>(HttpStatus.OK);
+    }
+
+    /**
+     * 审核兑换信息
+     */
+    @ApiOperation(value = "审核兑换信息")
+    @RequestMapping(value = "/examineExchangeMachine/{exchangeId}/{examineResult}", method = RequestMethod.POST)
+    public ResponseEntity<?> examineExchangeMachine(@PathVariable String exchangeId, @PathVariable boolean examineResult) throws BusinessException {
+        shopExchangeRecordsService.examineExchangeMachine(exchangeId, examineResult);
+        return new ResponseEntity<>(HttpStatus.OK);
+    }
+
 }
