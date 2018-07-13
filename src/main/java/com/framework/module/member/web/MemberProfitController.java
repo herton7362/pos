@@ -24,7 +24,7 @@ import java.util.*;
 import static org.springframework.http.HttpStatus.BAD_REQUEST;
 import static org.springframework.http.HttpStatus.NOT_ACCEPTABLE;
 
-@Api(value = "会员管理")
+@Api(value = "会员收益管理")
 @RestController
 @RequestMapping("/api/memberprofit")
 public class MemberProfitController extends AbstractCrudController<MemberProfitRecords> {
