@@ -69,4 +69,28 @@ public class ShopController extends AbstractCrudController<Shop> {
         }
         return new ResponseEntity<>(resultList, HttpStatus.OK);
     }
+
+    @ApiOperation(value = "获取兑换机器商户列表信息")
+    @RequestMapping(value = "/getExchangeMachineShopList", method = RequestMethod.GET)
+    public ResponseEntity<Map<String, Object>> getExchangeMachineShopList() {
+        String memberId = UserThread.getInstance().get().getId();
+        List<Shop> list = shopRepository.findAllByMemberId(memberId, 0, new Date().getTime());
+        int activeNum = 0;
+        int alreadyExchangeNum = 0;
+        if (list != null) {
+            for (Shop s : list) {
+                if (Shop.Status.ACTIVE.equals(s.getStatus())) {
+                    activeNum++;
+                }
+                if (s.getExchangePosMachine() != null && s.getExchangePosMachine() == 1) {
+                    alreadyExchangeNum++;
+                }
+            }
+        }
+        Map<String, Object> result = new HashMap<>();
+        result.put("shopList", list);
+        result.put("canExchangeNum", activeNum - alreadyExchangeNum);
+        result.put("alreadyExchangeNum", alreadyExchangeNum);
+        return new ResponseEntity<>(result, HttpStatus.OK);
+    }
 }

@@ -24,9 +24,12 @@ public class Shop extends BaseEntity {
     @ApiModelProperty(value = "交易总额")
     @Column(length = 11, precision = 2)
     private Double transactionAmount;
-    @ApiModelProperty(value = "是否领取激活奖励")
+    @ApiModelProperty(value = "是否领取激活奖励0未领取，1已领取")
     @Column(length = 1)
     private Integer activationReward;
+    @ApiModelProperty(value = "所属会员是否兑换了设备0未兑换，1已兑换")
+    @Column(length = 1)
+    private Integer exchangePosMachine = 0;
     @Transient
     private Integer activity;
 
@@ -92,6 +95,14 @@ public class Shop extends BaseEntity {
 
     public void setTransactionAmount(Double transactionAmount) {
         this.transactionAmount = transactionAmount;
+    }
+
+    public Integer getExchangePosMachine() {
+        return exchangePosMachine;
+    }
+
+    public void setExchangePosMachine(Integer exchangePosMachine) {
+        this.exchangePosMachine = exchangePosMachine;
     }
 
     public enum Status {
