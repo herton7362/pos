@@ -7,6 +7,11 @@ require(['jquery', 'vue', 'messager', 'utils'], function($, Vue, messager, utils
                 queryParams: {
                     organizationNo: '',
                     organizationName: '',
+                    userNo: '',
+                    userName: '',
+                    sn: '',
+                    transactionType: '',
+                    operateTransactionId: '',
                     profitType: '2'
                 },
                 columns: [

@@ -85,6 +85,16 @@
                                     >
                                 </div>
                             </div>
+                            <div class="row" style="margin-top: 8px">
+                                <div class="col-md-4">
+                                    <input
+                                            class="form-control"
+                                            type="text"
+                                            placeholder="批次号"
+                                            v-model="crudgrid.queryParams.operateTransactionId"
+                                    >
+                                </div>
+                            </div>
                             <button type="button" class="btn btn-flat btn-primary" @click="search" style="margin-top: 8px">
                                 <i class="fa fa-refresh"></i> 查询
                             </button>
