@@ -33,7 +33,7 @@ spring:
     mode: LEGACYHTML5
     cache: false
 service:
-  showAllEntities: false
+  showAllEntities: true
 
 oauth2:
   framework:
