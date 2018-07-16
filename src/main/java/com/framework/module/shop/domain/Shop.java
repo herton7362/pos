@@ -27,7 +27,7 @@ public class Shop extends BaseEntity {
     @ApiModelProperty(value = "是否领取激活奖励0未领取，1已领取")
     @Column(length = 1)
     private Integer activationReward;
-    @ApiModelProperty(value = "所属会员是否兑换了设备0未兑换，1已兑换")
+    @ApiModelProperty(value = "所属会员是否兑换了设备0未兑换，1已兑换，2兑换审核中")
     @Column(length = 1)
     private Integer exchangePosMachine = 0;
     @Transient

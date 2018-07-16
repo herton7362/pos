@@ -79,20 +79,26 @@ public class ShopController extends AbstractCrudController<Shop> {
         List<Shop> list = shopRepository.findAllByMemberId(memberId, 0, new Date().getTime());
         int activeNum = 0;
         int alreadyExchangeNum = 0;
+        int auditExchangeNum = 0;
         if (list != null) {
             for (Shop s : list) {
                 if (Shop.Status.ACTIVE.equals(s.getStatus())) {
                     activeNum++;
                 }
-                if (s.getExchangePosMachine() != null && s.getExchangePosMachine() == 1) {
-                    alreadyExchangeNum++;
+                if (s.getExchangePosMachine() != null) {
+                    if (s.getExchangePosMachine() == 1) {
+                        alreadyExchangeNum++;
+                    } else if (s.getExchangePosMachine() == 2) {
+                        auditExchangeNum++;
+                    }
                 }
             }
         }
         Map<String, Object> result = new HashMap<>();
         result.put("shopList", list);
-        result.put("canExchangeNum", activeNum - alreadyExchangeNum);
+        result.put("canExchangeNum", activeNum - alreadyExchangeNum - auditExchangeNum);
         result.put("alreadyExchangeNum", alreadyExchangeNum);
+        result.put("auditExchangeNum", auditExchangeNum);
         return new ResponseEntity<>(result, HttpStatus.OK);
     }
 
