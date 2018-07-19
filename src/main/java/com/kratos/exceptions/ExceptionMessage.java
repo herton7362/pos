@@ -3,6 +3,7 @@ package com.kratos.exceptions;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.servlet.ModelAndView;
 
@@ -26,6 +27,10 @@ abstract class ExceptionMessage  {
             message = e.getMessage();
             status = HttpStatus.NOT_ACCEPTABLE.value();
             error = "Business Error";
+        } if(e instanceof DataIntegrityViolationException) {
+            message = "当前数据已经被使用，需要先删除关联数据";
+            status = HttpStatus.NOT_ACCEPTABLE.value();
+            error = "Data Integrity Violation Error";
         } else {
             message = "系统内部错误！";
             status = HttpStatus.INTERNAL_SERVER_ERROR.value();
