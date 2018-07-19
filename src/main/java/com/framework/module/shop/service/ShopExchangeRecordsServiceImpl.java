@@ -8,6 +8,7 @@ import com.framework.module.shop.domain.ShopExchangeRecordsRepository;
 import com.framework.module.shop.domain.ShopRepository;
 import com.kratos.common.AbstractCrudService;
 import com.kratos.exceptions.BusinessException;
+import org.apache.log4j.Logger;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -21,6 +22,7 @@ public class ShopExchangeRecordsServiceImpl extends AbstractCrudService<ShopExch
     private final ShopExchangeRecordsRepository shopExchangeRecordsRepository;
     private final ShopRepository shopRepository;
     private final MemberRepository memberRepository;
+    private final Logger logger = Logger.getLogger(ShopExchangeRecordsServiceImpl.class);
 
     public ShopExchangeRecordsServiceImpl(ShopExchangeRecordsRepository shopExchangeRecordsRepository, ShopRepository shopRepository, MemberRepository memberRepository) {
         this.shopExchangeRecordsRepository = shopExchangeRecordsRepository;
@@ -30,6 +32,7 @@ public class ShopExchangeRecordsServiceImpl extends AbstractCrudService<ShopExch
 
     @Override
     public void exchangeMachine(String shopIds, String memberId) throws BusinessException {
+        logger.info("shopIds=" + shopIds + ",memberId=" + memberId);
         List<ShopExchangeRecords> saveList = new ArrayList<>();
         List<Shop> shops = new ArrayList<>();
         Member member = memberRepository.findOne(memberId);
@@ -68,17 +71,17 @@ public class ShopExchangeRecordsServiceImpl extends AbstractCrudService<ShopExch
     @Override
     public void examineExchangeMachine(String exchangeId, boolean examineResult) throws BusinessException {
         ShopExchangeRecords shopExchangeRecords = shopExchangeRecordsRepository.findOne(exchangeId);
-        if (shopExchangeRecords == null){
+        if (shopExchangeRecords == null) {
             throw new BusinessException("未找到该条审核记录");
         }
-        if (!ShopExchangeRecords.Status.EXCHANGING.equals(shopExchangeRecords.getStatus())){
+        if (!ShopExchangeRecords.Status.EXCHANGING.equals(shopExchangeRecords.getStatus())) {
             throw new BusinessException("已经审核完成，不能重复审核");
         }
         Shop shop = shopRepository.findOne(shopExchangeRecords.getShopId());
-        if (examineResult){
+        if (examineResult) {
             shopExchangeRecords.setStatus(ShopExchangeRecords.Status.EXCHANGED);
             shop.setExchangePosMachine(1);
-        }else {
+        } else {
             shopExchangeRecords.setStatus(ShopExchangeRecords.Status.EXCHANGE_FAIL);
             shop.setExchangePosMachine(0);
         }
