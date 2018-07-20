@@ -38,6 +38,8 @@ public class MemberProfitRecords extends BaseEntity {
     private double profit;
     @Column(length = 50)
     private String operateTransactionId;
+    @Column(length = 10)
+    private String relateId;
     @Column()
     private Integer profitType;
 
@@ -135,5 +137,13 @@ public class MemberProfitRecords extends BaseEntity {
 
     public void setOperateTransactionId(String operateTransactionId) {
         this.operateTransactionId = operateTransactionId;
+    }
+
+    public String getRelateId() {
+        return relateId;
+    }
+
+    public void setRelateId(String relateId) {
+        this.relateId = relateId;
     }
 }

@@ -305,14 +305,17 @@ public class MemberProfitRecordsServiceImpl extends AbstractCrudService<MemberPr
         Sheet sheet = wb.getSheetAt(0);
         List<MemberProfitTmpRecords> memberProfitTmpRecordsList = new ArrayList<>();
         Integer importSize = sheet.getLastRowNum();
+        String timestamp = DateFormatUtils.format(System.currentTimeMillis(), "yyyyMMddHHmmssSSS");
+        String operateTransactionId = timestamp + RandomStringUtils.randomNumeric(8);
         for (int r = 1; r <= sheet.getLastRowNum(); r++) {
+            String relateId = RandomStringUtils.randomNumeric(8);
             Row row = sheet.getRow(r);
             if (row == null) {
                 continue;
             }
-            String operateTransactionId = DateFormatUtils.format(System.currentTimeMillis(), "yyyyMMddHHmmssSSS") + RandomStringUtils.randomNumeric(8);
             MemberProfitTmpRecords importProfit = getAllParamFromExcel(row, r);
             importProfit.setOperateTransactionId(operateTransactionId);
+            importProfit.setRelateId(relateId);
             Shop shop = shopRepository.findOneBySn(importProfit.getSn());
             if (shop == null) {
                 throw new BusinessException(String.format("第" + r + "行数据不合法,SN对应商户不存在。SN为:[%s]", importProfit.getSn()));
@@ -337,7 +340,7 @@ public class MemberProfitRecordsServiceImpl extends AbstractCrudService<MemberPr
             memberProfitTmpRecordsList.add(importProfit);
             // 如果父节点不为空，设置父节点的收益
             if (StringUtils.isNotBlank(member.getFatherId())) {
-                setParamProfitRecords(memberProfitTmpRecordsList, importProfit, member, profitRate, operateTransactionId);
+                setParamProfitRecords(memberProfitTmpRecordsList, importProfit, member, profitRate, operateTransactionId, relateId);
             }
         }
         // 将数据都插入到数据库中
@@ -385,13 +388,15 @@ public class MemberProfitRecordsServiceImpl extends AbstractCrudService<MemberPr
      * @param member                     当前用户
      * @param profitRate                 当前用户的收益
      * @param operateTransactionId       操作流水号
+     * @param relateId
      * @throws Exception 异常
      */
-    private void setParamProfitRecords(List<MemberProfitTmpRecords> memberProfitTmpRecordsList, MemberProfitTmpRecords importProfit, Member member, double profitRate, String operateTransactionId) throws Exception {
+    private void setParamProfitRecords(List<MemberProfitTmpRecords> memberProfitTmpRecordsList, MemberProfitTmpRecords importProfit, Member member, double profitRate, String operateTransactionId, String relateId) throws Exception {
         Member fatherMember = repository.findOne(member.getFatherId());
         while (fatherMember != null) {
             MemberProfitTmpRecords fatherProfit = new MemberProfitTmpRecords();
             fatherProfit.setOperateTransactionId(operateTransactionId);
+            fatherProfit.setRelateId(relateId);
             fatherProfit.setTransactionDate(importProfit.getTransactionDate());
             fatherProfit.setProfitType(Constant.PROFIT_TYPE_GUANLI);
             fatherProfit.setMemberId(fatherMember.getId());
@@ -503,7 +508,7 @@ public class MemberProfitRecordsServiceImpl extends AbstractCrudService<MemberPr
         if (CollectionUtils.isEmpty(records)) {
             throw new BusinessException("未找到对应数据的操作流水号" + operateTransactionId);
         }
-        if (!examineResult){
+        if (!examineResult) {
             memberProfitTmpRecordsRepository.delete(records);
             return;
         }
