@@ -31,6 +31,7 @@ require(['jquery', 'vue', 'messager', 'utils'], function($, Vue, messager, utils
                             } else if(4 == value) {
                                 return '团建奖';
                             }
+                            return '未知' + value;
                         }},
                     {field:'profit', title:'收益'},
                     {field:'transactionDate', title:'交易日期', formatter: function (value) {
