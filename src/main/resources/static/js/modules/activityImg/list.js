@@ -11,7 +11,7 @@ require(['jquery', 'vue', 'messager', 'utils'], function($, Vue, messager, utils
                     {field:'image', title:'图片', formatter: function(value) {
                             return '<img width="50" src="'+utils.patchUrl('/attachment/download/' + value.id)+'">';
                         }},
-                    {field:'link', title:'活动链接地址'},
+                    {field:'link', width: 500, title:'活动链接地址'},
                     {field:'remark', title:'备注'}
                 ]
             },
