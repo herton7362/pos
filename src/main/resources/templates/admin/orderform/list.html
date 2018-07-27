@@ -126,6 +126,10 @@
                                         <td style="text-align: center;">
                                             <div class="col-xs-4 cell-title">操作：</div>
                                             <a class="btn btn-xs bg-purple" title="查看" @click="detailModalOpen(row)"><i class="fa fa-fw fa-eye"></i></a>
+                                            <a v-if="row.paymentStatus == 'UN_PAY'"
+                                               class="btn btn-xs bg-green"
+                                               title="确认收款"
+                                               @click="pay(row)"><i class="fa fa-fw fa-cny"></i></a>
                                             <a v-if="row.status == 'PAYED'"
                                                class="btn btn-xs bg-green"
                                                title="发货"

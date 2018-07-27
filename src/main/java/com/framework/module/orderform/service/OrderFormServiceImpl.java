@@ -270,6 +270,21 @@ public class OrderFormServiceImpl extends AbstractCrudService<OrderForm> impleme
         return null;
     }
 
+    @Override
+    public Integer getPayedOrderItemCounts(String memberId) throws Exception {
+        Map<String, String[]> param = new HashMap<>();
+        param.put("member.id", new String[]{memberId});
+        param.put("paymentStatus", new String[]{OrderForm.PaymentStatus.PAYED.name()});
+        List<OrderForm> orderForms = findAll(param);
+        Integer total = 0;
+        for (OrderForm form : orderForms) {
+            for (OrderItem orderItem : form.getItems()) {
+                total = total + orderItem.getCount();
+            }
+        }
+        return total;
+    }
+
     /**
      * 要求外部订单号必须唯一。
      * @return 订单号

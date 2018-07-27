@@ -223,6 +223,19 @@ require(['jquery', 'vue', 'messager', 'utils'], function($, Vue, messager, utils
                         self.formDetail.modal.$instance.open();
                     }
                 })
+            },
+            pay: function (row) {
+                var self = this;
+                $.ajax({
+                    url: utils.patchUrl('/api/orderForm/pay'),
+                    contentType: 'application/json',
+                    data: JSON.stringify(row),
+                    type: 'POST',
+                    success: function() {
+                        messager.bubble("支付成功");
+                        self.load();
+                    }
+                })
             }
         },
         mounted: function() {

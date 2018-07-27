@@ -33,6 +33,14 @@ public class OrderFormController extends AbstractCrudController<OrderForm> {
         return orderFormService;
     }
 
+    /**
+     * 获取已支付订单商品数量
+     */
+    @ApiOperation(value="获取已支付订单商品数量")
+    @RequestMapping(value = "/item/count/{memberId}", method = RequestMethod.GET)
+    public ResponseEntity<Integer> getPayedOrderItemCounts(@PathVariable String memberId) throws Exception {
+        return new ResponseEntity<>(orderFormService.getPayedOrderItemCounts(memberId), HttpStatus.OK);
+    }
 
     /**
      * 下 订单

@@ -70,4 +70,11 @@ public interface OrderFormService extends CrudService<OrderForm> {
      * @param outTradeNo 订单id
      */
     OrderForm payed(String outTradeNo) throws Exception;
+
+    /**
+     * 获取已支付订单商品数量
+     * @param memberId 会员
+     * @return 数量
+     */
+    Integer getPayedOrderItemCounts(String memberId) throws Exception;
 }

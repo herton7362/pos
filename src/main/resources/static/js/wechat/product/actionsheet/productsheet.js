@@ -12,7 +12,8 @@ define([
             actionsheet: {
                 $instance: {}
             },
-            count: 1,
+            count: 5,
+            min: 5,
             product: {
                 coverImage: {}
             },
@@ -36,10 +37,23 @@ define([
         },
         methods: {
             open: function (product) {
-                if(product) {
-                    this.product = product;
-                }
-                this.actionsheet.$instance.open();
+                var self = this;
+                utils.getLoginMember(function(member) {
+                    $.ajax({
+                        url: utils.patchUrl('/api/orderForm/item/count/' + member.id),
+                        type: 'GET',
+                        success: function (count) {
+                            if(count >= 5) {
+                                self.min = 1;
+                            }
+                            if(product) {
+                                self.product = product;
+                            }
+                            self.actionsheet.$instance.open();
+                        }
+                    });
+                });
+
             },
             close: function () {
                 this.actionsheet.$instance.close();

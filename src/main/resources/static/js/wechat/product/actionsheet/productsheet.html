@@ -24,8 +24,8 @@
                         <div class="input-group-addon">
                             <button
                                     class="btn btn-sm btn-block btn-flat"
-                                    :class="{disabled: count <= 1}"
-                                    :disabled="count <= 1"
+                                    :class="{disabled: count <= min}"
+                                    :disabled="count <= min"
                                     @click="reduce"> - </button>
                         </div>
                         <input type="text" pattern="[0-9]*" class="form-control" v-model="count">

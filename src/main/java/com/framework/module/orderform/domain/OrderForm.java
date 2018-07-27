@@ -31,6 +31,9 @@ public class OrderForm extends BaseEntity {
     @ApiModelProperty(value = "订单号，系统自动生成")
     @Column(length = 20)
     private String orderNumber;
+    @ApiModelProperty(value = "实收金额")
+    @Column(length = 11, precision = 2)
+    private Double receiveMoney;
     @ApiModelProperty(value = "现金支付")
     @Column(length = 11, precision = 2)
     private Double cash;
@@ -80,6 +83,14 @@ public class OrderForm extends BaseEntity {
     @ApiModelProperty(value = "申请退款备注")
     @Column(length = 500)
     private String applyRejectRemark;
+
+    public Double getReceiveMoney() {
+        return receiveMoney;
+    }
+
+    public void setReceiveMoney(Double receiveMoney) {
+        this.receiveMoney = receiveMoney;
+    }
 
     public Member getMember() {
         return member;
