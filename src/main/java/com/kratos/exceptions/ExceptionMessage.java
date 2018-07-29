@@ -27,7 +27,7 @@ abstract class ExceptionMessage  {
             message = e.getMessage();
             status = HttpStatus.NOT_ACCEPTABLE.value();
             error = "Business Error";
-        } if(e instanceof DataIntegrityViolationException) {
+        }else if(e instanceof DataIntegrityViolationException) {
             message = "当前数据已经被使用，需要先删除关联数据";
             status = HttpStatus.NOT_ACCEPTABLE.value();
             error = "Data Integrity Violation Error";
