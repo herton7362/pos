@@ -49,6 +49,15 @@ public class GuestAttachmentController extends AbstractReadController<Attachment
     @ApiOperation(value="下载文件")
     @RequestMapping(value = "/download/{id}", method = RequestMethod.GET)
     public ResponseEntity<byte[]> download(@PathVariable String id) throws Exception {
+        return download(id, null);
+    }
+
+    /**
+     * 下载文件
+     */
+    @ApiOperation(value="下载文件")
+    @RequestMapping(value = "/download/{id}.{format}", method = RequestMethod.GET)
+    public ResponseEntity<byte[]> download(@PathVariable String id, @PathVariable String format) throws Exception {
         Attachment attachment = attachmentService.findOne(id);
         String prefixPath = null;
         if(OSUtils.isWindows()) {
@@ -66,6 +75,8 @@ public class GuestAttachmentController extends AbstractReadController<Attachment
             headers.setContentType(MediaType.IMAGE_PNG);//设置MIME类型
         } else if("pdf".equals(attachment.getFormat())) {
             headers.setContentType(MediaType.APPLICATION_PDF);//设置MIME类型
+            headers.remove("Content-Disposition");
+            headers.set("Content-Disposition", "inline;filename=a.pdf");//告知浏览器以下载方式打开
         } else {
             String downloadFileName=new String(attachment.getName().getBytes("UTF-8"),"ISO-8859-1");  //少了这句，可能导致下载中文文件名的文档，只有后缀名的情况
             headers.setContentDispositionFormData("attachment", downloadFileName);//告知浏览器以下载方式打开
