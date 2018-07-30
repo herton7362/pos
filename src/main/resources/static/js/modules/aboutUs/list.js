@@ -8,12 +8,16 @@ require(['jquery', 'vue', 'messager', 'utils'], function($, Vue, messager, utils
                     content: ''
                 },
                 columns: [
-                    {field:'content', title:'内容'}
+                    {field:'wechatSubscription', title:'公众号'},
+                    {field:'customerServiceNumber', title:'客服电话'},
+                    {field:'contactPhone', title:'联系电话'}
                 ]
             },
             formData: {
                 id: null,
-                content: null
+                wechatSubscription: null,
+                customerServiceNumber: null,
+                contactPhone: null
             }
         },
         methods: {
