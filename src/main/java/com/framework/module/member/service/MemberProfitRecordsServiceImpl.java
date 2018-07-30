@@ -335,7 +335,7 @@ public class MemberProfitRecordsServiceImpl extends AbstractCrudService<MemberPr
             if (param == null) {
                 throw new BusinessException(String.format("第" + r + "行数据不合法,用户等级信息不合法:[%s]", importProfit.getUserNo()));
             }
-            double profitRate = param.getmPosProfit();
+            double profitRate = param.getmPosProfit()/10000;
             importProfit.setProfit(new BigDecimal(profitRate * importProfit.getTransactionAmount()).setScale(2, BigDecimal.ROUND_HALF_UP).doubleValue());
             memberProfitTmpRecordsList.add(importProfit);
             // 如果父节点不为空，设置父节点的收益
@@ -401,7 +401,7 @@ public class MemberProfitRecordsServiceImpl extends AbstractCrudService<MemberPr
             fatherProfit.setProfitType(Constant.PROFIT_TYPE_GUANLI);
             fatherProfit.setMemberId(fatherMember.getId());
             MemberLevelParam fatherMemberParam = memberLevelParamService.getParamByLevel(String.valueOf(fatherMember.getMemberLevel()));
-            double fatherProfitRate = fatherMemberParam.getmPosProfit() - profitRate;
+            double fatherProfitRate = fatherMemberParam.getmPosProfit()/10000 - profitRate;
             fatherProfitRate = fatherProfitRate < 0 ? 0 : fatherProfitRate;
             fatherProfit.setProfit(new BigDecimal(fatherProfitRate * importProfit.getTransactionAmount()).setScale(2, BigDecimal.ROUND_HALF_UP).doubleValue());
             memberProfitTmpRecordsList.add(fatherProfit);
@@ -425,7 +425,8 @@ public class MemberProfitRecordsServiceImpl extends AbstractCrudService<MemberPr
             List<Member> sons = repository.findMembersByFatherId(member.getId(), new Date().getTime());
             Map<String, Double> transactionAmount = shopRepository.staticTotalTransaction(member.getId());
             double totalTransactionAmount = transactionAmount.get("totalTransactionAmount") == null ? 0 : transactionAmount.get("totalTransactionAmount");
-            if (totalTransactionAmount < memberLevelParam.getTotalTransactionVolume()) {
+            double transAmountYuan = memberLevelParam.getTotalTransactionVolume() * 10000;
+            if (totalTransactionAmount < transAmountYuan) {
                 s++;
                 continue;
             }
