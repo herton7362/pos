@@ -15,13 +15,14 @@ import java.util.Date;
 @Entity
 public class MemberLevelParam extends BaseEntity {
     private Integer level;
+    private String levelName;
     private Double totalTransactionVolume;
     private String teamScale;
     private Double mPosProfit;
-    private Double bigPosProfit;
     private String allyTitle;
     private String honor;
     private String headquartersSupport;
+
 
     public Double getTotalTransactionVolume() {
         return totalTransactionVolume;
@@ -79,7 +80,11 @@ public class MemberLevelParam extends BaseEntity {
         this.mPosProfit = mPosProfit;
     }
 
-    public void setBigPosProfit(Double bigPosProfit) {
-        this.bigPosProfit = bigPosProfit;
+    public String getLevelName() {
+        return levelName;
+    }
+
+    public void setLevelName(String levelName) {
+        this.levelName = levelName;
     }
 }

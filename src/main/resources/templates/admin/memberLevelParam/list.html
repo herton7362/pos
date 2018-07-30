@@ -40,32 +40,36 @@
                     >
                         <template slot="form-body" scope="props">
                             <div class="form-group">
-                                <label>级别：</label>
-                                <input type="text" class="form-control" required v-model="props.form.level" placeholder="输入级别">
+                                <label>等级ID：</label>
+                                <input type="text" class="form-control" required v-model="props.form.level" placeholder="输入等级">
                             </div>
                             <div class="form-group">
-                                <label>总交易量：</label>
-                                <input type="text" class="form-control" required v-model="props.form.totalTransactionVolume" placeholder="输入总交易量">
+                                <label>等级：</label>
+                                <input type="text" class="form-control" required v-model="props.form.levelName" placeholder="输入等级名称">
+                            </div>
+                            <div class="form-group">
+                                <label>总交易：</label>
+                                <input type="text" class="form-control" required v-model="props.form.totalTransactionVolume" placeholder="输入总交易">
                             </div>
                             <div class="form-group">
                                 <label>团队要求：</label>
                                 <datagrid  :columns="teamScale.columns" :data="teamScale.data"></datagrid>
                             </div>
                             <div class="form-group">
-                                <label>MPOS收益：</label>
-                                <input type="text" class="form-control" required v-model="props.form.mPosProfit" placeholder="输入MPOS收益">
+                                <label>分润：</label>
+                                <input type="text" class="form-control" required v-model="props.form.mPosProfit" placeholder="输入分润">
                             </div>
                             <!--<div class="form-group">-->
                                 <!--<label>大POS收益：</label>-->
                                 <!--<input type="text" class="form-control" required v-model="props.form.bigPosProfit" placeholder="输入大POS收益">-->
                             <!--</div>-->
                             <div class="form-group">
-                                <label>盟友称号：</label>
-                                <input type="text" class="form-control" required v-model="props.form.allyTitle" placeholder="输入盟友称号">
+                                <label>晋级名称：</label>
+                                <input type="text" class="form-control" required v-model="props.form.allyTitle" placeholder="输入晋级名称">
                             </div>
                             <div class="form-group">
-                                <label>升级荣誉：</label>
-                                <input type="text" class="form-control" required v-model="props.form.honor" placeholder="输入升级荣誉">
+                                <label>晋级荣誉：</label>
+                                <input type="text" class="form-control" required v-model="props.form.honor" placeholder="输入晋级荣誉">
                             </div>
                             <div class="form-group">
                                 <label>总部支持：</label>

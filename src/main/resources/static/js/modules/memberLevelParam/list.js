@@ -8,13 +8,14 @@ require(['jquery', 'vue', 'messager', 'utils'], function($, Vue, messager, utils
                     content: ''
                 },
                 columns: [
-                    {field:'level', title:'级别'},
-                    {field:'totalTransactionVolume', title:'总交易量'},
+                    {field:'level', title:'等级ID'},
+                    {field:'levelName', title:'等级'},
+                    {field:'totalTransactionVolume', title:'总交易'},
                     // {field:'teamScale', title:'团队要求'},
-                    {field:'mPosProfit', title:'MPOS收益'},
+                    {field:'mPosProfit', title:'分润'},
                     // {field:'bigPosProfit', title:'大POS收益'},
-                    {field:'allyTitle', title:'盟友称号'},
-                    {field:'honor', title:'升级荣誉'},
+                    {field:'allyTitle', title:'晋级名称'},
+                    {field:'honor', title:'晋级荣誉'},
                     {field:'headquartersSupport', title:'总部支持'}
                 ]
             },
