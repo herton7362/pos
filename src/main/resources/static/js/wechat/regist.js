@@ -59,11 +59,11 @@ require(['jquery', 'vue', 'utils', 'messager'], function ($, Vue, utils, message
                             }
                         }
 
-                        setupWebViewJavascriptBridge(function(bridge) {
-
-                            /* Initialize your app here */
-                            bridge.callHandler('RegistResult', self.username);
-                        });
+                        // setupWebViewJavascriptBridge(function(bridge) {
+                        //
+                        //     /* Initialize your app here */
+                        //     bridge.callHandler('RegistResult', self.username);
+                        // });
                         messager.bubble('注册成功');
                         setTimeout(function () {
                             window.location.href = utils.patchUrlPrefixUrl('/wechat/register-success');
