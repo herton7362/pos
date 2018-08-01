@@ -64,8 +64,11 @@ require(['jquery', 'vue', 'utils', 'messager'], function ($, Vue, utils, message
                             /* Initialize your app here */
                             bridge.callHandler('RegistResult', self.username);
                         });
-                        messager.bubble('注册成功，前往登录');
-                        self.pageType = '使用手机号密码登录';
+                        messager.bubble('注册成功');
+                        setTimeout(function () {
+                            window.location.href = utils.patchUrlPrefixUrl('/wechat/register-success');
+                        }, 500);
+                        //self.pageType = '使用手机号密码登录';
                     }
                 })
             },

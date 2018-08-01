@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <template th:include="wechat/common/header_statics :: header('登录')" th:remove="tag"></template>
+    <link rel="stylesheet" th:href="@{/static/css/wechat.css}"/>
+</head>
+<!-- ADD THE CLASS layout-top-nav TO REMOVE THE SIDEBAR. -->
+<body class="layout-top-nav skin-yellow h5-layout" style="height: auto; min-height: 100%;">
+<div class="wrapper login" style="height: auto; min-height: 100%;">
+
+    <!-- Full Width Column -->
+    <div class="content-wrapper">
+        <div class="container">
+            <!-- Main content -->
+            <section id="content" class="content" v-cloak>
+                <h3 style="margin-top: 50px; margin-bottom: 60px; text-align: center">欢迎成为会员宝用户</h3>
+                <img class="weui-media-box__thumb" th:src="@{/static/image/wechat/qrCode.jpg}" alt="" style="display: block; width: 60%; margin: 0 auto;">
+                <p style="margin-top: 30px; padding: 0 40px">恭喜您已经成功注册会员宝，现在您可以：扫描二维码关注公众号下载</p>
+            </section>
+            <!-- /.content -->
+        </div>
+        <!-- /.container -->
+    </div>
+    <aside th:replace="wechat/common/aside"></aside>
+    <!-- /.content-wrapper -->
+</div>
+<!-- ./wrapper -->
+<footer th:replace="wechat/common/footer_statics"></footer>
+<script th:src="@{/static/js/wechat/regist.js}"></script>
+</body>
+</html>
