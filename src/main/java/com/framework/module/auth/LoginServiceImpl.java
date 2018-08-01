@@ -53,6 +53,9 @@ public class LoginServiceImpl extends AbstractLoginService {
         if(findUserByMobile(mobile) != null) {
             throw new BusinessException("该手机号已被注册，请选择找回密码或者直接登录");
         }
+        if(StringUtils.isBlank(invitePersonMobile)) {
+            throw new BusinessException("邀请人手机号不能为空");
+        }
         Member father = null;
         if(StringUtils.isNotBlank(invitePersonMobile)) {
             father = memberService.findOneByLoginName(invitePersonMobile);
