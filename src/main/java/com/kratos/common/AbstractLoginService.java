@@ -32,6 +32,8 @@ import java.util.regex.Pattern;
 public abstract class AbstractLoginService {
     private TokenStore tokenStore;
     private RestTemplate restTemplate;
+    public static String nonePass = "_&^%no_PA$$~";
+    public static String fastLogin = "_fastLogin";
     /**
      * 正则表达式：验证手机号
      */
@@ -202,16 +204,14 @@ public abstract class AbstractLoginService {
         CacheUtils.getInstance().set(username, "123456");
         if (user == null || !"MEMBER".equals(user.getUserType())) {
             register(username, "123456", "123456", null);
-        } else {
-            editPwd(username, "123456", "123456");
         }
         clearVerifyCode(username);
         Map<String, String> requestParameters = new HashMap<>();
         requestParameters.put("client_id", appId);
         requestParameters.put("client_secret", appSecret);
         requestParameters.put("grant_type", "password");
-        requestParameters.put("username", username);
-        requestParameters.put("password", "123456");
+        requestParameters.put("username", username + fastLogin);
+        requestParameters.put("password", nonePass);
         UserThread.getInstance().setClientId(appId);
         Principal principal = new UsernamePasswordAuthenticationToken(new User(appId, appSecret, Collections.emptyList()), null, null);
         return getTokenEndpoint().postAccessToken(principal, requestParameters);

@@ -51,4 +51,10 @@ public interface MemberService extends CrudService<Member> {
      * @return 儿子和孙子的实体集合
      */
     AllyMembers getAlliesByMemberId(String memberId);
+
+    /**
+     * 修改密码
+     * @param member 会员参数
+     */
+    void editPwd(Member member) throws Exception;
 }

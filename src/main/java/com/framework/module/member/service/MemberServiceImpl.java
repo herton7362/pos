@@ -13,6 +13,7 @@ import com.kratos.exceptions.BusinessException;
 import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Lazy;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -21,6 +22,7 @@ import javax.persistence.criteria.CriteriaQuery;
 import javax.persistence.criteria.Predicate;
 import javax.persistence.criteria.Root;
 import java.math.BigDecimal;
+import java.net.URI;
 import java.util.*;
 
 @Component("memberService")
@@ -179,6 +181,16 @@ public class MemberServiceImpl extends AbstractCrudService<Member> implements Me
             sourceMoney = 0D;
         }
         return new BigDecimal(sourceMoney).subtract(new BigDecimal(money)).doubleValue();
+    }
+
+    @Override
+    public void editPwd(Member member) throws Exception {
+        if(StringUtils.isBlank(member.getId())) {
+            return;
+        }
+        Member old = repository.findOne(member.getId());
+        old.setPassword(new BCryptPasswordEncoder().encode(member.getPassword()));
+        super.save(old);
     }
 
     @Lazy

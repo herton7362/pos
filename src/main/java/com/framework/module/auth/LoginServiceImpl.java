@@ -41,8 +41,8 @@ public class LoginServiceImpl extends AbstractLoginService {
         if(member == null) {
             throw new BusinessException("当前号码未注册");
         }
-        member.setPassword(new BCryptPasswordEncoder().encode(password));
-        memberService.save(member);
+        member.setPassword(password);
+        memberService.editPwd(member);
     }
 
     @Override

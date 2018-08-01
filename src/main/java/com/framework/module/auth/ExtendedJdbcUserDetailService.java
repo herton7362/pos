@@ -1,6 +1,7 @@
 package com.framework.module.auth;
 
 import com.framework.module.member.domain.MemberRepository;
+import com.kratos.common.AbstractLoginService;
 import com.kratos.entity.BaseUser;
 import com.kratos.module.auth.JdbcUserDetailService;
 import com.kratos.module.auth.service.UserService;
@@ -10,6 +11,7 @@ import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Component;
 
 import java.util.Collections;
@@ -28,8 +30,20 @@ public class ExtendedJdbcUserDetailService extends JdbcUserDetailService impleme
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
         UserDetails userDetails = super.loadUserByUsername(username);
         if(userDetails == null) {
-            BaseUser user = memberRepository.findOneByLoginName(username);
-            return new User(username, user.getPassword(), Collections.singletonList(new SimpleGrantedAuthority(user.getUserType())));
+            if(username.contains(AbstractLoginService.fastLogin)) {
+                username = username.substring(0,
+                        username.lastIndexOf(AbstractLoginService.fastLogin));
+                BaseUser user = memberRepository.findOneByLoginName(username);
+                if(user != null) {
+                    return new User(username, new BCryptPasswordEncoder().encode(AbstractLoginService.nonePass),
+                            Collections.singletonList(new SimpleGrantedAuthority(user.getUserType())));
+                }
+            } else {
+                BaseUser user = memberRepository.findOneByLoginName(username);
+                return new User(username, user.getPassword(), Collections.singletonList(new SimpleGrantedAuthority(user.getUserType())));
+            }
+
+            return null;
         } else {
             return userDetails;
         }

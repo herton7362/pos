@@ -49,6 +49,9 @@ public class OrderFormServiceImpl extends AbstractCrudService<OrderForm> impleme
         if(member == null) {
             throw new BusinessException("下单账户未找到");
         }
+        if(orderForm.getDeliverToAddress() == null || StringUtils.isBlank(orderForm.getDeliverToAddress().getId())) {
+            throw new BusinessException("请选择收货地址");
+        }
         orderForm.setOrderNumber(getOutTradeNo());
         validAccount(orderForm);
         if(OrderForm.OrderStatus.PAYED == orderForm.getStatus()) {
