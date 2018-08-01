@@ -31,7 +31,7 @@ public class RealIdentityAudit extends BaseEntity {
     @ApiModelProperty(value = "认证状态")
     @Column(length = 20)
     @Enumerated(EnumType.STRING)
-    private Status status;
+    private Status status = Status.PENDING;
     @ApiModelProperty(required = true, value = "未通过原因")
     @Column(length = 500)
     private String reason;
