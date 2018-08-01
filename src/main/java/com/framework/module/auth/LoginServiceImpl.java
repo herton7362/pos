@@ -50,6 +50,13 @@ public class LoginServiceImpl extends AbstractLoginService {
         if(!verifyVerifyCode(mobile, code)) {
             throw new BusinessException(String.format("验证码%s不正确", code));
         }
+        String reg = "^[A-Za-z0-9]{4,40}$";
+        if(StringUtils.isBlank(password)) {
+            throw new BusinessException("密码不能为空");
+        }
+        if(!password.matches(reg)) {
+            throw new BusinessException("");
+        }
         if(findUserByMobile(mobile) != null) {
             throw new BusinessException("该手机号已被注册，请选择找回密码或者直接登录");
         }
