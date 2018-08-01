@@ -66,20 +66,19 @@ public class MemberProfitRecordsServiceImpl extends AbstractCrudService<MemberPr
                     predicate.add(criteriaBuilder.equal(root.get("status"), Member.Status.ACTIVE));
                     return criteriaBuilder.and(predicate.toArray(new Predicate[]{}));
                 });
-        List<GroupBuildDrawRule> groupBuildDrawRules = groupBuildDrawRuleService.findAll(new HashMap<>());
+        Map<String, String[]> param = new HashMap<>();
+        String[] nameArray = {String.valueOf(activeCount)};
+        param.put("memberCount", nameArray);
+        List<GroupBuildDrawRule> groupBuildDrawRules = groupBuildDrawRuleService.findAll(param);
         if (CollectionUtils.isEmpty(groupBuildDrawRules) || groupBuildDrawRules.get(0).getMemberCount() == null || groupBuildDrawRules.get(0).getReward() == null) {
-            throw new BusinessException("团建奖励设置不合法");
+            return;
         }
-        Integer memberCount = groupBuildDrawRules.get(0).getMemberCount();
-        Double reward = groupBuildDrawRules.get(0).getReward();
-        if (activeCount > 0 && activeCount % memberCount == 0) {
-            MemberProfitRecords teamBuilderProfit = new MemberProfitRecords();
-            teamBuilderProfit.setProfitType(Constant.PROFIT_TYPE_TUANJIAN);
-            teamBuilderProfit.setProfit(activeCount / memberCount * reward);
-            teamBuilderProfit.setMemberId(fatherId);
-            teamBuilderProfit.setTransactionDate(new Date().getTime());
-            save(teamBuilderProfit);
-        }
+        MemberProfitRecords teamBuilderProfit = new MemberProfitRecords();
+        teamBuilderProfit.setProfitType(Constant.PROFIT_TYPE_TUANJIAN);
+        teamBuilderProfit.setProfit(groupBuildDrawRules.get(0).getReward());
+        teamBuilderProfit.setMemberId(fatherId);
+        teamBuilderProfit.setTransactionDate(new Date().getTime());
+        save(teamBuilderProfit);
     }
 
     @Override
@@ -335,7 +334,7 @@ public class MemberProfitRecordsServiceImpl extends AbstractCrudService<MemberPr
             if (param == null) {
                 throw new BusinessException(String.format("第" + r + "行数据不合法,用户等级信息不合法:[%s]", importProfit.getUserNo()));
             }
-            double profitRate = param.getmPosProfit()/10000;
+            double profitRate = param.getmPosProfit() / 10000;
             importProfit.setProfit(new BigDecimal(profitRate * importProfit.getTransactionAmount()).setScale(2, BigDecimal.ROUND_HALF_UP).doubleValue());
             memberProfitTmpRecordsList.add(importProfit);
             // 如果父节点不为空，设置父节点的收益
@@ -401,7 +400,7 @@ public class MemberProfitRecordsServiceImpl extends AbstractCrudService<MemberPr
             fatherProfit.setProfitType(Constant.PROFIT_TYPE_GUANLI);
             fatherProfit.setMemberId(fatherMember.getId());
             MemberLevelParam fatherMemberParam = memberLevelParamService.getParamByLevel(String.valueOf(fatherMember.getMemberLevel()));
-            double fatherProfitRate = fatherMemberParam.getmPosProfit()/10000 - profitRate;
+            double fatherProfitRate = fatherMemberParam.getmPosProfit() / 10000 - profitRate;
             fatherProfitRate = fatherProfitRate < 0 ? 0 : fatherProfitRate;
             fatherProfit.setProfit(new BigDecimal(fatherProfitRate * importProfit.getTransactionAmount()).setScale(2, BigDecimal.ROUND_HALF_UP).doubleValue());
             memberProfitTmpRecordsList.add(fatherProfit);
