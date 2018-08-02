@@ -10,7 +10,6 @@
         };
     </script>
     <script th:src="@{/webjars/require.js}"></script>
-    <script th:src="@{/webjars/plugins/wechat/main.js}"></script>
     <script>
         requirejs.config({
             urlArgs: "v=" + window._appConf.version,
@@ -109,4 +108,5 @@
             });
         })
     </script>
+    <script th:src="@{/webjars/plugins/wechat/main.js}"></script>
 </footer>
