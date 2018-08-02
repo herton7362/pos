@@ -245,13 +245,12 @@ public abstract class AbstractLoginController {
                     member.setFatherName(father.getName());
                 }
 
-                AllyMembers allyMembers = memberService.getAlliesByMemberId(member.getId());
-                if(allyMembers != null) {
-                    member.setAllySonNumber(allyMembers.getSonList().size());
-                    member.setAllyAllNumber(allyMembers.getTotalNum());
-                }
             }
-
+            AllyMembers allyMembers = memberService.getAlliesByMemberId(member.getId());
+            if(allyMembers != null) {
+                member.setAllySonNumber(allyMembers.getSonList().size());
+                member.setAllyAllNumber(allyMembers.getTotalNum());
+            }
             return new ResponseEntity<>(member, HttpStatus.OK);
         }
         return new ResponseEntity<>(user, HttpStatus.OK);
