@@ -2,6 +2,9 @@ package com.kratos.common;
 
 import com.framework.module.member.domain.AllyMembers;
 import com.framework.module.member.domain.Member;
+import com.framework.module.member.domain.MemberLevelParam;
+import com.framework.module.member.domain.MemberVO;
+import com.framework.module.member.service.MemberLevelParamService;
 import com.framework.module.member.service.MemberService;
 import com.kratos.common.utils.StringUtils;
 import com.kratos.entity.BaseUser;
@@ -10,6 +13,7 @@ import com.kratos.module.auth.UserThread;
 import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiImplicitParams;
 import io.swagger.annotations.ApiOperation;
+import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -27,10 +31,13 @@ public abstract class AbstractLoginController {
     private final AbstractLoginService loginService;
     @Autowired
     private MemberService memberService;
+    @Autowired
+    private MemberLevelParamService memberLevelParamService;
+
     /**
      * 发送短信验证码
      */
-    @ApiOperation(value="发送短信验证码")
+    @ApiOperation(value = "发送短信验证码")
     @ApiImplicitParams(value = {
             @ApiImplicitParam(name = "mobile", value = "手机号码", dataType = "String", paramType = "query")
     })
@@ -43,7 +50,7 @@ public abstract class AbstractLoginController {
     /**
      * 根据手机号获取用户
      */
-    @ApiOperation(value="根据手机号获取用户")
+    @ApiOperation(value = "根据手机号获取用户")
     @RequestMapping(value = "/user/mobile/{mobile}", method = RequestMethod.GET)
     public ResponseEntity<BaseUser> findUserByMobile(@PathVariable(value = "mobile") String mobile) throws Exception {
         return new ResponseEntity<>(loginService.findUserByMobile(mobile), HttpStatus.OK);
@@ -52,7 +59,7 @@ public abstract class AbstractLoginController {
     /**
      * token登录
      */
-    @ApiOperation(value="token登录")
+    @ApiOperation(value = "token登录")
     @ApiImplicitParams(value = {
             @ApiImplicitParam(name = "appId", value = "app_id", dataType = "String", paramType = "query"),
             @ApiImplicitParam(name = "appSecret", value = "app_secret", dataType = "String", paramType = "query"),
@@ -75,7 +82,7 @@ public abstract class AbstractLoginController {
     /**
      * 修改密码
      */
-    @ApiOperation(value="修改密码")
+    @ApiOperation(value = "修改密码")
     @ApiImplicitParams(value = {
             @ApiImplicitParam(name = "mobile", value = "手机号码", dataType = "String", paramType = "query"),
             @ApiImplicitParam(name = "code", value = "验证码", dataType = "String", paramType = "query"),
@@ -95,7 +102,7 @@ public abstract class AbstractLoginController {
     /**
      * 刷新token
      */
-    @ApiOperation(value="刷新token")
+    @ApiOperation(value = "刷新token")
     @ApiImplicitParams(value = {
             @ApiImplicitParam(name = "appId", value = "app_id", dataType = "String", paramType = "query"),
             @ApiImplicitParam(name = "appSecret", value = "app_secret", dataType = "String", paramType = "query"),
@@ -120,7 +127,7 @@ public abstract class AbstractLoginController {
     /**
      * 登录
      */
-    @ApiOperation(value="登录")
+    @ApiOperation(value = "登录")
     @ApiImplicitParams(value = {
             @ApiImplicitParam(name = "username", value = "手机号码", dataType = "String", paramType = "query"),
             @ApiImplicitParam(name = "password", value = "密码", dataType = "String", paramType = "query")
@@ -145,7 +152,7 @@ public abstract class AbstractLoginController {
     /**
      * 登录
      */
-    @ApiOperation(value="登录")
+    @ApiOperation(value = "登录")
     @ApiImplicitParams(value = {
             @ApiImplicitParam(name = "appId", value = "app_id", dataType = "String", paramType = "query"),
             @ApiImplicitParam(name = "appSecret", value = "app_secret", dataType = "String", paramType = "query"),
@@ -172,7 +179,7 @@ public abstract class AbstractLoginController {
     /**
      * 注册
      */
-    @ApiOperation(value="注册")
+    @ApiOperation(value = "注册")
     @ApiImplicitParams(value = {
             @ApiImplicitParam(name = "mobile", value = "手机号码", dataType = "String", paramType = "query"),
             @ApiImplicitParam(name = "code", value = "验证码", dataType = "String", paramType = "query"),
@@ -193,7 +200,7 @@ public abstract class AbstractLoginController {
     /**
      * 获取token
      */
-    @ApiOperation(value="获取token")
+    @ApiOperation(value = "获取token")
     @ApiImplicitParams(value = {
             @ApiImplicitParam(name = "appId", value = "app_id", dataType = "String", paramType = "query"),
             @ApiImplicitParam(name = "appSecret", value = "app_secret", dataType = "String", paramType = "query")
@@ -205,7 +212,7 @@ public abstract class AbstractLoginController {
     ) throws Exception {
         ResponseEntity<OAuth2AccessToken> responseEntity;
         try {
-            responseEntity =   loginService.getAccessToken(appId, appSecret);
+            responseEntity = loginService.getAccessToken(appId, appSecret);
         } catch (Exception e) {
             e.printStackTrace();
             throw new BusinessException(e.getMessage());
@@ -216,7 +223,7 @@ public abstract class AbstractLoginController {
     /**
      * 验证码校验
      */
-    @ApiOperation(value="验证码校验")
+    @ApiOperation(value = "验证码校验")
     @ApiImplicitParams(value = {
             @ApiImplicitParam(name = "mobile", value = "手机号码", dataType = "String", paramType = "query"),
             @ApiImplicitParam(name = "code", value = "验证码", dataType = "String", paramType = "query")
@@ -232,26 +239,32 @@ public abstract class AbstractLoginController {
     /**
      * 查询登录用户
      */
-    @ApiOperation(value="查询登录用户")
+    @ApiOperation(value = "查询登录用户")
     @RequestMapping(value = "/user/info", method = RequestMethod.GET)
     public ResponseEntity<BaseUser> getOne() throws Exception {
         BaseUser user = UserThread.getInstance().get();
-        if(user instanceof Member) {
+        if (user instanceof Member) {
             Member member = (Member) user;
-            if(StringUtils.isNotBlank(member.getFatherId())) {
+            if (StringUtils.isNotBlank(member.getFatherId())) {
                 Member father = memberService.findOne(member.getFatherId());
-                if(father != null) {
+                if (father != null) {
                     member.setFatherMobile(father.getLoginName());
                     member.setFatherName(father.getName());
                 }
 
             }
             AllyMembers allyMembers = memberService.getAlliesByMemberId(member.getId());
-            if(allyMembers != null) {
+            if (allyMembers != null) {
                 member.setAllySonNumber(allyMembers.getSonList().size());
                 member.setAllyAllNumber(allyMembers.getTotalNum());
             }
-            return new ResponseEntity<>(member, HttpStatus.OK);
+            MemberVO memberVO = new MemberVO();
+            BeanUtils.copyProperties(member, memberVO);
+            MemberLevelParam levelParam = memberLevelParamService.getParamByLevel(String.valueOf(member.getMemberLevel()));
+            if (levelParam != null) {
+                memberVO.setMemberLevel(levelParam.getLevelName());
+            }
+            return new ResponseEntity<>(memberVO, HttpStatus.OK);
         }
         return new ResponseEntity<>(user, HttpStatus.OK);
     }
@@ -259,7 +272,7 @@ public abstract class AbstractLoginController {
     /**
      * 获取OAuth2AccessToken
      */
-    @ApiOperation(value="获取OAuth2AccessToken")
+    @ApiOperation(value = "获取OAuth2AccessToken")
     @RequestMapping(value = "/token/{token}", method = RequestMethod.GET)
     public ResponseEntity<OAuth2AccessToken> getToken(@PathVariable String token) throws Exception {
         return new ResponseEntity<>(loginService.readAccessToken(token), HttpStatus.OK);
@@ -268,7 +281,7 @@ public abstract class AbstractLoginController {
     /**
      * 获取OAuth2AccessToken
      */
-    @ApiOperation(value="获取OAuth2AccessToken")
+    @ApiOperation(value = "获取OAuth2AccessToken")
     @RequestMapping(value = "/token/authentication/{token}", method = RequestMethod.GET)
     public ResponseEntity<OAuth2Authentication> readAuthentication(@PathVariable String token) throws Exception {
         return new ResponseEntity<>(loginService.readAuthentication(token), HttpStatus.OK);
