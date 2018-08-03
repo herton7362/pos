@@ -3,7 +3,6 @@ package com.kratos.common;
 import com.framework.module.member.domain.AllyMembers;
 import com.framework.module.member.domain.Member;
 import com.framework.module.member.domain.MemberLevelParam;
-import com.framework.module.member.domain.MemberVO;
 import com.framework.module.member.service.MemberLevelParamService;
 import com.framework.module.member.service.MemberService;
 import com.kratos.common.utils.StringUtils;
@@ -251,20 +250,17 @@ public abstract class AbstractLoginController {
                     member.setFatherMobile(father.getLoginName());
                     member.setFatherName(father.getName());
                 }
-
             }
             AllyMembers allyMembers = memberService.getAlliesByMemberId(member.getId());
             if (allyMembers != null) {
                 member.setAllySonNumber(allyMembers.getSonList().size());
                 member.setAllyAllNumber(allyMembers.getTotalNum());
             }
-            MemberVO memberVO = new MemberVO();
-            BeanUtils.copyProperties(member, memberVO);
             MemberLevelParam levelParam = memberLevelParamService.getParamByLevel(String.valueOf(member.getMemberLevel()));
             if (levelParam != null) {
-                memberVO.setMemberLevel(levelParam.getLevelName());
+                member.setMemberLevelName(levelParam.getLevelName());
             }
-            return new ResponseEntity<>(memberVO, HttpStatus.OK);
+            return new ResponseEntity<>(member, HttpStatus.OK);
         }
         return new ResponseEntity<>(user, HttpStatus.OK);
     }

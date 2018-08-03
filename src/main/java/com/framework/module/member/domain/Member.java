@@ -107,6 +107,9 @@ public class Member extends BaseUser implements Comparable {
     @Transient
     @ApiModelProperty(value = "购买设备数量")
     private String buyEquipmentNum;
+    @Transient
+    @ApiModelProperty(value = "会员级别名称")
+    private String memberLevelName;
 
     public String getBuyEquipmentNum() {
         return buyEquipmentNum;
@@ -341,6 +344,14 @@ public class Member extends BaseUser implements Comparable {
 
     public void setOpenAccountSubbranch(String openAccountSubbranch) {
         this.openAccountSubbranch = openAccountSubbranch;
+    }
+
+    public String getMemberLevelName() {
+        return memberLevelName;
+    }
+
+    public void setMemberLevelName(String memberLevelName) {
+        this.memberLevelName = memberLevelName;
     }
 
     @Override
