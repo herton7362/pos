@@ -95,23 +95,6 @@ public class MemberController extends AbstractCrudController<Member> {
     }
 
     /**
-     * 查询儿子总数
-     *
-     * @return
-     * @throws Exception
-     */
-    @ApiOperation(value = "查询盟友总数")
-    @RequestMapping(value = "/allyNum", method = RequestMethod.GET)
-    public ResponseEntity<Map<String, Integer>> allyNum() {
-        String memberId = UserThread.getInstance().get().getId();
-        AllyMembers allyMembers = memberService.getAlliesByMemberId(memberId);
-        Map<String, Integer> result = new HashMap<>();
-        result.put("sons", allyMembers.getSonList() == null ? 0 : allyMembers.getSonList().size());
-        result.put("grandSons", allyMembers.getGrandSonList() == null ? 0 : allyMembers.getGrandSonList().size());
-        return new ResponseEntity<>(result, HttpStatus.OK);
-    }
-
-    /**
      * 查询盟友
      *
      * @return
@@ -137,9 +120,9 @@ public class MemberController extends AbstractCrudController<Member> {
             m.setBalance(totalProfit.get("totalProfit") == null ? 0d : totalProfit.get("totalProfit"));
             m.setAllyNumber(memberService.getAlliesByMemberId(m.getId()).getTotalNum());
             RealIdentityAudit realIdentityAudit = realIdentityAuditRepository.findByMemberId(m.getId());
-            if (realIdentityAudit != null && RealIdentityAudit.Status.PASS.equals(realIdentityAudit.getStatus())){
+            if (realIdentityAudit != null && RealIdentityAudit.Status.PASS.equals(realIdentityAudit.getStatus())) {
                 m.setRealIdentity(1);
-            }else {
+            } else {
                 m.setRealIdentity(0);
             }
         }

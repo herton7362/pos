@@ -159,7 +159,13 @@ public class MemberProfitRecordsServiceImpl extends AbstractCrudService<MemberPr
             if (member.getCreatedDate() > end) {
                 break;
             }
-            List<Member> sonList = repository.findMembersByFatherId(memberId, end);
+//            List<Member> sonList = repository.findMembersByFatherId(memberId, end);
+            List<Member> sonList = new ArrayList<>();
+            AllyMembers allyMembers = memberService.getAlliesByMemberId(memberId);
+            if (allyMembers != null) {
+                sonList.addAll(allyMembers.getSonList());
+                sonList.addAll(allyMembers.getGrandSonList());
+            }
             getAchievementDetail(achievementDetail, start, end, sonList);
             achievementDetail.setStaticDate(sdf.format(calendar.getTime()));
             result.add(achievementDetail);
@@ -188,7 +194,13 @@ public class MemberProfitRecordsServiceImpl extends AbstractCrudService<MemberPr
             if (member.getCreatedDate() > end) {
                 break;
             }
-            List<Member> sonList = repository.findMembersByFatherId(memberId, end);
+            List<Member> sonList = new ArrayList<>();
+            AllyMembers allyMembers = memberService.getAlliesByMemberId(memberId);
+            if (allyMembers != null) {
+                sonList.addAll(allyMembers.getSonList());
+                sonList.addAll(allyMembers.getGrandSonList());
+            }
+
             getAchievementDetail(achievementDetail, start, end, sonList);
             achievementDetail.setStaticDate(sdf.format(calendar.getTime()));
             result.add(achievementDetail);
@@ -213,20 +225,24 @@ public class MemberProfitRecordsServiceImpl extends AbstractCrudService<MemberPr
             String lastDay = sdf1.format(calendar.getTime()) + " 23:59:59";
             long start = sdf2.parse(firstDay).getTime();
             long end = sdf2.parse(lastDay).getTime();
-            List<Member> sonList = repository.findMembersByFatherId(memberId, end);
-            if (sonList != null) {
-                int newSonShopNum = 0;
-                double totalTransactionAmount = 0;
-                for (Member m : sonList) {
-                    List<Shop> shops = shopRepository.findAllByMemberId(m.getId(), start, end);
-                    newSonShopNum += shops == null ? 0 : shops.size();
-                    Map<String, Double> resultMap = memberProfitRecordsRepository.staticProfitsByMonth(m.getId(), start, end);
-                    totalTransactionAmount += resultMap.get("totalTransactionAmount") == null ? 0d : resultMap.get("totalTransactionAmount");
-                }
-                totalTransactionAmount = new BigDecimal(totalTransactionAmount).setScale(2, BigDecimal.ROUND_HALF_UP).doubleValue();
-                achievement.setAllyNewShopNum(newSonShopNum);
-                achievement.setAllyTransactionAmount(totalTransactionAmount);
+            List<Member> sonList = new ArrayList<>();
+            AllyMembers allyMembers = memberService.getAlliesByMemberId(memberId);
+            if (allyMembers != null) {
+                sonList.addAll(allyMembers.getSonList());
+                sonList.addAll(allyMembers.getGrandSonList());
             }
+            int newSonShopNum = 0;
+            double totalTransactionAmount = 0;
+            for (Member m : sonList) {
+                List<Shop> shops = shopRepository.findAllByMemberId(m.getId(), start, end);
+                newSonShopNum += shops == null ? 0 : shops.size();
+                Map<String, Double> resultMap = memberProfitRecordsRepository.staticProfitsByMonth(m.getId(), start, end);
+                totalTransactionAmount += resultMap.get("totalTransactionAmount") == null ? 0d : resultMap.get("totalTransactionAmount");
+            }
+            totalTransactionAmount = new BigDecimal(totalTransactionAmount).setScale(2, BigDecimal.ROUND_HALF_UP).doubleValue();
+            achievement.setAllyNewShopNum(newSonShopNum);
+            achievement.setAllyTransactionAmount(totalTransactionAmount);
+
             List<Shop> shops1 = shopRepository.findAllByMemberId(memberId, start, end);
             Map<String, Double> resultMap1 = memberProfitRecordsRepository.staticProfitsByMonth(memberId, start, end);
             Double totalTransactionAmount1 = resultMap1.get("totalTransactionAmount") == null ? 0d : resultMap1.get("totalTransactionAmount");
@@ -262,7 +278,7 @@ public class MemberProfitRecordsServiceImpl extends AbstractCrudService<MemberPr
     @Override
     public Double getTotalProfit(String memberId) {
         Map<String, Double> resultMap = memberProfitRecordsRepository.staticTotalProfit(memberId);
-        return resultMap.get("totalProfit") == null ? 0d : resultMap.get("totalProfit");
+        return setDouleScale(resultMap.get("totalProfit") == null ? 0d : resultMap.get("totalProfit"));
     }
 
     private void getAchievementDetail(AchievementDetail achievementDetail, long start, long end, List<Member> sonList) {
