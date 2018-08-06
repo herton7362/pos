@@ -1,11 +1,14 @@
 package com.framework.module.shop.service;
 
+import com.framework.module.auth.MemberThread;
+import com.framework.module.member.domain.Member;
 import com.framework.module.shop.domain.Shop;
 import com.kratos.common.AbstractCrudService;
 import com.kratos.common.PageResult;
 import com.kratos.common.utils.StringUtils;
 import com.kratos.exceptions.BusinessException;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.security.access.method.P;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -32,7 +35,13 @@ public class ShopServiceImpl extends AbstractCrudService<Shop> implements ShopSe
                 throw new BusinessException("手机号【"+shop.getMobile()+"】不能重复");
             }
         }
-
+        if(StringUtils.isBlank(shop.getId())) {
+            Member member = MemberThread.getInstance().get();
+            if(member == null) {
+                throw new BusinessException("请登录");
+            }
+            shop.setMemberId(member.getId());
+        }
         return super.save(shop);
     }
 
