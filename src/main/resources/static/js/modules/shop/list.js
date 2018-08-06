@@ -10,6 +10,7 @@ require(['jquery', 'vue', 'messager', 'utils'], function($, Vue, messager, utils
                 columns: [
                     {field:'name', title:'姓名'},
                     {field:'sn', title:'sn码'},
+                    {field:'member.name', title:'会员'},
                     {field:'mobile', title:'手机'},
                     {field:'transactionAmount', title:'交易总额'},
                     {field:'status', title:'激活状态', formatter: function(value) {
@@ -29,7 +30,7 @@ require(['jquery', 'vue', 'messager', 'utils'], function($, Vue, messager, utils
             members: []
         },
         methods: {
-            loadMember: function () {
+            loadMember: function (fn) {
                 var self = this;
                 $.ajax({
                     url: utils.patchUrl('/api/member'),
@@ -39,14 +40,35 @@ require(['jquery', 'vue', 'messager', 'utils'], function($, Vue, messager, utils
                         logicallyDeleted: false
                     },
                     success: function(data) {
+                        $.each(data.content, function () {
+                            if(!this.name)  {
+                                this.name = this.loginName;
+                            }
+                        });
                         self.members = data.content;
+                        fn();
                     }
                 })
+            },
+            tableTransformResponse: function (data) {
+                var self = this;
+                $.each(data, function (k1, v1) {
+                   this.member = {name: '未配置'};
+                   $.each(self.members, function (k, v) {
+                       if(v.id === v1.memberId) {
+                           v1.member = v;
+                       }
+                   })
+                });
+                return data;
             }
         },
         mounted: function() {
-            this.loadMember();
-            this.crudgrid.$instance.load();
+            var self = this;
+            this.loadMember(function () {
+                self.crudgrid.$instance.load();
+            });
+
         }
     });
 });
