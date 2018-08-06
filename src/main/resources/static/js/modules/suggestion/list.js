@@ -18,11 +18,27 @@ require(['jquery', 'vue', 'messager', 'utils'], function($, Vue, messager, utils
                 memberId: null,
                 mobile: null,
                 content: null
-            }
+            },
+            members: []
         },
         methods: {
+            loadMember: function () {
+                var self = this;
+                $.ajax({
+                    url: utils.patchUrl('/api/member'),
+                    data: {
+                        sort: 'sortNumber',
+                        order: 'asc',
+                        logicallyDeleted: false
+                    },
+                    success: function(data) {
+                        self.members = data.content;
+                    }
+                })
+            }
         },
         mounted: function() {
+            this.loadMember();
             this.crudgrid.$instance.load();
         }
     });

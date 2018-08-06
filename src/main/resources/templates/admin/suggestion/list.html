@@ -40,7 +40,11 @@
                         <template slot="form-body" scope="props">
                             <div class="form-group">
                                 <label>会员：</label>
-                                <input type="text" class="form-control" required v-model="props.form.memberId" placeholder="输入会员">
+                                <combobox
+                                        class="form-control"
+                                        :options="members"
+                                        v-model="props.form.memberId">
+                                </combobox>
                             </div>
                             <div class="form-group">
                                 <label>手机：</label>
