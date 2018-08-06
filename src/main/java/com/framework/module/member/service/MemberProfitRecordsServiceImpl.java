@@ -161,7 +161,7 @@ public class MemberProfitRecordsServiceImpl extends AbstractCrudService<MemberPr
             }
 //            List<Member> sonList = repository.findMembersByFatherId(memberId, end);
             List<Member> sonList = new ArrayList<>();
-            AllyMembers allyMembers = memberService.getAlliesByMemberId(memberId);
+            AllyMembers allyMembers = memberService.getAlliesByMemberId(memberId, end);
             if (allyMembers != null) {
                 sonList.addAll(allyMembers.getSonList());
                 sonList.addAll(allyMembers.getGrandSonList());
@@ -195,7 +195,7 @@ public class MemberProfitRecordsServiceImpl extends AbstractCrudService<MemberPr
                 break;
             }
             List<Member> sonList = new ArrayList<>();
-            AllyMembers allyMembers = memberService.getAlliesByMemberId(memberId);
+            AllyMembers allyMembers = memberService.getAlliesByMemberId(memberId, end);
             if (allyMembers != null) {
                 sonList.addAll(allyMembers.getSonList());
                 sonList.addAll(allyMembers.getGrandSonList());
@@ -226,7 +226,7 @@ public class MemberProfitRecordsServiceImpl extends AbstractCrudService<MemberPr
             long start = sdf2.parse(firstDay).getTime();
             long end = sdf2.parse(lastDay).getTime();
             List<Member> sonList = new ArrayList<>();
-            AllyMembers allyMembers = memberService.getAlliesByMemberId(memberId);
+            AllyMembers allyMembers = memberService.getAlliesByMemberId(memberId, end);
             if (allyMembers != null) {
                 sonList.addAll(allyMembers.getSonList());
                 sonList.addAll(allyMembers.getGrandSonList());
@@ -403,7 +403,7 @@ public class MemberProfitRecordsServiceImpl extends AbstractCrudService<MemberPr
      * @param member                     当前用户
      * @param profitRate                 当前用户的收益
      * @param operateTransactionId       操作流水号
-     * @param relateId
+     * @param relateId 关联号码
      * @throws Exception 异常
      */
     private void setParamProfitRecords(List<MemberProfitTmpRecords> memberProfitTmpRecordsList, MemberProfitTmpRecords importProfit, Member member, double profitRate, String operateTransactionId, String relateId) throws Exception {

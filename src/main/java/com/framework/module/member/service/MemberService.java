@@ -53,6 +53,13 @@ public interface MemberService extends CrudService<Member> {
     AllyMembers getAlliesByMemberId(String memberId);
 
     /**
+     * 查询会员对应的盟友
+     * @param memberId 会员ID
+     * @return 儿子和孙子的实体集合
+     */
+    AllyMembers getAlliesByMemberId(String memberId, long endDate);
+
+    /**
      * 修改密码
      * @param member 会员参数
      */

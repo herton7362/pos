@@ -22,7 +22,6 @@ import javax.persistence.criteria.CriteriaQuery;
 import javax.persistence.criteria.Predicate;
 import javax.persistence.criteria.Root;
 import java.math.BigDecimal;
-import java.net.URI;
 import java.util.*;
 
 @Component("memberService")
@@ -145,16 +144,39 @@ public class MemberServiceImpl extends AbstractCrudService<Member> implements Me
         }
         Integer totalSize = allGrandson.size();
         Integer startPos = 0;
-        while (true) {
+        do {
             for (int i = startPos; i < totalSize; i++) {
                 allGrandson.addAll(repository.findMembersByFatherId(allGrandson.get(i).getId(), new Date().getTime()));
             }
             startPos = totalSize;
             totalSize = allGrandson.size();
-            if (totalSize == startPos) {
-                break;
-            }
+        } while (!totalSize.equals(startPos));
+        AllyMembers allyMembers  = new AllyMembers();
+        allyMembers.setGrandSonList(allGrandson);
+        allyMembers.setSonList(allSons);
+        allyMembers.setTotalNum(allSons.size() + allGrandson.size());
+        return allyMembers;
+    }
+
+    @Override
+    public AllyMembers getAlliesByMemberId(String memberId, long endDate) {
+        List<Member> allSons = repository.findMembersByFatherId(memberId, endDate);
+        if (allSons == null){
+            allSons = new ArrayList<>();
         }
+        List<Member> allGrandson = new ArrayList<>();
+        for (Member m : allSons) {
+            allGrandson.addAll(repository.findMembersByFatherId(m.getId(), endDate));
+        }
+        Integer totalSize = allGrandson.size();
+        Integer startPos = 0;
+        do {
+            for (int i = startPos; i < totalSize; i++) {
+                allGrandson.addAll(repository.findMembersByFatherId(allGrandson.get(i).getId(), endDate));
+            }
+            startPos = totalSize;
+            totalSize = allGrandson.size();
+        } while (!totalSize.equals(startPos));
         AllyMembers allyMembers  = new AllyMembers();
         allyMembers.setGrandSonList(allGrandson);
         allyMembers.setSonList(allSons);
