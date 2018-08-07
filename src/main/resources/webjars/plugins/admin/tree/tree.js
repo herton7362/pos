@@ -1,7 +1,11 @@
 define(['jquery', 'jstree'], function($) {
     return {
         props: {
-            data: Array
+            data: Array,
+            checkAble: {
+                type: Boolean,
+                default: true
+            }
         },
         template: '<div></div>',
         methods: {
@@ -11,6 +15,7 @@ define(['jquery', 'jstree'], function($) {
                     innerData.push({
                         id: this.id,
                         text: this.name,
+                        icon: this.icon,
                         parent: this.parent? this.parent.id: '#'
                     })
                 });
@@ -50,7 +55,7 @@ define(['jquery', 'jstree'], function($) {
                     core: {
                         data: this.innerData
                     },
-                    plugins : [ "checkbox" ]
+                    plugins : this.checkAble ? [ "checkbox" ] : []
                 });
                 $(this.$el).jstree(true).get_all_checked = function(full) {
                     var tmp= [];

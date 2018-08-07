@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <template th:include="admin/common/header_statics :: header('首页')" th:remove="tag"></template>
+</head>
+<body class="hold-transition skin-yellow sidebar-mini">
+<!--[if lte IE 9]>
+<p class="browsehappy">你正在使用<strong>过时</strong>的浏览器，奎爷 暂不支持。 请 <a href="http://browsehappy.com/" target="_blank">升级浏览器</a>
+    以获得更好的体验！</p>
+<![endif]-->
+<!-- Site wrapper -->
+<div class="wrapper">
+    <header th:include="admin/common/header_html"></header>
+    <!-- =============================================== -->
+    <aside th:include="admin/common/aside"></aside>
+    <!-- =============================================== -->
+
+    <!-- Content Wrapper. Contains page content -->
+    <div class="content-wrapper">
+        <!-- Content Header (Page header) -->
+        <section class="content-header">
+            <h1>
+                盟友管理
+                <small>人员结构查看</small>
+            </h1>
+            <ol class="breadcrumb">
+                <li>盟友管理</li>
+                <li class="active">人员结构查看</li>
+            </ol>
+        </section>
+
+        <!-- Main content -->
+        <section id="content" class="content" v-cloak>
+            <div class="box">
+                <div class="box-body">
+                    <button type="button" class="btn btn-sm btn-flat" @click="closeAll">
+                        <i class="fa fa-minus"></i> 收起全部
+                    </button>
+                    <button type="button" class="btn btn-sm btn-primary btn-flat" @click="openAll">
+                        <i class="fa fa-plus"></i> 展开全部
+                    </button>
+                    <tree :data="tree.data" :instance="tree" :check-able="false" style="margin-top: 8px"></tree>
+                </div>
+            </div>
+        </section>
+        <!-- /.content -->
+    </div>
+    <!-- /.content-wrapper -->
+    <footer th:include="admin/common/footer_html"></footer>
+</div>
+<!-- ./wrapper -->
+<footer th:include="admin/common/footer_statics"></footer>
+<script th:src="@{/static/js/modules/orgnization/tree.js}"></script>
+</body>
+</html>
