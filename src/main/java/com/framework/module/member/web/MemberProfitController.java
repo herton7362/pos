@@ -6,12 +6,12 @@ import com.framework.module.member.service.MemberProfitRecordsService;
 import com.framework.module.member.service.MemberProfitTmpRecordsService;
 import com.kratos.common.AbstractCrudController;
 import com.kratos.common.CrudService;
+import com.kratos.exceptions.BusinessException;
 import com.kratos.module.auth.UserThread;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiImplicitParams;
 import io.swagger.annotations.ApiOperation;
-import org.apache.poi.ss.formula.functions.T;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -23,7 +23,6 @@ import java.text.SimpleDateFormat;
 import java.util.*;
 
 import static org.springframework.http.HttpStatus.BAD_REQUEST;
-import static org.springframework.http.HttpStatus.NOT_ACCEPTABLE;
 
 @Api(value = "会员收益管理")
 @RestController
@@ -174,19 +173,15 @@ public class MemberProfitController extends AbstractCrudController<MemberProfitR
     @RequestMapping(value = "/userCashIn", method = RequestMethod.POST, produces = "application/json; charset=utf-8")
     @ApiImplicitParams({@ApiImplicitParam(name = "amount", value = "提现金额", dataType = "double", paramType = "query", required = true)})
     public ResponseEntity<Map<String, String>> userCashIn(@RequestParam(value = "amount") double amount) throws Exception {
-        Map<String, String> result = new HashMap<>();
         String memberId = UserThread.getInstance().get().getId();
         double allowCashInAmout = memberProfitService.cashOnAmount(memberId);
         if (amount > allowCashInAmout) {
-            result.put("message", "提现金额超出允许提现范围");
-            return new ResponseEntity<>(result, BAD_REQUEST);
+            throw new BusinessException("提现金额超出允许提现范围");
         }
         if (memberCashInRecordsService.cashIn(memberId, amount)) {
-            result.put("message", "提现成功，等待审核");
-            return new ResponseEntity<>(result, HttpStatus.OK);
+            throw new BusinessException("提现成功，等待审核");
         } else {
-            result.put("message", "提现失败，请联系管理员");
-            return new ResponseEntity<>(result, NOT_ACCEPTABLE);
+            throw new BusinessException("提现失败，请联系管理员");
         }
     }
 
