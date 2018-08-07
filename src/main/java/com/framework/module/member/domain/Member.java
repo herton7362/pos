@@ -69,7 +69,7 @@ public class Member extends BaseUser implements Comparable {
     @ApiModelProperty(value = "激活状态")
     @Column(length = 20)
     @Enumerated(EnumType.STRING)
-    private Status status = Status.UN_ACTIVE;
+    private Status status;
     @ApiModelProperty(value = "银行卡号")
     @Column(length = 50)
     private String bankCardNumber;
