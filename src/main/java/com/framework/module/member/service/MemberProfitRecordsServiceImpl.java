@@ -187,6 +187,9 @@ public class MemberProfitRecordsServiceImpl extends AbstractCrudService<MemberPr
             AchievementDetail achievementDetail = new AchievementDetail();
             calendar.setTime(sdf.parse(date));
             calendar.add(Calendar.DAY_OF_MONTH, -i);
+            if (calendar.getTime().after(new Date())){
+                continue;
+            }
             String startTime = sdf.format(calendar.getTime()) + " 00:00:00";
             String endTime = sdf.format(calendar.getTime()) + " 23:59:59";
             long start = sdf2.parse(startTime).getTime();
