@@ -40,6 +40,9 @@ import java.io.InputStream;
 import java.math.BigDecimal;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.time.LocalDate;
+import java.time.ZoneId;
+import java.time.ZonedDateTime;
 import java.util.*;
 
 @Component
@@ -187,7 +190,9 @@ public class MemberProfitRecordsServiceImpl extends AbstractCrudService<MemberPr
             AchievementDetail achievementDetail = new AchievementDetail();
             calendar.setTime(sdf.parse(date));
             calendar.add(Calendar.DAY_OF_MONTH, -i);
-            if (calendar.getTime().after(new Date())){
+            LocalDate statisDate = ZonedDateTime.ofInstant(calendar.getTime().toInstant(), ZoneId.systemDefault()).toLocalDate();
+            LocalDate currentDate = ZonedDateTime.ofInstant(new Date().toInstant(), ZoneId.systemDefault()).toLocalDate();
+            if (!statisDate.isBefore(currentDate)){
                 continue;
             }
             String startTime = sdf.format(calendar.getTime()) + " 00:00:00";
