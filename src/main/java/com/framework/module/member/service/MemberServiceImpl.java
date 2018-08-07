@@ -9,10 +9,12 @@ import com.framework.module.record.domain.OperationRecord;
 import com.framework.module.record.service.OperationRecordService;
 import com.kratos.common.AbstractCrudService;
 import com.kratos.common.PageRepository;
+import com.kratos.common.PageResult;
 import com.kratos.exceptions.BusinessException;
 import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Lazy;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
@@ -43,6 +45,35 @@ public class MemberServiceImpl extends AbstractCrudService<Member> implements Me
     @Override
     protected PageRepository<Member> getRepository() {
         return repository;
+    }
+
+    @Override
+    public PageResult<Member> findAll(PageRequest pageRequest, Map<String, String[]> param) throws Exception {
+        return new PageResult<>(repository.findAll(new MySpecification(param, true), pageRequest));
+    }
+
+    private class MySpecification extends SimpleSpecification {
+        MySpecification(Map<String, String[]> params, Boolean allEntities) {
+            super(params, allEntities);
+        }
+
+        @Override
+        public Predicate toPredicate(Root<Member> root, CriteriaQuery<?> criteriaQuery, CriteriaBuilder criteriaBuilder) {
+            Predicate predicate = super.toPredicate(root, criteriaQuery, criteriaBuilder);
+            List<Predicate> predicates = new ArrayList<>();
+            if(params.containsKey("quickSearch") && StringUtils.isNotBlank(params.get("quickSearch")[0])) {
+                String[] value = params.get("quickSearch");
+                predicates.add(criteriaBuilder.like(root.get("name"), "%"+ value[0] +"%"));
+                predicates.add(criteriaBuilder.like(root.get("loginName"), "%"+ value[0] +"%"));
+                predicates.add(criteriaBuilder.like(root.get("mobile"), "%"+ value[0] +"%"));
+                predicates.add(criteriaBuilder.like(root.get("idCard"), "%"+ value[0] +"%"));
+                Predicate predicateTemp = criteriaBuilder.or(predicates.toArray(new Predicate[]{}));
+                predicates.clear();
+                predicates.add(predicateTemp);
+            }
+            predicates.add(predicate);
+            return criteriaBuilder.and(predicates.toArray(new Predicate[]{}));
+        }
     }
 
     @Override

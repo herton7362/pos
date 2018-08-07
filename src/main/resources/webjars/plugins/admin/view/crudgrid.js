@@ -77,14 +77,14 @@ define(['jquery', 'utils'], function($, utils) {
         '                                      class="form-control"\n' +
         '                                      type="text"\n' +
         '                                      placeholder="搜索"\n' +
-        '                                      v-model="datagrid.queryParams.name"\n' +
+        '                                      v-model="datagrid.queryParams[queryKey]"\n' +
         '                                      @input="datagrid.$instance.reload()"\n' +
         '                              >\n' +
         '                              <span\n' +
         '                                      v-if="datagrid.queryParams[queryKey]"\n' +
         '                                      class="fa fa-times-circle-o form-control-feedback"\n' +
         '                                      aria-hidden="true"\n' +
-        '                                      @click="datagrid.queryParams.name=\'\';datagrid.$instance.reload()"\n' +
+        '                                      @click="datagrid.queryParams[queryKey]=\'\';datagrid.$instance.reload()"\n' +
         '                              ></span>\n' +
         '                          </div>\n' +
         '                      </div>\n' +

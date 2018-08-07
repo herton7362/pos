@@ -4,7 +4,7 @@ require(['jquery', 'vue', 'messager', 'utils'], function($, Vue, messager, utils
         data: {
             crudgrid: {
                 queryParams: {
-                    name: ''
+                    quickSearch: ''
                 },
                 columns: [
                     {field:'headPhoto', title:'头像', formatter: function(value) {
@@ -85,7 +85,8 @@ require(['jquery', 'vue', 'messager', 'utils'], function($, Vue, messager, utils
                 birthday: null,
                 idCard: null,
                 address: null
-            }
+            },
+            memberLevelParams: []
         },
         methods: {
             openAddMemberCardModal: function () {
@@ -180,11 +181,26 @@ require(['jquery', 'vue', 'messager', 'utils'], function($, Vue, messager, utils
             },
             cardTypeChange: function (val) {
                 console.log(val)
+            },
+            loadMemberLevelParams: function () {
+                var self = this;
+                $.ajax({
+                    url: utils.patchUrl('/api/memberLevelParam'),
+                    data: {
+                        sort: 'sortNumber',
+                        order: 'desc',
+                        logicallyDeleted:false
+                    },
+                    success: function (data) {
+                        self.memberLevelParams = data.content;
+                    }
+                })
             }
         },
         mounted: function() {
             this.crudgrid.$instance.load();
             this.loadCardTypes();
+            this.loadMemberLevelParams();
         },
         watch: {
             'cards.form.memberCardType.id': function (val) {
