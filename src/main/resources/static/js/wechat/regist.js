@@ -94,6 +94,7 @@ require(['jquery', 'vue', 'utils', 'messager'], function ($, Vue, utils, message
             }
         },
         mounted: function () {
+            window.localStorage.refreshToken = null;
             this.invitePersonMobile = utils.getQueryString("mobile");
         }
     });
