@@ -272,13 +272,16 @@ public class MemberProfitRecordsServiceImpl extends AbstractCrudService<MemberPr
         String endTime = sdf.format(calendar.getTime()) + " 23:59:59";
         long start = sdf2.parse(startTime).getTime();
         long end = sdf2.parse(endTime).getTime();
-        List<Member> sonList = repository.findMembersByFatherId(memberId, end);
+        List<Member> sonList = new ArrayList<>();
+        AllyMembers allyMembers = memberService.getAlliesByMemberId(memberId, end);
+        if (allyMembers != null) {
+            sonList.addAll(allyMembers.getSonList());
+            sonList.addAll(allyMembers.getGrandSonList());
+        }
         int newSonShopNum = 0;
-        if (sonList != null) {
-            for (Member m : sonList) {
-                List<Shop> shops = shopRepository.findAllByMemberId(m.getId(), start, end);
-                newSonShopNum += shops == null ? 0 : shops.size();
-            }
+        for (Member m : sonList) {
+            List<Shop> shops = shopRepository.findAllByMemberId(m.getId(), start, end);
+            newSonShopNum += shops == null ? 0 : shops.size();
         }
         return newSonShopNum;
     }
