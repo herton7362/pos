@@ -173,6 +173,9 @@ public class MemberProfitController extends AbstractCrudController<MemberProfitR
     @RequestMapping(value = "/userCashIn", method = RequestMethod.POST, produces = "application/json; charset=utf-8")
     @ApiImplicitParams({@ApiImplicitParam(name = "amount", value = "提现金额", dataType = "double", paramType = "query", required = true)})
     public ResponseEntity<Map<String, String>> userCashIn(@RequestParam(value = "amount") double amount) throws Exception {
+        if (amount < 10) {
+            throw new BusinessException("提现最低金额为10元");
+        }
         String memberId = UserThread.getInstance().get().getId();
         double allowCashInAmout = memberProfitService.cashOnAmount(memberId);
         if (amount > allowCashInAmout) {
@@ -196,9 +199,9 @@ public class MemberProfitController extends AbstractCrudController<MemberProfitR
     @RequestMapping(value = "/getMemberProfitTmpRecords", method = RequestMethod.GET)
     public ResponseEntity<List<MemberProfitTmpRecords>> getMemberProfitTmpRecords() throws Exception {
         Map<String, String[]> param = new HashMap<>();
-        param.put("sort", new String[] {"operateTransactionId"});
-        param.put("order", new String[] {"asc"});
-        param.put("profitType", new String[] {"2"});
+        param.put("sort", new String[]{"operateTransactionId"});
+        param.put("order", new String[]{"asc"});
+        param.put("profitType", new String[]{"2"});
         return new ResponseEntity<>(memberProfitTmpRecordsService.findAll(param), HttpStatus.OK);
     }
 }
