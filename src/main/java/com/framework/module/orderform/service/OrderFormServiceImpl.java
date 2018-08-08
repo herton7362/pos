@@ -261,7 +261,7 @@ public class OrderFormServiceImpl extends AbstractCrudService<OrderForm> impleme
                         total = total + orderItem.getCount();
                     }
                 }
-                if(total > 5) {
+                if(total >= 5) {
                     Member member = memberService.findOne(orderForm.getMember().getId());
                     member.setStatus(Member.Status.ACTIVE);
                     memberService.save(member);
