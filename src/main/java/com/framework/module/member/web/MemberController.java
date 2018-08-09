@@ -4,6 +4,7 @@ import com.framework.module.auth.MemberThread;
 import com.framework.module.member.domain.*;
 import com.framework.module.member.service.MemberLevelService;
 import com.framework.module.member.service.MemberService;
+import com.framework.module.orderform.service.OrderFormService;
 import com.kratos.common.AbstractCrudController;
 import com.kratos.common.CrudService;
 import com.kratos.common.PageParam;
@@ -31,6 +32,7 @@ public class MemberController extends AbstractCrudController<Member> {
     private final MemberLevelService memberLevelService;
     private final MemberProfitRecordsRepository memberProfitRecordsRepository;
     private final RealIdentityAuditRepository realIdentityAuditRepository;
+    private final OrderFormService orderFormService;
 
     @Override
     protected CrudService<Member> getService() {
@@ -102,7 +104,7 @@ public class MemberController extends AbstractCrudController<Member> {
      */
     @ApiOperation(value = "查询盟友总数")
     @RequestMapping(value = "/myAllies/{sortType}", method = RequestMethod.GET)
-    public ResponseEntity<List<Member>> myAllies(@PathVariable Integer sortType) {
+    public ResponseEntity<List<Member>> myAllies(@PathVariable Integer sortType) throws Exception {
         String memberId = UserThread.getInstance().get().getId();
         AllyMembers allyMembers = memberService.getAlliesByMemberId(memberId);
         List<Member> result = new ArrayList<>();
@@ -125,6 +127,7 @@ public class MemberController extends AbstractCrudController<Member> {
             } else {
                 m.setRealIdentity(0);
             }
+            m.setBuyEquipmentNum(String.valueOf(orderFormService.getPayedOrderItemCounts(memberId)));
         }
         Collections.sort(result);
         return new ResponseEntity<>(result, HttpStatus.OK);
@@ -165,10 +168,11 @@ public class MemberController extends AbstractCrudController<Member> {
     @Autowired
     public MemberController(
             MemberService memberService,
-            MemberLevelService memberLevelService, MemberProfitRecordsRepository memberProfitRecordsRepository, RealIdentityAuditRepository realIdentityAuditRepository) {
+            MemberLevelService memberLevelService, MemberProfitRecordsRepository memberProfitRecordsRepository, RealIdentityAuditRepository realIdentityAuditRepository, OrderFormService orderFormService) {
         this.memberService = memberService;
         this.memberLevelService = memberLevelService;
         this.memberProfitRecordsRepository = memberProfitRecordsRepository;
         this.realIdentityAuditRepository = realIdentityAuditRepository;
+        this.orderFormService = orderFormService;
     }
 }
