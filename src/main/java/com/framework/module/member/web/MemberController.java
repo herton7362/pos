@@ -127,7 +127,7 @@ public class MemberController extends AbstractCrudController<Member> {
             } else {
                 m.setRealIdentity(0);
             }
-            m.setBuyEquipmentNum(String.valueOf(orderFormService.getPayedOrderItemCounts(memberId)));
+            m.setBuyEquipmentNum(String.valueOf(orderFormService.getPayedOrderItemCounts(m.getId())));
         }
         Collections.sort(result);
         return new ResponseEntity<>(result, HttpStatus.OK);
