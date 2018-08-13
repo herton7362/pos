@@ -182,7 +182,9 @@ public class MemberProfitController extends AbstractCrudController<MemberProfitR
             throw new BusinessException("提现金额超出允许提现范围");
         }
         if (memberCashInRecordsService.cashIn(memberId, amount)) {
-            throw new BusinessException("提现成功，等待审核");
+            Map<String, String> result = new HashMap<>();
+            result.put("message", "提现成功，等待审核");
+            return new ResponseEntity<>(result, HttpStatus.OK);
         } else {
             throw new BusinessException("提现失败，请联系管理员");
         }
