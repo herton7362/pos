@@ -84,6 +84,7 @@
                                         <th>数量</th>
                                         <th>折扣</th>
                                         <th>单号</th>
+                                        <th>会员</th>
                                         <th style="text-align: center; width: 40px;">状态</th>
                                         <th>创建日期</th>
                                         <th style="text-align: center; width: 100px;">操作</th>
@@ -113,6 +114,10 @@
                                         <td>
                                             <div class="col-xs-4 cell-title">单号：</div>
                                             {{row.orderNumber}}
+                                        </td>
+                                        <td>
+                                            <div class="col-xs-4 cell-title">会员：</div>
+                                            {{row.member.name}}
                                         </td>
                                         <td style="text-align: center;">
                                             <div class="col-xs-4 cell-title">状态：</div>

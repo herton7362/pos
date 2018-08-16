@@ -41,7 +41,8 @@ require(['jquery', 'vue', 'messager', 'utils'], function($, Vue, messager, utils
                     member: {},
                     items: []
                 }
-            }
+            },
+            members: []
         },
         watch: {
             'queryParams.createdDateRadio': function (val) {
@@ -119,6 +120,13 @@ require(['jquery', 'vue', 'messager', 'utils'], function($, Vue, messager, utils
                         pageSize: this.pageSize
                     }, this.queryParams),
                     success: function(data) {
+                        $.each(data.content, function (k, row) {
+                            if(row.member) {
+                                row.member.name = row.member.name || row.member.loginName;
+                            } else {
+                                row.member = {name: '未知'};
+                            }
+                        });
                         self.data = data.content;
                         self.count = data.totalElements;
                         self.clearSelected();
@@ -240,7 +248,7 @@ require(['jquery', 'vue', 'messager', 'utils'], function($, Vue, messager, utils
         },
         mounted: function() {
             var self = this;
-            this.load();
+            self.load();
             $.ajax({
                 url: utils.patchUrl('/api/orderForm/status'),
                 success: function (data) {
