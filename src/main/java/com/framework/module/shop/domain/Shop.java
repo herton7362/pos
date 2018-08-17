@@ -32,6 +32,8 @@ public class Shop extends BaseEntity {
     private Integer exchangePosMachine = 0;
     @Transient
     private Integer activity;
+    @Transient
+    private String access_token;
 
     public Integer getActivity() {
         return activity;
@@ -103,6 +105,14 @@ public class Shop extends BaseEntity {
 
     public void setExchangePosMachine(Integer exchangePosMachine) {
         this.exchangePosMachine = exchangePosMachine;
+    }
+
+    public String getAccess_token() {
+        return access_token;
+    }
+
+    public void setAccess_token(String access_token) {
+        this.access_token = access_token;
     }
 
     public enum Status {

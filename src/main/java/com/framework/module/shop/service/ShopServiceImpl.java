@@ -2,13 +2,16 @@ package com.framework.module.shop.service;
 
 import com.framework.module.auth.MemberThread;
 import com.framework.module.member.domain.Member;
+import com.framework.module.member.service.MemberService;
 import com.framework.module.shop.domain.Shop;
 import com.kratos.common.AbstractCrudService;
 import com.kratos.common.PageResult;
 import com.kratos.common.utils.StringUtils;
 import com.kratos.exceptions.BusinessException;
 import org.springframework.data.domain.PageRequest;
-import org.springframework.security.access.method.P;
+import org.springframework.security.core.userdetails.User;
+import org.springframework.security.oauth2.provider.OAuth2Authentication;
+import org.springframework.security.oauth2.provider.token.TokenStore;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -25,6 +28,14 @@ import java.util.Map;
 @Transactional
 public class ShopServiceImpl extends AbstractCrudService<Shop> implements ShopService {
 
+    private final TokenStore tokenStore;
+    private final MemberService memberService;
+
+    public ShopServiceImpl(TokenStore tokenStore, MemberService memberService) {
+        this.tokenStore = tokenStore;
+        this.memberService = memberService;
+    }
+
     @Override
     public Shop save(Shop shop) throws Exception {
         if(StringUtils.isNotBlank(shop.getMobile())) {
@@ -38,7 +49,17 @@ public class ShopServiceImpl extends AbstractCrudService<Shop> implements ShopSe
         if(StringUtils.isBlank(shop.getId())) {
             Member member = MemberThread.getInstance().get();
             if(member == null) {
-                throw new BusinessException("请登录");
+                OAuth2Authentication oAuth2Authentication = tokenStore.readAuthentication(shop.getAccess_token());
+                if(oAuth2Authentication != null) {
+                    Object principal = oAuth2Authentication.getPrincipal();
+                    if(principal instanceof User) {
+                        User user = (User) principal;
+                        member = memberService.findOneByLoginName(user.getUsername());
+                    }
+                    if(member == null) {
+                        throw new BusinessException("未携带用户信息");
+                    }
+                }
             }
             shop.setMemberId(member.getId());
         }
