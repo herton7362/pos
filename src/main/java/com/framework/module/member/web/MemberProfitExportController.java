@@ -67,7 +67,7 @@ public class MemberProfitExportController extends AbstractCrudController<MemberP
             double tax = record.getCashAmount() * 0.09;
             double cashRealAmount = record.getCashAmount() - tax - 2;
             row.createCell(0).setCellValue(setDouleScale(record.getCashAmount()));
-            row.createCell(1).setCellValue(setDouleScale(tax));
+            row.createCell(1).setCellValue(setDouleScale(record.getCashAmount() - tax));
             row.createCell(2).setCellValue(2);
             row.createCell(3).setCellValue(setDouleScale(cashRealAmount));
             row.createCell(4).setCellValue(record.getCollectName());
