@@ -52,6 +52,9 @@ require(['jquery', 'vue', 'messager', 'utils'], function($, Vue, messager, utils
                     })
                 });
                 return data;
+            },
+            choseFile: function () {
+                window.location.href = utils.patchUrlPrefixUrl('/memberprofit/exportCashInRecords')
             }
         },
         watch: {
