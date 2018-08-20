@@ -389,7 +389,7 @@ public class MemberProfitRecordsServiceImpl extends AbstractCrudService<MemberPr
             Long rewardCount = shopRepository.count(
                     (Root<Shop> root, CriteriaQuery<?> criteriaQuery, CriteriaBuilder criteriaBuilder) -> {
                         List<Predicate> predicate = new ArrayList<>();
-                        predicate.add(criteriaBuilder.equal(root.get("memberId"), shop.getMemberId()));
+                        predicate.add(criteriaBuilder.equal(root.get("mobile"), shop.getMobile()));
                         predicate.add(criteriaBuilder.equal(root.get("activationReward"), Constant.ACTIVATION_REWARD_YES));
                         return criteriaBuilder.and(predicate.toArray(new Predicate[]{}));
                     });
