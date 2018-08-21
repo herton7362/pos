@@ -38,6 +38,14 @@ public class ShopServiceImpl extends AbstractCrudService<Shop> implements ShopSe
 
     @Override
     public Shop save(Shop shop) throws Exception {
+        if(StringUtils.isNotBlank(shop.getSn())) {
+            Map<String, String[]> param = new HashMap<>();
+            param.put("sn", new String[]{ shop.getSn() });
+            List<Shop> shops = findAll(param);
+            if(shops != null && !shops.isEmpty() && !shops.get(0).getId().equals(shop.getId())) {
+                throw new BusinessException("SN码【"+shop.getSn()+"】不能重复");
+            }
+        }
         if(StringUtils.isBlank(shop.getId())) {
             Member member = MemberThread.getInstance().get();
             if(member == null) {
