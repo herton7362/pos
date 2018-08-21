@@ -43,6 +43,11 @@
                             <radio name="searchStatus" value="UN_PASS" v-model="searchStatus"></radio> 未通过
                         </label>
                     </div>
+                    <div style="background: #fff; margin-bottom: 10px; padding: 10px">
+                        <button type="button" class="btn btn-flat btn-success btn-sm" @click="choseFile">
+                            <i class="fa fa-paperclip"></i> 下载提现审核成功记录
+                        </button>
+                    </div>
                     <crudgrid
                             domain="memberCashInRecords"
                             :columns="crudgrid.columns"

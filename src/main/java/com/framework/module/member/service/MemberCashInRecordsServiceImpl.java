@@ -41,7 +41,7 @@ public class MemberCashInRecordsServiceImpl extends AbstractCrudService<MemberCa
         record.setStatus(MemberCashInRecords.Status.PENDING);
         record.setCollectAccount(member.getBankCardNumber());
         record.setCollectName(member.getName());
-        record.setBankName(member.getOpenAccountBank() + "-" + member.getOpenAccountAddress() + "-" + member.getOpenAccountSubbranch());
+        record.setBankName(member.getOpenAccountBank());
         save(record);
 
         return true;
