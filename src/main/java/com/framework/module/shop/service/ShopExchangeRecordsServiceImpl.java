@@ -8,10 +8,12 @@ import com.framework.module.shop.domain.ShopExchangeRecordsRepository;
 import com.framework.module.shop.domain.ShopRepository;
 import com.kratos.common.AbstractCrudService;
 import com.kratos.exceptions.BusinessException;
+import com.sun.jndi.toolkit.url.UrlUtil;
 import org.apache.log4j.Logger;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.net.MalformedURLException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -36,6 +38,11 @@ public class ShopExchangeRecordsServiceImpl extends AbstractCrudService<ShopExch
         List<ShopExchangeRecords> saveList = new ArrayList<>();
         List<Shop> shops = new ArrayList<>();
         Member member = memberRepository.findOne(memberId);
+        try {
+            shopIds = UrlUtil.decode(shopIds);
+        } catch (MalformedURLException e) {
+            throw new BusinessException("商户ID无法解码，shopIds:" + shopIds);
+        }
         String[] shopList = shopIds.split("\\|");
         int i = 0;
         while (i < shopList.length) {
