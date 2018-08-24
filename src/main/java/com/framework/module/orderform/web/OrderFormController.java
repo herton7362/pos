@@ -201,7 +201,7 @@ public class OrderFormController extends AbstractCrudController<OrderForm> {
         if (orderForms == null || orderForms.isEmpty()) {
             throw new BusinessException("订单未找到");
         }
-        return aliPayAPI.getAliPayOrderId(orderForm.getOrderNumber(), String.valueOf(orderForms.get(0).getCash()), "鼎骏商城");
+        return aliPayAPI.getAliPayOrderId(orderForm.getOrderNumber(), String.valueOf(orderForms.get(0).getCash()), "会员宝管家");
     }
 
     /**
@@ -219,7 +219,7 @@ public class OrderFormController extends AbstractCrudController<OrderForm> {
         if (orderForms == null || orderForms.isEmpty()) {
             throw new BusinessException("订单未找到");
         }
-        response.getWriter().write(aliPayAPI.getWebAliPayForm(param.get("orderNumber")[0], String.valueOf(orderForms.get(0).getCash()), "鼎骏商城"));//直接将完整的表单html输出到页面
+        response.getWriter().write(aliPayAPI.getWebAliPayForm(param.get("orderNumber")[0], String.valueOf(orderForms.get(0).getCash()), "会员宝管家"));//直接将完整的表单html输出到页面
         response.getWriter().flush();
         response.getWriter().close();
     }

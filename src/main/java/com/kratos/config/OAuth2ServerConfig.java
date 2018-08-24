@@ -105,10 +105,7 @@ public class OAuth2ServerConfig {
 		@Bean
 		public AuthorizationServerTokenServices tokenServices() {
 			DefaultTokenServices defaultTokenServices = new DefaultTokenServices();
-			defaultTokenServices.setAccessTokenValiditySeconds(-1);
-			defaultTokenServices.setRefreshTokenValiditySeconds(-1);
 			defaultTokenServices.setSupportRefreshToken(true);
-			defaultTokenServices.setReuseRefreshToken(false);
 			defaultTokenServices.setTokenStore(tokenStore());
 			return defaultTokenServices;
 		}
