@@ -4,6 +4,7 @@ import com.framework.module.orderform.domain.OrderForm;
 import com.framework.module.orderform.service.OrderFormService;
 import com.kratos.common.AbstractCrudController;
 import com.kratos.common.CrudService;
+import com.kratos.exceptions.BusinessException;
 import com.kratos.kits.alipay.AliPayAPI;
 import com.kratos.kits.alipay.AliPayResult;
 import com.kratos.kits.wechat.WeChatAPI;
@@ -156,21 +157,33 @@ public class OrderFormController extends AbstractCrudController<OrderForm> {
     /**
      * 微信获取预付订单
      */
-    @ApiOperation(value="获取预付订单")
+    @ApiOperation(value = "获取预付订单")
     @RequestMapping(value = "/wechat/unified", method = RequestMethod.POST)
     public ResponseEntity<Map<String, Object>> unified(@RequestBody OrderForm orderForm, HttpServletRequest request) throws Exception {
-        return new ResponseEntity<>(weChatAPI.makeAppUnifiedOrder(orderForm.getOrderNumber(), request, ((Double)(orderForm.getCash()*100D)).intValue()), HttpStatus.OK);
+        Map<String, String[]> param = new HashMap<>();
+        param.put("orderNumber", new String[]{orderForm.getOrderNumber()});
+        List<OrderForm> orderForms = orderFormService.findAll(param);
+        if (orderForms == null || orderForms.isEmpty()) {
+            throw new BusinessException("订单未找到");
+        }
+        return new ResponseEntity<>(weChatAPI.makeAppUnifiedOrder(orderForm.getOrderNumber(), request, ((Double) (orderForms.get(0).getCash() * 100D)).intValue()), HttpStatus.OK);
     }
 
     /**
      * 微信获取预付订单
      */
-    @ApiOperation(value="获取预付订单")
+    @ApiOperation(value = "获取预付订单")
     @RequestMapping(value = "/wechat/web/unified", method = RequestMethod.GET)
     public void webUnified(HttpServletRequest request,
                            HttpServletResponse response) throws Exception {
         Map<String, String[]> param = request.getParameterMap();
-        Map<String, Object> map = weChatAPI.makeWebUnifiedOrder(param.get("orderNumber")[0], request, ((Double)(Double.valueOf(param.get("cash")[0])*100D)).intValue());
+        Map<String, String[]> params = new HashMap<>();
+        params.put("orderNumber", param.get("orderNumber"));
+        List<OrderForm> orderForms = orderFormService.findAll(params);
+        if (orderForms == null || orderForms.isEmpty()) {
+            throw new BusinessException("订单未找到");
+        }
+        Map<String, Object> map = weChatAPI.makeWebUnifiedOrder(param.get("orderNumber")[0], request, ((Double) (orderForms.get(0).getCash() * 100D)).intValue());
         System.out.println((String) map.get("mwebUrl"));
         response.addHeader("location", (String) map.get("mwebUrl"));
         response.setStatus(302);
@@ -179,22 +192,34 @@ public class OrderFormController extends AbstractCrudController<OrderForm> {
     /**
      * 支付宝获取预付订单
      */
-    @ApiOperation(value="获取预付订单")
+    @ApiOperation(value = "获取预付订单")
     @RequestMapping(value = "/ali/unified", method = RequestMethod.POST)
     public ResponseEntity<AliPayResult> unified(@RequestBody OrderForm orderForm) throws Exception {
-        return aliPayAPI.getAliPayOrderId(orderForm.getOrderNumber(), String.valueOf(orderForm.getCash()), "鼎骏商城");
+        Map<String, String[]> param = new HashMap<>();
+        param.put("orderNumber", new String[]{orderForm.getOrderNumber()});
+        List<OrderForm> orderForms = orderFormService.findAll(param);
+        if (orderForms == null || orderForms.isEmpty()) {
+            throw new BusinessException("订单未找到");
+        }
+        return aliPayAPI.getAliPayOrderId(orderForm.getOrderNumber(), String.valueOf(orderForms.get(0).getCash()), "鼎骏商城");
     }
 
     /**
      * 支付宝获取预付订单
      */
-    @ApiOperation(value="获取预付订单")
+    @ApiOperation(value = "获取预付订单")
     @RequestMapping(value = "/ali/web/unified", method = RequestMethod.GET)
     public void aliWebUnified(HttpServletRequest request,
                               HttpServletResponse response) throws Exception {
         Map<String, String[]> param = request.getParameterMap();
         response.setContentType("text/html;charset=UTF-8");
-        response.getWriter().write(aliPayAPI.getWebAliPayForm(param.get("orderNumber")[0], param.get("cash")[0], "鼎骏商城"));//直接将完整的表单html输出到页面
+        Map<String, String[]> params = new HashMap<>();
+        params.put("orderNumber", param.get("orderNumber"));
+        List<OrderForm> orderForms = orderFormService.findAll(params);
+        if (orderForms == null || orderForms.isEmpty()) {
+            throw new BusinessException("订单未找到");
+        }
+        response.getWriter().write(aliPayAPI.getWebAliPayForm(param.get("orderNumber")[0], String.valueOf(orderForms.get(0).getCash()), "鼎骏商城"));//直接将完整的表单html输出到页面
         response.getWriter().flush();
         response.getWriter().close();
     }
