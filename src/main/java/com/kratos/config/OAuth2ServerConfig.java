@@ -16,6 +16,7 @@
 package com.kratos.config;
 
 import com.kratos.module.auth.JdbcUserDetailService;
+import com.kratos.module.auth.service.MyJdbcTokenStore;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.annotation.Bean;
@@ -83,7 +84,7 @@ public class OAuth2ServerConfig {
 
 		@Bean
 		public JdbcTokenStore tokenStore() {
-			return new JdbcTokenStore(dataSource);
+			return new MyJdbcTokenStore(dataSource);
 		}
 
 		@Override
