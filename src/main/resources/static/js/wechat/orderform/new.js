@@ -254,13 +254,13 @@ require(['jquery', 'vue', 'utils', 'weui', 'messager'], function ($, Vue, utils,
                                         url: utils.patchUrl('/api/cart/' + utils.getQueryString("id")),
                                         type: 'DELETE',
                                         success: function () {
-                                            //window.location.href = utils.patchUrlPrefixUrl('/wechat/orderform/un_pay?id=' + orderForm.id);
-                                            window.location.href = utils.patchUrlPrefixUrl('/wechat/orderform/temp?id=' + orderForm.id);
+                                            window.location.href = utils.patchUrlPrefixUrl('/wechat/orderform/un_pay?id=' + orderForm.id);
+                                            //window.location.href = utils.patchUrlPrefixUrl('/wechat/orderform/temp?id=' + orderForm.id);
                                         }
                                     })
                                 } else {
-                                    //window.location.href = utils.patchUrlPrefixUrl('/wechat/orderform/un_pay?id=' + orderForm.id);
-                                    window.location.href = utils.patchUrlPrefixUrl('/wechat/orderform/temp?id=' + orderForm.id);
+                                    window.location.href = utils.patchUrlPrefixUrl('/wechat/orderform/un_pay?id=' + orderForm.id);
+                                    //window.location.href = utils.patchUrlPrefixUrl('/wechat/orderform/temp?id=' + orderForm.id);
                                 }
                             }, 1000);
                         }
