@@ -15,7 +15,7 @@ public class NotificationConfig extends NotificationKitConfigurerAdaptor {
                 .setAppSecret("e7GPlgoluQ9SUxbuZLL9a1Y1LxdzNJ")
                 .setServerUrl("http://gw.api.taobao.com/router/rest")
                 .setSmsFreeSignName("会员宝管家")
-                .setSmsTemplateCode("SMS_138370042")
+                .setSmsTemplateCode("SMS_142948965")
                 .setSmsType("normal")
                 .and()
                 .ipyyProvider()

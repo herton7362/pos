@@ -192,7 +192,7 @@ public class MemberProfitRecordsServiceImpl extends AbstractCrudService<MemberPr
             calendar.add(Calendar.DAY_OF_MONTH, -i);
             LocalDate statisDate = ZonedDateTime.ofInstant(calendar.getTime().toInstant(), ZoneId.systemDefault()).toLocalDate();
             LocalDate currentDate = ZonedDateTime.ofInstant(new Date().toInstant(), ZoneId.systemDefault()).toLocalDate();
-            if (!statisDate.isBefore(currentDate)){
+            if (!statisDate.isBefore(currentDate)) {
                 continue;
             }
             String startTime = sdf.format(calendar.getTime()) + " 00:00:00";
@@ -339,6 +339,11 @@ public class MemberProfitRecordsServiceImpl extends AbstractCrudService<MemberPr
             if (row == null) {
                 continue;
             }
+            if (isCellBlack(row.getCell(0)) && isCellBlack(row.getCell(1)) && isCellBlack(row.getCell(2)) && isCellBlack(row.getCell(3)) && isCellBlack(row.getCell(4)) && isCellBlack(row.getCell(5)) && isCellBlack(row.getCell(6))) {
+                importSize--;
+                continue;
+            }
+
             MemberProfitTmpRecords importProfit = getAllParamFromExcel(row, r);
             importProfit.setOperateTransactionId(operateTransactionId);
             importProfit.setRelateId(relateId);
@@ -414,7 +419,7 @@ public class MemberProfitRecordsServiceImpl extends AbstractCrudService<MemberPr
      * @param member                     当前用户
      * @param profitRate                 当前用户的收益
      * @param operateTransactionId       操作流水号
-     * @param relateId 关联号码
+     * @param relateId                   关联号码
      * @throws Exception 异常
      */
     private void setParamProfitRecords(List<MemberProfitTmpRecords> memberProfitTmpRecordsList, MemberProfitTmpRecords importProfit, Member member, double profitRate, String operateTransactionId, String relateId) throws Exception {
@@ -644,6 +649,10 @@ public class MemberProfitRecordsServiceImpl extends AbstractCrudService<MemberPr
         importProfit.setTransactionDate(transactionDate.getTime());
         importProfit.setProfitType(Constant.PROFIT_TYPE_ZHIYING);
         return importProfit;
+    }
+
+    private boolean isCellBlack(Cell cell) {
+        return cell == null || StringUtils.isBlank(cell.getStringCellValue());
     }
 
     private double setDouleScale(double inputDouble) {
