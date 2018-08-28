@@ -89,6 +89,7 @@ public class ShopServiceImpl extends AbstractCrudService<Shop> implements ShopSe
                 String[] value = params.get("quickSearch");
                 predicates.add(criteriaBuilder.like(root.get("name"), "%"+ value[0] +"%"));
                 predicates.add(criteriaBuilder.like(root.get("mobile"), "%"+ value[0] +"%"));
+                predicates.add(criteriaBuilder.like(root.get("sn"), "%"+ value[0] +"%"));
                 Predicate predicateTemp = criteriaBuilder.or(predicates.toArray(new Predicate[]{}));
                 predicates.clear();
                 predicates.add(predicateTemp);

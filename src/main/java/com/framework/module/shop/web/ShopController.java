@@ -4,7 +4,9 @@ import com.framework.module.member.domain.MemberProfitRecordsRepository;
 import com.framework.module.shop.domain.Shop;
 import com.framework.module.shop.domain.ShopRepository;
 import com.framework.module.shop.service.ShopExchangeRecordsService;
+import com.framework.module.shop.service.ShopService;
 import com.kratos.common.AbstractCrudController;
+import com.kratos.common.utils.StringUtils;
 import com.kratos.exceptions.BusinessException;
 import com.kratos.module.auth.UserThread;
 import io.swagger.annotations.Api;
@@ -25,21 +27,30 @@ public class ShopController extends AbstractCrudController<Shop> {
     private final ShopRepository shopRepository;
     private final MemberProfitRecordsRepository memberProfitRecordsRepository;
     private final ShopExchangeRecordsService shopExchangeRecordsService;
+    private final ShopService shopService;
 
-    public ShopController(ShopRepository shopRepository, MemberProfitRecordsRepository memberProfitRecordsRepository, ShopExchangeRecordsService shopExchangeRecordsService) {
+    public ShopController(ShopRepository shopRepository, MemberProfitRecordsRepository memberProfitRecordsRepository, ShopExchangeRecordsService shopExchangeRecordsService, ShopService shopService) {
         this.shopRepository = shopRepository;
         this.memberProfitRecordsRepository = memberProfitRecordsRepository;
         this.shopExchangeRecordsService = shopExchangeRecordsService;
+        this.shopService = shopService;
     }
 
     @ApiOperation(value = "获取商户信息")
     @RequestMapping(value = "/getMyShops", method = RequestMethod.GET)
-    public ResponseEntity<List<Shop>> getMyShops() throws ParseException {
+    public ResponseEntity<List<Shop>> getMyShops(@RequestParam(required = false) String quickSearch) throws Exception {
         Calendar calendar = Calendar.getInstance();
         calendar.add(Calendar.MONTH, -2);
         String memberId = UserThread.getInstance().get().getId();
         List<Shop> resultList = new ArrayList<>();
-        List<Shop> list = shopRepository.findAllByMemberId(memberId, 0, new Date().getTime());
+        Map<String, String[]> param = new HashMap<>();
+        param.put("memberId", new String[]{memberId});
+        param.put("status", new String[]{Shop.Status.ACTIVE.toString()});
+        if (StringUtils.isNotBlank(quickSearch)) {
+            param.put("quickSearch", new String[]{quickSearch});
+        }
+        List<Shop> list = shopService.findAll(param);
+//        List<Shop> list = shopRepository.findAllByMemberId(memberId, 0, new Date().getTime());
         if (list != null) {
             for (Shop s : list) {
                 Map<String, Double> result = memberProfitRecordsRepository.staticTransactionAmountBySnMonth(s.getSn(), calendar.getTime().getTime(), new Date().getTime());
