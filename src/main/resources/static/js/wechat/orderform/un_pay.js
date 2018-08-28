@@ -12,7 +12,7 @@ require(['jquery', 'vue', 'utils', 'weui', 'messager'], function ($, Vue, utils,
                 balance: 0,
                 point: 0
             },
-            payType: 'wechat'
+            payType: 'ali'
         },
         filters: {
             coverPath: function (val) {

@@ -80,5 +80,5 @@ spring:
     username: root
     password: PassW!orD@$$
 server:
-  port: 8080
+  port: 8070
   context-path:
