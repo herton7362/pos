@@ -8,7 +8,7 @@
                     </div>
                     <div class="weui-media-box__bd">
                         <h4 class="weui-media-box__title">{{product.name}}</h4>
-                        <p class="weui-media-box__desc main-text-color">￥{{product.price | price}}</p>
+                     <!--   <p class="weui-media-box__desc main-text-color">￥{{product.price | price}}</p>-->
                     </div>
                     <div class="cancel" @click="actionsheet.$instance.close()">
                         <i class="fa fa-close"></i>
@@ -28,7 +28,7 @@
                                     :disabled="count <= min"
                                     @click="reduce"> - </button>
                         </div>
-                        <input type="text" pattern="[0-9]*" class="form-control" v-model="count">
+                        <input type="text" pattern="[0-9]*" class="form-control" v-model="count" style="width: 100px;">
                         <div class="input-group-addon">
                             <button class="btn btn-sm btn-block btn-flat" @click="increase"> + </button>
                         </div>
@@ -39,10 +39,10 @@
         <template slot="footer">
             <div class="weui-flex">
                 <div class="weui-flex__item">
-                    <div class="weui-actionsheet__cell second-btn" @click="addCart">加入购物车</div>
+                    <div class="weui-actionsheet__cell second-btn">￥{{product.price | price}}</div>
                 </div>
                 <div class="weui-flex__item">
-                    <div class="weui-actionsheet__cell main-btn" @click="justBuy">立即购买</div>
+                    <div class="weui-actionsheet__cell main-btn" @click="justBuy">立即申领</div>
                 </div>
             </div>
         </template>

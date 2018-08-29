@@ -43,23 +43,23 @@
                     <div class="weui-cell">
                         <div class="weui-cell__bd">
                             <p class="title">{{product.name}}</p>
-                            <p class="main-text-color">￥{{product.price}}</p>
+                         <!--   <p class="main-text-color">￥{{product.price}}</p>-->
                         </div>
                     </div>
-                    <div class="weui-cell">
+                  <!--  <div class="weui-cell">
                         <div class="weui-cell__bd">
                             <p class="deliver-price">顺丰</p>
                         </div>
-                    </div>
+                    </div>-->
                 </div>
                 <div class="weui-cells">
                     <a class="weui-cell weui-cell_access" th:href="@{/}">
                         <div class="weui-cell__bd">
                             <p>机具申领</p>
                         </div>
-                        <div class="weui-cell__ft">
+                       <!-- <div class="weui-cell__ft">
                             进入店铺
-                        </div>
+                        </div>-->
                     </a>
                     <div class="weui-cell" v-if="product.points">
                         <div class="weui-cell__bd">
@@ -72,7 +72,7 @@
                     <div class="weui-cell statement">
                         <div class="weui-cell__bd">
                             <span class="margin-r-5"><i class="iconfont icon-success margin-r-5"></i> 企业认证</span>
-                            <span><i class="iconfont icon-success margin-r-5"></i> 担保交易</span>
+                          <!--  <span><i class="iconfont icon-success margin-r-5"></i> 担保交易</span>-->
                         </div>
                     </div>
                 </div>
@@ -88,14 +88,14 @@
         <!-- /.container -->
     </div>
     <div class="row tabbar">
-        <a th:href="@{/wechat/cart/list}" class="col-xs-3 item">
+        <!--<a th:href="@{/wechat/cart/list}" class="col-xs-3 item">
             <i class="fa fa-shopping-cart"></i>
             <p>购物车</p>
-        </a>
-        <div class="col-xs-9 padding-none">
+        </a>-->
+        <div class="padding-none">
             <div class="btn-group btn-block">
-                <button type="button" class="btn btn-flat add-cart second-btn" @click="addCart">加入购物车</button>
-                <button type="button" class="btn btn-flat just-buy main-btn" @click="justBuy">立即购买</button>
+                <button type="button" class="btn btn-flat add-cart second-btn" @click="myOrder">我的订单</button>
+                <button type="button" class="btn btn-flat just-buy main-btn" @click="justBuy">立即申领</button>
             </div>
         </div>
     </div>

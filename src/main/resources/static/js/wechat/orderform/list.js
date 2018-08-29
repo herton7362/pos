@@ -140,6 +140,11 @@ require(['jquery', 'vue', 'utils', 'weui', 'messager'], function ($, Vue, utils,
                         })
                     }
                 })
+            } else {
+                utils.getLoginMember(function (member) {
+                    self.member = member;
+                    self.tabClick(self.activeId);
+                }, true);
             }
         }
     });

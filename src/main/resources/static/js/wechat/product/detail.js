@@ -26,6 +26,9 @@ require([
             },
             justBuy: function () {
                 productsheet.open(this.product);
+            },
+            myOrder: function () {
+                window.location.href = utils.patchUrl('/wechat/orderform/list')
             }
         },
         mounted: function () {

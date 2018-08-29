@@ -78,14 +78,14 @@
                             </div>
                         </div>
                     </div>
-                    <div class="weui-cell">
+                    <!--<div class="weui-cell">
                         <div class="weui-cell__bd">
                             <p>配送方式</p>
                         </div>
                         <div class="weui-cell__ft">
                             <p>顺丰</p>
                         </div>
-                    </div>
+                    </div>-->
                     <div class="weui-cell">
                         <div class="weui-cell__hd"><label class="weui-label">买家留言：</label></div>
                         <div class="weui-cell__bd">
@@ -101,7 +101,7 @@
                         </div>
                     </div>
                 </div>
-                <div class="weui-cells">
+                <!--<div class="weui-cells">
                     <a href="#content" class="weui-cell" :class="{'weui-cell_access':coupons.length > 0}" @click="selectCoupon">
                         <div class="weui-cell__bd">
                             <p>
@@ -157,7 +157,7 @@
                             </template>
                         </div>
                     </a>
-                </div>
+                </div>-->
                 <div class="weui-cells">
                     <div class="weui-cell">
                         <div class="weui-cell__hd">
@@ -391,7 +391,7 @@
             <span class="main-text-color">￥{{getFinalTotal() | price}}</span>
         </div>
         <div class="col-xs-4 padding-none">
-            <button type="button" class="btn btn-flat submit-order main-btn" @click="submit">提交订单</button>
+            <button type="button" class="btn btn-flat submit-order main-btn" @click="submit">结算</button>
         </div>
     </div>
     <aside th:replace="wechat/common/aside"></aside>

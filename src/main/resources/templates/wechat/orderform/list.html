@@ -47,7 +47,7 @@
                                         </div>
                                     </div>
                                     <div class="space"></div>
-                                    <p class="weui-media-box__title price">￥ {{item.product.price | price}}</p>
+                                    <p class="weui-media-box__title price"></p>
                                 </div>
                             </div>
                         </div>
@@ -55,7 +55,7 @@
                             <div class="weui-cell weui-cell_link">
                                 <div class="weui-cell__bd"></div>
                                 <div class="weui-cell__ft">
-                                    共 {{getAmount(orderForm.items)}} 件商品 合计 <span class="total-price">￥{{getTotal(orderForm.items) | price}}</span>
+                                    合计 <span class="total-price">￥{{getTotal(orderForm.items) | price}}</span>
                                     <p class="operators">
                                       <!--  <button type="button"
                                                 class="weui-btn weui-btn_mini weui-btn_primary"
@@ -67,11 +67,7 @@
                                                 style="margin-right: 5px; line-height: 26px;"
                                                 v-if="orderForm.status == 'DELIVERED'"
                                                 @click="receive(orderForm)">确认收货</button>
-                                        <button type="button"
-                                                class="weui-btn weui-btn_mini weui-btn_warn"
-                                                style="margin-right: 5px; line-height: 26px;"
-                                                v-if="orderForm.status == 'PAYED' || orderForm.status == 'DELIVERED' || orderForm.status == 'RECEIVED'"
-                                                @click="applyReject(orderForm)">申请退货</button>
+
                                         <button type="button"
                                                 class="weui-btn weui-btn_mini weui-btn_plain-default"
                                                 @click="orderFormDetail(orderForm)">查看订单</button>
