@@ -35,7 +35,7 @@
                                 <div class="col-xs-6">
                                     <p class="weui-media-box__title">
                                         <i class="fa fa-fw fa-map-marker location"></i>
-                                        收货人：{{orderForm.deliverToAddress.name}}
+                                        <template v-if="receiveType != '自提'">收货人：</template>{{orderForm.deliverToAddress.name}}
                                     </p>
                                 </div>
                                 <div class="col-xs-6">
@@ -43,7 +43,7 @@
                                 </div>
                             </div>
 
-                            <p class="weui-media-box__desc">收货地址：{{orderForm.deliverToAddress.address | addressName}}{{orderForm.deliverToAddress.detailAddress}}</p>
+                            <p class="weui-media-box__desc" v-if="receiveType != '自提'">收货地址：{{orderForm.deliverToAddress.address | addressName}}{{orderForm.deliverToAddress.detailAddress}}</p>
                         </div>
                         <div class="weui-cell__ft"></div>
                     </a>
@@ -61,7 +61,7 @@
                         <div class="weui-cell__bd">
                             <div class="weui-media-box weui-media-box_appmsg">
                                 <div class="weui-media-box__hd">
-                                    <img class="weui-media-box__thumb" :src="item.product.coverImage.id | coverPath" alt="item.product.name">
+                                    <img class="weui-media-box__thumb" :src="item.product.coverImage.id | coverPath" :alt="item.product.name">
                                 </div>
                                 <div class="weui-media-box__bd">
                                     <div class="row">
@@ -91,6 +91,26 @@
                         <div class="weui-cell__bd">
                             <input class="weui-input" type="text" v-model="orderForm.remark" placeholder="点击给商家留言">
                         </div>
+                    </div>
+                    <div class="weui-cells weui-cells_checkbox">
+                        <label class="weui-cell weui-check__label" >
+                            <div class="weui-cell__hd">
+                                <input type="radio" class="weui-check" name="payType" v-model="receiveType" value="自提">
+                                <i class="weui-icon-checked"></i>
+                            </div>
+                            <div class="weui-cell__bd">
+                                <p>自提</p>
+                            </div>
+                        </label>
+                        <label class="weui-cell weui-check__label">
+                            <div class="weui-cell__hd">
+                                <input type="radio" name="payType" class="weui-check" v-model="receiveType" value="快递">
+                                <i class="weui-icon-checked"></i>
+                            </div>
+                            <div class="weui-cell__bd">
+                                <p>快递</p>
+                            </div>
+                        </label>
                     </div>
                     <div class="weui-cell">
                         <div class="weui-cell__hd">

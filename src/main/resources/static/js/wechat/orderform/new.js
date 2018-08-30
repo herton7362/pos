@@ -43,6 +43,7 @@ require(['jquery', 'vue', 'utils', 'weui', 'messager'], function ($, Vue, utils,
                 balance: null,
                 point: null
             },
+            receiveType: '快递',
             hashchanged: false
         },
         filters: {
@@ -73,6 +74,45 @@ require(['jquery', 'vue', 'utils', 'weui', 'messager'], function ($, Vue, utils,
                     this.value = this.id;
                 });
                 return val;
+            },
+            receiveType: function (val) {
+                if(val === '自提') {
+                    var address, self = this;
+                    $.ajax({
+                        url: utils.patchUrl('/api/memberAddress'),
+                        data: {
+                            sort: 'createdDate',
+                            order: 'desc',
+                            'member.id': this.member.id
+                        },
+                        success: function(data) {
+                            $.each(data.content, function () {
+                                if(this.name === '自提') {
+                                    address = this;
+                                }
+                            });
+                            if(address) {
+                                self.orderForm.deliverToAddress = address;
+                            } else {
+                                $.ajax({
+                                    url: utils.patchUrl('/api/memberAddress'),
+                                    contentType: 'application/json',
+                                    type: 'POST',
+                                    dataType: 'JSON',
+                                    data: JSON.stringify({
+                                        member: self.member,
+                                        name: '自提'
+                                    }),
+                                    success: function(data) {
+                                        messager.bubble('保存成功！');
+                                        self.orderForm.deliverToAddress = data;
+                                    }
+                                });
+                            }
+                        }
+                    });
+
+                }
             }
         },
         methods: {
@@ -219,12 +259,22 @@ require(['jquery', 'vue', 'utils', 'weui', 'messager'], function ($, Vue, utils,
                         'member.id': this.member.id
                     },
                     success: function(data) {
-                        self.memberAddresses = data.content;
+                        var addresses = [];
+                        $.each(data.content, function () {
+                            if(this.name !== '自提') {
+                                addresses.push(this);
+                            }
+                        });
+                        self.memberAddresses = addresses;
                         $.each(self.memberAddresses, function () {
                             if(this.defaultAddress) {
                                 self.orderForm.deliverToAddress = this;
                             }
-                        })
+                        });
+                        if(!self.orderForm.deliverToAddress.name && self.memberAddresses && self.memberAddresses.length > 0) {
+                            self.orderForm.deliverToAddress = self.memberAddresses[0];
+                            self.orderForm.deliverToAddress.defaultAddress = true;
+                        }
                     }
                 })
             },
