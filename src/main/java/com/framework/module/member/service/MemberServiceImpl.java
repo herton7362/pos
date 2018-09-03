@@ -224,7 +224,7 @@ public class MemberServiceImpl extends AbstractCrudService<Member> implements Me
     public AllyMembers getAlliesByMemberId(String memberId, String quickSearch) throws Exception {
 //        List<Member> allSons = repository.findMembersByFatherId(memberId, new Date().getTime());
         Map<String, String[]> searchParam = new HashMap<>();
-        if (StringUtils.isNotBlank(quickSearch)){
+        if (StringUtils.isNotBlank(quickSearch)) {
             searchParam.put("quickSearch", new String[]{quickSearch});
         }
         searchParam.put("fatherId", new String[]{memberId});
@@ -249,6 +249,13 @@ public class MemberServiceImpl extends AbstractCrudService<Member> implements Me
             startPos = totalSize;
             totalSize = allGrandson.size();
         } while (!totalSize.equals(startPos));
+
+        for (Member grandson : allGrandson) {
+            Member fatherMember = findOne(grandson.getFatherId());
+            if (null != fatherMember) {
+                grandson.setFatherName(fatherMember.getName());
+            }
+        }
         AllyMembers allyMembers = new AllyMembers();
         allyMembers.setGrandSonList(allGrandson);
         allyMembers.setSonList(allSons);
