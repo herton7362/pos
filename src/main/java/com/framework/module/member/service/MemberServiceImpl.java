@@ -52,6 +52,11 @@ public class MemberServiceImpl extends AbstractCrudService<Member> implements Me
         return new PageResult<>(repository.findAll(new MySpecification(param, true), pageRequest));
     }
 
+    @Override
+    public List<Member> findAll(Map<String, String[]> param) throws Exception {
+        return repository.findAll(new MySpecification(param, true));
+    }
+
     private class MySpecification extends SimpleSpecification {
         MySpecification(Map<String, String[]> params, Boolean allEntities) {
             super(params, allEntities);
@@ -61,12 +66,12 @@ public class MemberServiceImpl extends AbstractCrudService<Member> implements Me
         public Predicate toPredicate(Root<Member> root, CriteriaQuery<?> criteriaQuery, CriteriaBuilder criteriaBuilder) {
             Predicate predicate = super.toPredicate(root, criteriaQuery, criteriaBuilder);
             List<Predicate> predicates = new ArrayList<>();
-            if(params.containsKey("quickSearch") && StringUtils.isNotBlank(params.get("quickSearch")[0])) {
+            if (params.containsKey("quickSearch") && StringUtils.isNotBlank(params.get("quickSearch")[0])) {
                 String[] value = params.get("quickSearch");
-                predicates.add(criteriaBuilder.like(root.get("name"), "%"+ value[0] +"%"));
-                predicates.add(criteriaBuilder.like(root.get("loginName"), "%"+ value[0] +"%"));
-                predicates.add(criteriaBuilder.like(root.get("mobile"), "%"+ value[0] +"%"));
-                predicates.add(criteriaBuilder.like(root.get("idCard"), "%"+ value[0] +"%"));
+                predicates.add(criteriaBuilder.like(root.get("name"), "%" + value[0] + "%"));
+                predicates.add(criteriaBuilder.like(root.get("loginName"), "%" + value[0] + "%"));
+                predicates.add(criteriaBuilder.like(root.get("mobile"), "%" + value[0] + "%"));
+                predicates.add(criteriaBuilder.like(root.get("idCard"), "%" + value[0] + "%"));
                 Predicate predicateTemp = criteriaBuilder.or(predicates.toArray(new Predicate[]{}));
                 predicates.clear();
                 predicates.add(predicateTemp);
@@ -166,7 +171,7 @@ public class MemberServiceImpl extends AbstractCrudService<Member> implements Me
     @Override
     public AllyMembers getAlliesByMemberId(String memberId) {
         List<Member> allSons = repository.findMembersByFatherId(memberId, new Date().getTime());
-        if (allSons == null){
+        if (allSons == null) {
             allSons = new ArrayList<>();
         }
         List<Member> allGrandson = new ArrayList<>();
@@ -182,7 +187,7 @@ public class MemberServiceImpl extends AbstractCrudService<Member> implements Me
             startPos = totalSize;
             totalSize = allGrandson.size();
         } while (!totalSize.equals(startPos));
-        AllyMembers allyMembers  = new AllyMembers();
+        AllyMembers allyMembers = new AllyMembers();
         allyMembers.setGrandSonList(allGrandson);
         allyMembers.setSonList(allSons);
         allyMembers.setTotalNum(allSons.size() + allGrandson.size());
@@ -192,7 +197,7 @@ public class MemberServiceImpl extends AbstractCrudService<Member> implements Me
     @Override
     public AllyMembers getAlliesByMemberId(String memberId, long endDate) {
         List<Member> allSons = repository.findMembersByFatherId(memberId, endDate);
-        if (allSons == null){
+        if (allSons == null) {
             allSons = new ArrayList<>();
         }
         List<Member> allGrandson = new ArrayList<>();
@@ -208,7 +213,43 @@ public class MemberServiceImpl extends AbstractCrudService<Member> implements Me
             startPos = totalSize;
             totalSize = allGrandson.size();
         } while (!totalSize.equals(startPos));
-        AllyMembers allyMembers  = new AllyMembers();
+        AllyMembers allyMembers = new AllyMembers();
+        allyMembers.setGrandSonList(allGrandson);
+        allyMembers.setSonList(allSons);
+        allyMembers.setTotalNum(allSons.size() + allGrandson.size());
+        return allyMembers;
+    }
+
+    @Override
+    public AllyMembers getAlliesByMemberId(String memberId, String quickSearch) throws Exception {
+//        List<Member> allSons = repository.findMembersByFatherId(memberId, new Date().getTime());
+        Map<String, String[]> searchParam = new HashMap<>();
+        if (StringUtils.isNotBlank(quickSearch)){
+            searchParam.put("quickSearch", new String[]{quickSearch});
+        }
+        searchParam.put("fatherId", new String[]{memberId});
+        List<Member> allSons = findAll(searchParam);
+        if (allSons == null) {
+            allSons = new ArrayList<>();
+        }
+        List<Member> allGrandson = new ArrayList<>();
+        for (Member m : allSons) {
+//            allGrandson.addAll(repository.findMembersByFatherId(m.getId(), new Date().getTime()));
+            searchParam.put("fatherId", new String[]{m.getId()});
+            allGrandson.addAll(findAll(searchParam));
+        }
+        Integer totalSize = allGrandson.size();
+        Integer startPos = 0;
+        do {
+            for (int i = startPos; i < totalSize; i++) {
+//                allGrandson.addAll(repository.findMembersByFatherId(allGrandson.get(i).getId(), new Date().getTime()));
+                searchParam.put("fatherId", new String[]{allGrandson.get(i).getId()});
+                allGrandson.addAll(findAll(searchParam));
+            }
+            startPos = totalSize;
+            totalSize = allGrandson.size();
+        } while (!totalSize.equals(startPos));
+        AllyMembers allyMembers = new AllyMembers();
         allyMembers.setGrandSonList(allGrandson);
         allyMembers.setSonList(allSons);
         allyMembers.setTotalNum(allSons.size() + allGrandson.size());
@@ -238,7 +279,7 @@ public class MemberServiceImpl extends AbstractCrudService<Member> implements Me
 
     @Override
     public void editPwd(Member member) throws Exception {
-        if(StringUtils.isBlank(member.getId())) {
+        if (StringUtils.isBlank(member.getId())) {
             return;
         }
         Member old = repository.findOne(member.getId());
