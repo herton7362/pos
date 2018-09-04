@@ -178,6 +178,9 @@ public class MemberProfitRecordsServiceImpl extends AbstractCrudService<MemberPr
 
     @Override
     public List<AchievementDetail> getAchievementByDate(String memberId, String date, int size) throws Exception {
+        if (size > 10) {
+            size = 10;
+        }
         Member member = memberService.findOne(memberId);
         if (member == null) {
             throw new BusinessException(String.format("会员id:[%s]不存在", memberId));
@@ -190,9 +193,9 @@ public class MemberProfitRecordsServiceImpl extends AbstractCrudService<MemberPr
             AchievementDetail achievementDetail = new AchievementDetail();
             calendar.setTime(sdf.parse(date));
             calendar.add(Calendar.DAY_OF_MONTH, -i);
-            LocalDate statisDate = ZonedDateTime.ofInstant(calendar.getTime().toInstant(), ZoneId.systemDefault()).toLocalDate();
+            LocalDate staticDate = ZonedDateTime.ofInstant(calendar.getTime().toInstant(), ZoneId.systemDefault()).toLocalDate();
             LocalDate currentDate = ZonedDateTime.ofInstant(new Date().toInstant(), ZoneId.systemDefault()).toLocalDate();
-            if (!statisDate.isBefore(currentDate)) {
+            if (!staticDate.isBefore(currentDate)) {
                 continue;
             }
             String startTime = sdf.format(calendar.getTime()) + " 00:00:00";
