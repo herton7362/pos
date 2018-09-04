@@ -60,6 +60,14 @@ public interface MemberService extends CrudService<Member> {
     AllyMembers getAlliesByMemberId(String memberId, long endDate);
 
     /**
+     * 查询会员对应的盟友
+     * @param memberId 会员ID
+     * @param quickSearch 模糊查询字段
+     * @return 儿子和孙子的实体集合
+     */
+    AllyMembers getAlliesByMemberId(String memberId, String quickSearch) throws Exception;
+
+    /**
      * 修改密码
      * @param member 会员参数
      */

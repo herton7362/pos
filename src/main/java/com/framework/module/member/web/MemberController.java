@@ -104,9 +104,9 @@ public class MemberController extends AbstractCrudController<Member> {
      */
     @ApiOperation(value = "查询盟友总数")
     @RequestMapping(value = "/myAllies/{sortType}", method = RequestMethod.GET)
-    public ResponseEntity<List<Member>> myAllies(@PathVariable Integer sortType) throws Exception {
+    public ResponseEntity<List<Member>> myAllies(@PathVariable Integer sortType, @RequestParam(required = false) String quickSearch) throws Exception {
         String memberId = UserThread.getInstance().get().getId();
-        AllyMembers allyMembers = memberService.getAlliesByMemberId(memberId);
+        AllyMembers allyMembers = memberService.getAlliesByMemberId(memberId, quickSearch);
         List<Member> result = new ArrayList<>();
         result.addAll(allyMembers.getSonList());
         result.addAll(allyMembers.getGrandSonList());
@@ -120,7 +120,7 @@ public class MemberController extends AbstractCrudController<Member> {
             m.setSortType(sortType);
             Map<String, Double> totalProfit = memberProfitRecordsRepository.staticTotalProfit(m.getId());
             m.setBalance(totalProfit.get("totalProfit") == null ? 0d : totalProfit.get("totalProfit"));
-            m.setAllyNumber(memberService.getAlliesByMemberId(m.getId()).getTotalNum());
+            m.setAllyNumber(memberService.getAlliesByMemberId(m.getId(), quickSearch).getTotalNum());
             RealIdentityAudit realIdentityAudit = realIdentityAuditRepository.findByMemberId(m.getId());
             if (realIdentityAudit != null && RealIdentityAudit.Status.PASS.equals(realIdentityAudit.getStatus())) {
                 m.setRealIdentity(1);
