@@ -178,9 +178,6 @@ public class MemberProfitRecordsServiceImpl extends AbstractCrudService<MemberPr
 
     @Override
     public List<AchievementDetail> getAchievementByDate(String memberId, String date, int size) throws Exception {
-        if (size > 10) {
-            size = 10;
-        }
         Member member = memberService.findOne(memberId);
         if (member == null) {
             throw new BusinessException(String.format("会员id:[%s]不存在", memberId));
@@ -302,11 +299,11 @@ public class MemberProfitRecordsServiceImpl extends AbstractCrudService<MemberPr
             int newSonShopNum = 0;
             double totalTransactionAmount = 0;
             for (Member m : sonList) {
-                List<Shop> shops = shopRepository.findAllByMemberId(m.getId(), 0, end);
-                sonShopNum += shops == null ? 0 : shops.size();
-                shops = shopRepository.findAllByMemberId(m.getId(), start, end);
-                newSonShopNum += shops == null ? 0 : shops.size();
-                Map<String, Double> resultMap = memberProfitRecordsRepository.staticProfitsByMonth(m.getId(), start, end);
+                Integer shops = shopRepository.countAllByMemberId(m.getId(), 0, end);
+                sonShopNum += shops == null ? 0 : shops;
+                shops = shopRepository.countAllByMemberId(m.getId(), start, end);
+                newSonShopNum += shops == null ? 0 : shops;
+                Map<String, Double> resultMap = memberProfitRecordsRepository.staticProfitsByTime(m.getId(), start, end);
                 totalTransactionAmount += resultMap.get("totalTransactionAmount") == null ? 0d : resultMap.get("totalTransactionAmount");
             }
             achievementDetail.setTransactionAmount(new BigDecimal(totalTransactionAmount).setScale(2, BigDecimal.ROUND_HALF_UP).doubleValue());

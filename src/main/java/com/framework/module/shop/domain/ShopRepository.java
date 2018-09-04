@@ -13,6 +13,9 @@ public interface ShopRepository extends PageRepository<Shop> {
     @Query("select m from Shop m where m.memberId=?1 and m.createdDate>=?2 and m.createdDate<=?3")
     List<Shop> findAllByMemberId(String memberId, long start, long endDate);
 
+    @Query("select count(m) from Shop m where m.memberId=?1 and m.createdDate>=?2 and m.createdDate<=?3")
+    Integer countAllByMemberId(String memberId, long start, long endDate);
+
     @Query("SELECT sum(p.transactionAmount) AS totalTransactionAmount FROM Shop p where p.memberId=?1")
     Map<String, Double> staticTotalTransaction(String memberId);
 
