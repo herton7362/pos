@@ -190,8 +190,8 @@ public class MemberProfitRecordsServiceImpl extends AbstractCrudService<MemberPr
         SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMdd");
         SimpleDateFormat sdf2 = new SimpleDateFormat("yyyyMMdd HH:mm:ss");
         for (int i = 0; i < size; i++) {
-            Long startOperater = System.currentTimeMillis();
-            logger.info("start--------------"+i);
+//            Long startOperater = System.currentTimeMillis();
+//            logger.info("start--------------"+i);
             AchievementDetail achievementDetail = new AchievementDetail();
             calendar.setTime(sdf.parse(date));
             calendar.add(Calendar.DAY_OF_MONTH, -i);
@@ -207,23 +207,23 @@ public class MemberProfitRecordsServiceImpl extends AbstractCrudService<MemberPr
             if (member.getCreatedDate() > end) {
                 break;
             }
-            Long endTimeOperate = System.currentTimeMillis();
-            logger.info("end caculate time" + (endTimeOperate - startOperater));
+//            Long endTimeOperate = System.currentTimeMillis();
+//            logger.info("end caculate time" + (endTimeOperate - startOperater));
             List<String> sonList = new ArrayList<>();
             AllyMembers allyMembers = memberService.getAlliesByMemberId(memberId, end);
             if (allyMembers != null) {
                 sonList.addAll(allyMembers.getSonList());
                 sonList.addAll(allyMembers.getGrandSonList());
             }
-            Long endMemberOperate = System.currentTimeMillis();
-            logger.info("end get member time" + (endMemberOperate - endTimeOperate));
+//            Long endMemberOperate = System.currentTimeMillis();
+//            logger.info("end get member time" + (endMemberOperate - endTimeOperate));
 
             getAchievementDetail(achievementDetail, start, end, sonList);
-            Long endStaticOperate = System.currentTimeMillis();
-            logger.info("end get static time" + (endStaticOperate - endMemberOperate));
+//            Long endStaticOperate = System.currentTimeMillis();
+//            logger.info("end get static time" + (endStaticOperate - endMemberOperate));
             achievementDetail.setStaticDate(sdf.format(calendar.getTime()));
             result.add(achievementDetail);
-            logger.info("end--------------"+i);
+//            logger.info("end--------------"+i);
         }
         return result;
     }
