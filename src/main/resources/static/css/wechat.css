@@ -344,9 +344,22 @@
 }
 
 .product-list .product-title {
-    height: 36px;
+    height: 26px;
     overflow: hidden;
     word-break: break-all;
+    text-align: center;
+}
+
+.product-list .product-btn {
+    width: 92px;
+    height: 26px;
+    border-radius: 40px;
+    background-color: #ff4444;
+    color: #fff;
+    font-weight: normal;
+    text-align: center;
+    line-height: 26px;
+    float: right;
 }
 
 .product-list .product-price {
