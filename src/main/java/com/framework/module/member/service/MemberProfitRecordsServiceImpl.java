@@ -190,9 +190,9 @@ public class MemberProfitRecordsServiceImpl extends AbstractCrudService<MemberPr
             AchievementDetail achievementDetail = new AchievementDetail();
             calendar.setTime(sdf.parse(date));
             calendar.add(Calendar.DAY_OF_MONTH, -i);
-            LocalDate statisDate = ZonedDateTime.ofInstant(calendar.getTime().toInstant(), ZoneId.systemDefault()).toLocalDate();
+            LocalDate staticDate = ZonedDateTime.ofInstant(calendar.getTime().toInstant(), ZoneId.systemDefault()).toLocalDate();
             LocalDate currentDate = ZonedDateTime.ofInstant(new Date().toInstant(), ZoneId.systemDefault()).toLocalDate();
-            if (!statisDate.isBefore(currentDate)) {
+            if (!staticDate.isBefore(currentDate)) {
                 continue;
             }
             String startTime = sdf.format(calendar.getTime()) + " 00:00:00";
@@ -299,11 +299,11 @@ public class MemberProfitRecordsServiceImpl extends AbstractCrudService<MemberPr
             int newSonShopNum = 0;
             double totalTransactionAmount = 0;
             for (Member m : sonList) {
-                List<Shop> shops = shopRepository.findAllByMemberId(m.getId(), 0, end);
-                sonShopNum += shops == null ? 0 : shops.size();
-                shops = shopRepository.findAllByMemberId(m.getId(), start, end);
-                newSonShopNum += shops == null ? 0 : shops.size();
-                Map<String, Double> resultMap = memberProfitRecordsRepository.staticProfitsByMonth(m.getId(), start, end);
+                Integer shops = shopRepository.countAllByMemberId(m.getId(), 0, end);
+                sonShopNum += shops == null ? 0 : shops;
+                shops = shopRepository.countAllByMemberId(m.getId(), start, end);
+                newSonShopNum += shops == null ? 0 : shops;
+                Map<String, Double> resultMap = memberProfitRecordsRepository.staticProfitsByTime(m.getId(), start, end);
                 totalTransactionAmount += resultMap.get("totalTransactionAmount") == null ? 0d : resultMap.get("totalTransactionAmount");
             }
             achievementDetail.setTransactionAmount(new BigDecimal(totalTransactionAmount).setScale(2, BigDecimal.ROUND_HALF_UP).doubleValue());

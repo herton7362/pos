@@ -6,7 +6,7 @@ spring:
     driverClassName: com.mysql.jdbc.Driver
     initialSize: 5
     minIdle: 5
-    maxActive: 20
+    maxActive: 200
     maxWait: 60000 # 配置获取连接等待超时的时间
     timeBetweenEvictionRunsMillis: 60000 # 配置间隔多久才进行一次检测，检测需要关闭的空闲连接，单位是毫秒
     minEvictableIdleTimeMillis: 300000 # 配置一个连接在池中最小生存的时间，单位是毫秒
@@ -21,7 +21,7 @@ spring:
     useGlobalDataSourceStat: true
   jpa:
     database: MYSQL
-    show-sql: true
+    show-sql: false
     generate-ddl: true
     hibernate:
       ddl-auto: update
