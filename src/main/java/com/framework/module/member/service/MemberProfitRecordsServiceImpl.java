@@ -18,6 +18,7 @@ import com.kratos.module.dictionary.web.DictionaryController;
 import org.apache.commons.lang.RandomStringUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.time.DateFormatUtils;
+import org.apache.log4j.Logger;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.Row;
@@ -59,6 +60,8 @@ public class MemberProfitRecordsServiceImpl extends AbstractCrudService<MemberPr
     private final DictionaryCategoryService dictionaryCategoryService;
     private final MemberCashInRecordsService memberCashInRecordsService;
     private final MemberProfitTmpRecordsRepository memberProfitTmpRecordsRepository;
+
+    private final Logger logger = Logger.getLogger(MemberProfitRecordsServiceImpl.class);
 
     @Override
     public void setTeamBuildProfit(String fatherId) throws Exception {
@@ -163,7 +166,7 @@ public class MemberProfitRecordsServiceImpl extends AbstractCrudService<MemberPr
                 break;
             }
 //            List<Member> sonList = repository.findMembersByFatherId(memberId, end);
-            List<Member> sonList = new ArrayList<>();
+            List<String> sonList = new ArrayList<>();
             AllyMembers allyMembers = memberService.getAlliesByMemberId(memberId, end);
             if (allyMembers != null) {
                 sonList.addAll(allyMembers.getSonList());
@@ -187,6 +190,8 @@ public class MemberProfitRecordsServiceImpl extends AbstractCrudService<MemberPr
         SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMdd");
         SimpleDateFormat sdf2 = new SimpleDateFormat("yyyyMMdd HH:mm:ss");
         for (int i = 0; i < size; i++) {
+            Long startOperater = System.currentTimeMillis();
+            logger.info("start--------------"+i);
             AchievementDetail achievementDetail = new AchievementDetail();
             calendar.setTime(sdf.parse(date));
             calendar.add(Calendar.DAY_OF_MONTH, -i);
@@ -202,16 +207,23 @@ public class MemberProfitRecordsServiceImpl extends AbstractCrudService<MemberPr
             if (member.getCreatedDate() > end) {
                 break;
             }
-            List<Member> sonList = new ArrayList<>();
+            Long endTimeOperate = System.currentTimeMillis();
+            logger.info("end caculate time" + (endTimeOperate - startOperater));
+            List<String> sonList = new ArrayList<>();
             AllyMembers allyMembers = memberService.getAlliesByMemberId(memberId, end);
             if (allyMembers != null) {
                 sonList.addAll(allyMembers.getSonList());
                 sonList.addAll(allyMembers.getGrandSonList());
             }
+            Long endMemberOperate = System.currentTimeMillis();
+            logger.info("end get member time" + (endMemberOperate - endTimeOperate));
 
             getAchievementDetail(achievementDetail, start, end, sonList);
+            Long endStaticOperate = System.currentTimeMillis();
+            logger.info("end get static time" + (endStaticOperate - endMemberOperate));
             achievementDetail.setStaticDate(sdf.format(calendar.getTime()));
             result.add(achievementDetail);
+            logger.info("end--------------"+i);
         }
         return result;
     }
@@ -233,7 +245,7 @@ public class MemberProfitRecordsServiceImpl extends AbstractCrudService<MemberPr
             String lastDay = sdf1.format(calendar.getTime()) + " 23:59:59";
             long start = sdf2.parse(firstDay).getTime();
             long end = sdf2.parse(lastDay).getTime();
-            List<Member> sonList = new ArrayList<>();
+            List<String> sonList = new ArrayList<>();
             AllyMembers allyMembers = memberService.getAlliesByMemberId(memberId, end);
             if (allyMembers != null) {
                 sonList.addAll(allyMembers.getSonList());
@@ -241,10 +253,10 @@ public class MemberProfitRecordsServiceImpl extends AbstractCrudService<MemberPr
             }
             int newSonShopNum = 0;
             double totalTransactionAmount = 0;
-            for (Member m : sonList) {
-                List<Shop> shops = shopRepository.findAllByMemberId(m.getId(), start, end);
+            for (String m : sonList) {
+                List<Shop> shops = shopRepository.findAllByMemberId(m, start, end);
                 newSonShopNum += shops == null ? 0 : shops.size();
-                Map<String, Double> resultMap = memberProfitRecordsRepository.staticProfitsByMonth(m.getId(), start, end);
+                Map<String, Double> resultMap = memberProfitRecordsRepository.staticProfitsByMonth(m, start, end);
                 totalTransactionAmount += resultMap.get("totalTransactionAmount") == null ? 0d : resultMap.get("totalTransactionAmount");
             }
             totalTransactionAmount = new BigDecimal(totalTransactionAmount).setScale(2, BigDecimal.ROUND_HALF_UP).doubleValue();
@@ -272,15 +284,15 @@ public class MemberProfitRecordsServiceImpl extends AbstractCrudService<MemberPr
         String endTime = sdf.format(calendar.getTime()) + " 23:59:59";
         long start = sdf2.parse(startTime).getTime();
         long end = sdf2.parse(endTime).getTime();
-        List<Member> sonList = new ArrayList<>();
+        List<String> sonList = new ArrayList<>();
         AllyMembers allyMembers = memberService.getAlliesByMemberId(memberId, end);
         if (allyMembers != null) {
             sonList.addAll(allyMembers.getSonList());
             sonList.addAll(allyMembers.getGrandSonList());
         }
         int newSonShopNum = 0;
-        for (Member m : sonList) {
-            List<Shop> shops = shopRepository.findAllByMemberId(m.getId(), start, end);
+        for (String m : sonList) {
+            List<Shop> shops = shopRepository.findAllByMemberId(m, start, end);
             newSonShopNum += shops == null ? 0 : shops.size();
         }
         return newSonShopNum;
@@ -292,18 +304,18 @@ public class MemberProfitRecordsServiceImpl extends AbstractCrudService<MemberPr
         return setDouleScale(resultMap.get("totalProfit") == null ? 0d : resultMap.get("totalProfit"));
     }
 
-    private void getAchievementDetail(AchievementDetail achievementDetail, long start, long end, List<Member> sonList) {
+    private void getAchievementDetail(AchievementDetail achievementDetail, long start, long end, List<String> sonList) {
         if (sonList != null) {
             achievementDetail.setTotalAllyNum(sonList.size());
             int sonShopNum = 0;
             int newSonShopNum = 0;
             double totalTransactionAmount = 0;
-            for (Member m : sonList) {
-                Integer shops = shopRepository.countAllByMemberId(m.getId(), 0, end);
+            for (String m : sonList) {
+                Integer shops = shopRepository.countAllByMemberId(m, 0, end);
                 sonShopNum += shops == null ? 0 : shops;
-                shops = shopRepository.countAllByMemberId(m.getId(), start, end);
+                shops = shopRepository.countAllByMemberId(m, start, end);
                 newSonShopNum += shops == null ? 0 : shops;
-                Map<String, Double> resultMap = memberProfitRecordsRepository.staticProfitsByTime(m.getId(), start, end);
+                Map<String, Double> resultMap = memberProfitRecordsRepository.staticProfitsByTime(m, start, end);
                 totalTransactionAmount += resultMap.get("totalTransactionAmount") == null ? 0d : resultMap.get("totalTransactionAmount");
             }
             achievementDetail.setTransactionAmount(new BigDecimal(totalTransactionAmount).setScale(2, BigDecimal.ROUND_HALF_UP).doubleValue());
@@ -453,7 +465,7 @@ public class MemberProfitRecordsServiceImpl extends AbstractCrudService<MemberPr
             Integer memberLevel = member.getMemberLevel() == null ? 1 : member.getMemberLevel();
             // 获得下一级别的升级要求
             MemberLevelParam memberLevelParam = memberLevelParamService.getParamByLevel(String.valueOf(memberLevel + 1));
-            List<Member> sons = repository.findMembersByFatherId(member.getId(), new Date().getTime());
+            List<Member> sons = repository.findMemberInfosByFatherId(member.getId(), new Date().getTime());
             Map<String, Double> transactionAmount = shopRepository.staticTotalTransaction(member.getId());
             double totalTransactionAmount = transactionAmount.get("totalTransactionAmount") == null ? 0 : transactionAmount.get("totalTransactionAmount");
             double transAmountYuan = memberLevelParam.getTotalTransactionVolume() * 10000;

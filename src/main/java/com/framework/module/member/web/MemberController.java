@@ -92,21 +92,21 @@ public class MemberController extends AbstractCrudController<Member> {
      */
     @ApiOperation(value = "查询总数")
     @RequestMapping(value = "/count", method = RequestMethod.GET)
-    public ResponseEntity<Long> count() throws Exception {
+    public ResponseEntity<Long> count() {
         return new ResponseEntity<>(memberService.count(), HttpStatus.OK);
     }
 
     /**
      * 查询盟友
-     *
-     * @return
-     * @throws Exception
+     * @param sortType 排序类型
+     * @return 响应
+     * @throws Exception 异常
      */
     @ApiOperation(value = "查询盟友总数")
     @RequestMapping(value = "/myAllies/{sortType}", method = RequestMethod.GET)
-    public ResponseEntity<List<Member>> myAllies(@PathVariable Integer sortType, @RequestParam(required = false) String quickSearch) throws Exception {
+    public ResponseEntity<List<Member>> myAllies(@PathVariable Integer sortType) throws Exception {
         String memberId = UserThread.getInstance().get().getId();
-        AllyMembers allyMembers = memberService.getAlliesByMemberId(memberId, quickSearch);
+        AllyMemberInfos allyMembers = memberService.getAlliesInfosByMemberId(memberId, new Date().getTime());
         List<Member> result = new ArrayList<>();
         result.addAll(allyMembers.getSonList());
         result.addAll(allyMembers.getGrandSonList());
@@ -120,7 +120,7 @@ public class MemberController extends AbstractCrudController<Member> {
             m.setSortType(sortType);
             Map<String, Double> totalProfit = memberProfitRecordsRepository.staticTotalProfit(m.getId());
             m.setBalance(totalProfit.get("totalProfit") == null ? 0d : totalProfit.get("totalProfit"));
-            m.setAllyNumber(memberService.getAlliesByMemberId(m.getId(), quickSearch).getTotalNum());
+            m.setAllyNumber(memberService.getAlliesByMemberId(m.getId()).getTotalNum());
             RealIdentityAudit realIdentityAudit = realIdentityAuditRepository.findByMemberId(m.getId());
             if (realIdentityAudit != null && RealIdentityAudit.Status.PASS.equals(realIdentityAudit.getStatus())) {
                 m.setRealIdentity(1);
