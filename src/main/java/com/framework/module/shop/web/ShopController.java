@@ -39,8 +39,6 @@ public class ShopController extends AbstractCrudController<Shop> {
     @ApiOperation(value = "获取商户信息")
     @RequestMapping(value = "/getMyShops", method = RequestMethod.GET)
     public ResponseEntity<List<Shop>> getMyShops(@RequestParam(required = false) String quickSearch) throws Exception {
-        Calendar calendar = Calendar.getInstance();
-        calendar.add(Calendar.MONTH, -2);
         String memberId = UserThread.getInstance().get().getId();
         List<Shop> resultList = new ArrayList<>();
         Map<String, String[]> param = new HashMap<>();
@@ -53,12 +51,18 @@ public class ShopController extends AbstractCrudController<Shop> {
 //        List<Shop> list = shopRepository.findAllByMemberId(memberId, 0, new Date().getTime());
         if (list != null) {
             for (Shop s : list) {
-                Map<String, Double> result = memberProfitRecordsRepository.staticTransactionAmountBySnMonth(s.getSn(), calendar.getTime().getTime(), new Date().getTime());
+                Calendar calendar = Calendar.getInstance();
+                calendar.add(Calendar.MONTH, -3);
+                long startStaticTime = calendar.getTime().getTime();
+                if (startStaticTime < s.getCreatedDate()) {
+                    startStaticTime = s.getCreatedDate();
+                }
+                Map<String, Double> result = memberProfitRecordsRepository.staticTransactionAmountBySnMonth(s.getSn(), startStaticTime, new Date().getTime());
                 if (result.get("directlyAward") == null || result.get("directlyAward") == 0) {
                     s.setActivity(0);
                     resultList.add(s);
                 } else {
-                    calendar.add(Calendar.MONTH, 1);
+                    calendar.add(Calendar.MONTH, 2);
                     SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM");
                     SimpleDateFormat sdf1 = new SimpleDateFormat("yyyy-MM-dd");
                     SimpleDateFormat sdf2 = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
@@ -71,7 +75,6 @@ public class ShopController extends AbstractCrudController<Shop> {
                     calendar.set(Calendar.DAY_OF_MONTH, 0);
                     String lastDay = sdf1.format(calendar.getTime()) + " 23:59:59";
                     long end = sdf2.parse(lastDay).getTime();
-
                     Map<String, Double> lastMonth = memberProfitRecordsRepository.staticTransactionAmountBySnMonth(s.getSn(), start, end);
                     if (lastMonth.get("directlyAward") != null && lastMonth.get("directlyAward") > 200000) {
                         s.setActivity(1);
