@@ -1,10 +1,7 @@
 package com.framework.module.member.service;
 
 import com.framework.module.auth.MemberThread;
-import com.framework.module.member.domain.AllyMembers;
-import com.framework.module.member.domain.Member;
-import com.framework.module.member.domain.MemberCard;
-import com.framework.module.member.domain.MemberRepository;
+import com.framework.module.member.domain.*;
 import com.framework.module.record.domain.OperationRecord;
 import com.framework.module.record.service.OperationRecordService;
 import com.kratos.common.AbstractCrudService;
@@ -170,45 +167,24 @@ public class MemberServiceImpl extends AbstractCrudService<Member> implements Me
 
     @Override
     public AllyMembers getAlliesByMemberId(String memberId) {
-        List<Member> allSons = repository.findMembersByFatherId(memberId, new Date().getTime());
-        if (allSons == null) {
-            allSons = new ArrayList<>();
-        }
-        List<Member> allGrandson = new ArrayList<>();
-        for (Member m : allSons) {
-            allGrandson.addAll(repository.findMembersByFatherId(m.getId(), new Date().getTime()));
-        }
-        Integer totalSize = allGrandson.size();
-        Integer startPos = 0;
-        do {
-            for (int i = startPos; i < totalSize; i++) {
-                allGrandson.addAll(repository.findMembersByFatherId(allGrandson.get(i).getId(), new Date().getTime()));
-            }
-            startPos = totalSize;
-            totalSize = allGrandson.size();
-        } while (!totalSize.equals(startPos));
-        AllyMembers allyMembers = new AllyMembers();
-        allyMembers.setGrandSonList(allGrandson);
-        allyMembers.setSonList(allSons);
-        allyMembers.setTotalNum(allSons.size() + allGrandson.size());
-        return allyMembers;
+        return getAlliesByMemberId(memberId, new Date().getTime());
     }
 
     @Override
     public AllyMembers getAlliesByMemberId(String memberId, long endDate) {
-        List<Member> allSons = repository.findMembersByFatherId(memberId, endDate);
+        List<String> allSons = repository.findMembersByFatherId(memberId, endDate);
         if (allSons == null) {
             allSons = new ArrayList<>();
         }
-        List<Member> allGrandson = new ArrayList<>();
-        for (Member m : allSons) {
-            allGrandson.addAll(repository.findMembersByFatherId(m.getId(), endDate));
+        List<String> allGrandson = new ArrayList<>();
+        for (String m : allSons) {
+            allGrandson.addAll(repository.findMembersByFatherId(m, endDate));
         }
         Integer totalSize = allGrandson.size();
         Integer startPos = 0;
         do {
             for (int i = startPos; i < totalSize; i++) {
-                allGrandson.addAll(repository.findMembersByFatherId(allGrandson.get(i).getId(), endDate));
+                allGrandson.addAll(repository.findMembersByFatherId(allGrandson.get(i), endDate));
             }
             startPos = totalSize;
             totalSize = allGrandson.size();
@@ -221,42 +197,25 @@ public class MemberServiceImpl extends AbstractCrudService<Member> implements Me
     }
 
     @Override
-    public AllyMembers getAlliesByMemberId(String memberId, String quickSearch) throws Exception {
-//        List<Member> allSons = repository.findMembersByFatherId(memberId, new Date().getTime());
-        Map<String, String[]> searchParam = new HashMap<>();
-        if (StringUtils.isNotBlank(quickSearch)) {
-            searchParam.put("quickSearch", new String[]{quickSearch});
-        }
-        searchParam.put("fatherId", new String[]{memberId});
-        List<Member> allSons = findAll(searchParam);
+    public AllyMemberInfos getAlliesInfosByMemberId(String memberId, Long endDate) {
+        List<Member> allSons = repository.findMemberInfosByFatherId(memberId, endDate);
         if (allSons == null) {
             allSons = new ArrayList<>();
         }
         List<Member> allGrandson = new ArrayList<>();
         for (Member m : allSons) {
-//            allGrandson.addAll(repository.findMembersByFatherId(m.getId(), new Date().getTime()));
-            searchParam.put("fatherId", new String[]{m.getId()});
-            allGrandson.addAll(findAll(searchParam));
+            allGrandson.addAll(repository.findMemberInfosByFatherId(m.getId(), endDate));
         }
         Integer totalSize = allGrandson.size();
         Integer startPos = 0;
         do {
             for (int i = startPos; i < totalSize; i++) {
-//                allGrandson.addAll(repository.findMembersByFatherId(allGrandson.get(i).getId(), new Date().getTime()));
-                searchParam.put("fatherId", new String[]{allGrandson.get(i).getId()});
-                allGrandson.addAll(findAll(searchParam));
+                allGrandson.addAll(repository.findMemberInfosByFatherId(allGrandson.get(i).getId(), endDate));
             }
             startPos = totalSize;
             totalSize = allGrandson.size();
         } while (!totalSize.equals(startPos));
-
-        for (Member grandson : allGrandson) {
-            Member fatherMember = findOne(grandson.getFatherId());
-            if (null != fatherMember) {
-                grandson.setFatherName(fatherMember.getName());
-            }
-        }
-        AllyMembers allyMembers = new AllyMembers();
+        AllyMemberInfos allyMembers = new AllyMemberInfos();
         allyMembers.setGrandSonList(allGrandson);
         allyMembers.setSonList(allSons);
         allyMembers.setTotalNum(allSons.size() + allGrandson.size());

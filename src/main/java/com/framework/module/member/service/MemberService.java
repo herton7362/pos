@@ -1,5 +1,6 @@
 package com.framework.module.member.service;
 
+import com.framework.module.member.domain.AllyMemberInfos;
 import com.framework.module.member.domain.AllyMembers;
 import com.framework.module.member.domain.Member;
 import com.kratos.common.CrudService;
@@ -62,10 +63,9 @@ public interface MemberService extends CrudService<Member> {
     /**
      * 查询会员对应的盟友
      * @param memberId 会员ID
-     * @param quickSearch 模糊查询字段
      * @return 儿子和孙子的实体集合
      */
-    AllyMembers getAlliesByMemberId(String memberId, String quickSearch) throws Exception;
+    AllyMemberInfos getAlliesInfosByMemberId(String memberId, Long endDate) throws Exception;
 
     /**
      * 修改密码

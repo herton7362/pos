@@ -8,24 +8,24 @@ import java.util.List;
  * @Auther: 张庆贺
  * @Date: 2018/6/29 13:24
  */
-public class AllyMembers {
-    List<String> sonList;
-    List<String> grandSonList;
+public class AllyMemberInfos {
+    List<Member> sonList;
+    List<Member> grandSonList;
     Integer totalNum;
 
-    public List<String> getSonList() {
+    public List<Member> getSonList() {
         return sonList;
     }
 
-    public void setSonList(List<String> sonList) {
+    public void setSonList(List<Member> sonList) {
         this.sonList = sonList;
     }
 
-    public List<String> getGrandSonList() {
+    public List<Member> getGrandSonList() {
         return grandSonList;
     }
 
-    public void setGrandSonList(List<String> grandSonList) {
+    public void setGrandSonList(List<Member> grandSonList) {
         this.grandSonList = grandSonList;
     }
 
