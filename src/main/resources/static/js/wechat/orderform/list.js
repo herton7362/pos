@@ -90,6 +90,21 @@ require(['jquery', 'vue', 'utils', 'weui', 'messager'], function ($, Vue, utils,
             pay: function (orderForm) {
                 window.location.href = utils.patchUrlPrefixUrl('/wechat/orderform/un_pay?id=' + orderForm.id);
             },
+            remove: function (orderForm) {
+                messager.alert('是否确认删除？', function () {
+                    $.ajax({
+                        url: utils.patchUrl('/api/orderForm/' + orderForm.id),
+                        contentType: 'application/json',
+                        type: 'DELETE',
+                        success: function() {
+                            messager.bubble("操作成功");
+                            setTimeout(function () {
+                                window.location.reload();
+                            }, 500)
+                        }
+                    })
+                })
+            },
             receive: function (orderForm) {
                 messager.alert('是否确认收货？', function () {
                     $.ajax({
