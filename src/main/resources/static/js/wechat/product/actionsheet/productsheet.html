@@ -39,7 +39,7 @@
         <template slot="footer">
             <div class="weui-flex">
                 <div class="weui-flex__item">
-                    <div class="weui-actionsheet__cell second-btn">￥{{product.price | price}}</div>
+                    <div class="weui-actionsheet__cell second-btn">￥{{product.price * count | price}}</div>
                 </div>
                 <div class="weui-flex__item">
                     <div class="weui-actionsheet__cell main-btn" @click="justBuy">立即申领</div>

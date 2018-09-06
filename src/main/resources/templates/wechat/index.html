@@ -9,7 +9,7 @@
 <div class="wrapper" style="height: auto; min-height: 100%; ">
 
     <!-- Full Width Column -->
-    <div id="content" class="content-wrapper home product-list" v-cloak>
+    <div id="content" class="content-wrapper home product-list" v-cloak style="background-color: #fff">
        <!-- <div id="carousel-home-generic" class="carousel slide margin-bottom" data-ride="carousel" style="margin-bottom: 0">
             &lt;!&ndash; Indicators &ndash;&gt;
             <ol class="carousel-indicators">
@@ -60,7 +60,8 @@
                                 <img :alt="product.name" :src="product.coverImage.id | coverPath">
                                 <div class="caption">
                                     <p class="product-title">{{product.name}}</p>
-                                    <p>机具申领</p>
+                                    <p class="product-btn">机具申领</p>
+                                    <div style="clear: both;"></div>
                                 </div>
                             </div>
                         </div>
