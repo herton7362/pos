@@ -6,4 +6,6 @@ public interface SnInfoRepository extends PageRepository<SnInfo> {
 
     Integer countAllBySn(String sn);
 
+    SnInfo findFirstBySn(String sn);
+
 }

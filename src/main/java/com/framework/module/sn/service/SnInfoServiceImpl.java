@@ -1,6 +1,7 @@
 package com.framework.module.sn.service;
 
 import com.framework.module.sn.domain.SnInfo;
+import com.framework.module.sn.domain.SnInfoHistory;
 import com.framework.module.sn.domain.SnInfoRepository;
 import com.kratos.common.AbstractCrudService;
 import com.kratos.exceptions.BusinessException;
@@ -15,19 +16,20 @@ import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
-import java.io.IOException;
 import java.io.InputStream;
-import java.util.ArrayList;
-import java.util.List;
+import java.util.Date;
 
 @Component
 @Transactional
 public class SnInfoServiceImpl extends AbstractCrudService<SnInfo> implements SnInfoService {
 
     private final SnInfoRepository snInfoRepository;
+    private final SnInfoHistoryService snInfoHistoryService;
 
-    public SnInfoServiceImpl(SnInfoRepository snInfoRepository) {
+
+    public SnInfoServiceImpl(SnInfoRepository snInfoRepository, SnInfoHistoryService snInfoHistoryService) {
         this.snInfoRepository = snInfoRepository;
+        this.snInfoHistoryService = snInfoHistoryService;
     }
 
 
@@ -66,7 +68,35 @@ public class SnInfoServiceImpl extends AbstractCrudService<SnInfo> implements Sn
             snInfo.setSn(sn);
             save(snInfo);
             importSize++;
+
+            SnInfoHistory snInfoHistory = new SnInfoHistory();
+            snInfoHistory.setSn(sn);
+            snInfoHistoryService.save(snInfoHistory);
         }
         return importSize;
+    }
+
+    @Override
+    public void transSnByAdmin(String sns, String memberId) throws Exception {
+        String[] snArray = sns.split(",");
+        if (snArray.length == 0) {
+            throw new BusinessException("sn信息填写的不正确");
+        }
+        for (int i = 0; i < snArray.length; i++) {
+            SnInfo snInfo = snInfoRepository.findFirstBySn(snArray[i]);
+            if (StringUtils.isNotBlank(snInfo.getMemberId())) {
+                throw new BusinessException(snArray[i] + "已经划拨给会员" + snInfo.getMemberId());
+            }
+            snInfo.setMemberId(memberId);
+            snInfo.setTransDate(new Date());
+            save(snInfo);
+
+            SnInfoHistory snInfoHistory = new SnInfoHistory();
+            snInfoHistory.setSn(snInfo.getSn());
+            snInfoHistory.setMemberId(snInfo.getMemberId());
+            snInfoHistory.setTransDate(snInfo.getTransDate());
+            snInfoHistoryService.save(snInfoHistory);
+
+        }
     }
 }

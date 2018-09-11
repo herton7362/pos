@@ -5,8 +5,6 @@ import com.kratos.common.CrudService;
 import com.kratos.exceptions.BusinessException;
 import org.springframework.web.multipart.MultipartFile;
 
-import java.io.IOException;
-
 public interface SnInfoService extends CrudService<SnInfo> {
     /**
      * 批量上传SN
@@ -15,4 +13,11 @@ public interface SnInfoService extends CrudService<SnInfo> {
      * @return 上传文件数量
      */
     int batchImport(String fileName, MultipartFile profitFile) throws Exception;
+
+    /**
+     * 划拨SN，使用逗号分隔
+     * @param sns
+     * @param memberId
+     */
+    void transSnByAdmin(String sns, String memberId) throws Exception;
 }
