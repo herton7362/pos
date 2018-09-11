@@ -1,10 +1,12 @@
 package com.framework.module.sn.service;
 
+import com.framework.module.auth.MemberThread;
 import com.framework.module.sn.domain.SnInfo;
 import com.framework.module.sn.domain.SnInfoHistory;
 import com.framework.module.sn.domain.SnInfoRepository;
 import com.kratos.common.AbstractCrudService;
 import com.kratos.exceptions.BusinessException;
+import com.kratos.module.auth.AdminThread;
 import org.apache.commons.lang.StringUtils;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.ss.usermodel.Cell;
@@ -18,6 +20,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.io.InputStream;
 import java.util.Date;
+import java.util.List;
 
 @Component
 @Transactional
@@ -82,6 +85,9 @@ public class SnInfoServiceImpl extends AbstractCrudService<SnInfo> implements Sn
         if (snArray.length == 0) {
             throw new BusinessException("sn信息填写的不正确");
         }
+        if (snInfoRepository.countAllByMemberId(memberId)<=5 && snArray.length<=5){
+            throw new BusinessException("首次划分不得少于5个");
+        }
         for (int i = 0; i < snArray.length; i++) {
             SnInfo snInfo = snInfoRepository.findFirstBySn(snArray[i]);
             if (StringUtils.isNotBlank(snInfo.getMemberId())) {
@@ -98,5 +104,40 @@ public class SnInfoServiceImpl extends AbstractCrudService<SnInfo> implements Sn
             snInfoHistoryService.save(snInfoHistory);
 
         }
+    }
+
+    @Override
+    public void transSnByMember(String sns, String memberId, String currentMemberId) throws Exception {
+        String[] snArray = sns.split(",");
+        if (snArray.length == 0) {
+            throw new BusinessException("sn信息填写的不正确");
+        }
+
+        if (snInfoRepository.countAllByMemberId(memberId)<=5 && snArray.length<=5){
+            throw new BusinessException("首次划分不得少于5个");
+        }
+
+        for (int i = 0; i < snArray.length; i++) {
+            SnInfo snInfo = snInfoRepository.findFirstBySn(snArray[i]);
+            if (!currentMemberId.equals(snInfo.getMemberId())) {
+                throw new BusinessException(snArray[i] + "不属于您，不能划拨");
+            }
+            snInfo.setMemberId(memberId);
+            snInfo.setTransDate(new Date());
+            save(snInfo);
+
+            SnInfoHistory snInfoHistory = new SnInfoHistory();
+            snInfoHistory.setSn(snInfo.getSn());
+            snInfoHistory.setMemberId(snInfo.getMemberId());
+            snInfoHistory.setTransDate(snInfo.getTransDate());
+            snInfoHistoryService.save(snInfoHistory);
+
+        }
+    }
+
+    @Override
+    public List<String> getAvailableSn() {
+        String memberId = MemberThread.getInstance().get().getId();
+        return snInfoRepository.getAvailableSnByMemberId(memberId);
     }
 }

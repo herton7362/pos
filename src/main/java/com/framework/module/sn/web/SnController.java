@@ -42,12 +42,31 @@ public class SnController extends AbstractCrudController<SnInfo> {
     }
 
     /**
-     * 审核收益信息
+     * 管理员划拨未分配的SN
      */
     @ApiOperation(value = "管理员划拨未分配的SN")
     @RequestMapping(value = "/transSnByAdmin", method = RequestMethod.GET)
-    public ResponseEntity<?> transSnByAdmin(@RequestParam String sns, String memberId) throws Exception {
+    public ResponseEntity<?> transSnByAdmin(@RequestParam String sns, @RequestParam String memberId) throws Exception {
         snInfoService.transSnByAdmin(sns, memberId);
         return new ResponseEntity<>(HttpStatus.OK);
+    }
+
+    /**
+     * 会员划拨给儿子
+     */
+    @ApiOperation(value = "会员划拨给儿子")
+    @RequestMapping(value = "/transSnByMember", method = RequestMethod.GET)
+    public ResponseEntity<?> transSnByMember(@RequestParam String sns, @RequestParam String memberId, @RequestParam String currentMemberId) throws Exception {
+        snInfoService.transSnByMember(sns, memberId, currentMemberId);
+        return new ResponseEntity<>(HttpStatus.OK);
+    }
+
+    /**
+     * 查询会员下可分配的SN信息
+     */
+    @ApiOperation(value = "查询会员下可分配的SN信息")
+    @RequestMapping(value = "/getAvailableSn", method = RequestMethod.GET)
+    public ResponseEntity<List<String>> getAvailableSn() {
+        return new ResponseEntity<>(snInfoService.getAvailableSn(),HttpStatus.OK);
     }
 }
