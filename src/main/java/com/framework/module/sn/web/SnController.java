@@ -15,7 +15,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
 
-@Api(value = "SN管理")
+@Api(value = "SN管理11")
 @RestController
 @RequestMapping("/api/sn")
 public class SnController extends AbstractCrudController<SnInfo> {
