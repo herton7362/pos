@@ -69,4 +69,10 @@ public class SnController extends AbstractCrudController<SnInfo> {
     public ResponseEntity<List<String>> getAvailableSn() {
         return new ResponseEntity<>(snInfoService.getAvailableSn(),HttpStatus.OK);
     }
+
+    @ApiOperation(value = "管理员查看所有信息")
+    @RequestMapping(value = "/getAllSnInfo", method = RequestMethod.GET)
+    public ResponseEntity<List<String>> getAllSnInfo() {
+        return new ResponseEntity<>(snInfoService.getAvailableSn(),HttpStatus.OK);
+    }
 }
