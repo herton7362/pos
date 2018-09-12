@@ -73,7 +73,7 @@ public class SnController extends AbstractCrudController<SnInfo> {
         return new ResponseEntity<>(snInfoService.getAvailableSn(), HttpStatus.OK);
     }
 
-    @ApiOperation(value = "管理员查看所有信息")
+    @ApiOperation(value = "查询所有SN信息，有筛选功能")
     @RequestMapping(value = "/getAllSnInfo", method = RequestMethod.GET)
     public ResponseEntity<List<SnInfo>> getAllSnInfo(@RequestParam(required = false) String startSn, @RequestParam(required = false) String endSn, @RequestParam(required = false) SnInfo.Status status, @RequestParam(required = false) SnInfo.BindStatus bindStatus, @RequestParam() Integer pageSize, @RequestParam() Integer pageNum, @RequestParam(required = false) String memberId) throws Exception {
         return new ResponseEntity<>(snInfoService.getAllSnInfo(startSn, endSn, status, bindStatus, pageSize, pageNum, memberId), HttpStatus.OK);
