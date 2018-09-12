@@ -46,4 +46,6 @@ public interface SnInfoService extends CrudService<SnInfo> {
      * @return
      */
     List<SnInfo> getAllSnInfo(String startSn, String endSn, SnInfo.Status status, Integer pageSize, Integer pageNum) throws Exception;
+
+    List<SnInfo> getUnDistributionList(String memberId);
 }

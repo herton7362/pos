@@ -78,4 +78,11 @@ public class SnController extends AbstractCrudController<SnInfo> {
     public ResponseEntity<List<SnInfo>> getAllSnInfo(@RequestParam(required = false) String startSn, @RequestParam(required = false) String endSn, @RequestParam(required = false) SnInfo.Status status, @RequestParam() Integer pageSize, @RequestParam() Integer pageNum) throws Exception {
         return new ResponseEntity<>(snInfoService.getAllSnInfo(startSn, endSn, status, pageSize, pageNum), HttpStatus.OK);
     }
+
+    @ApiOperation(value = "查询待分配列表")
+    @RequestMapping(value = "/getUnDistributionList", method = RequestMethod.GET)
+    public ResponseEntity<List<SnInfo>> getUnDistributionList(@RequestParam String memberId) {
+        List<SnInfo> result = snInfoService.getUnDistributionList(memberId);
+        return new ResponseEntity<>(result,HttpStatus.OK);
+    }
 }

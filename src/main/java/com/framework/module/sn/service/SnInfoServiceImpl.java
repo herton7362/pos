@@ -172,6 +172,11 @@ public class SnInfoServiceImpl extends AbstractCrudService<SnInfo> implements Sn
     }
 
     @Override
+    public List<SnInfo> getUnDistributionList(String memberId) {
+        return snInfoRepository.findAllByMemberIdAndShopIdNull(memberId);
+    }
+
+    @Override
     public List<SnInfo> findAll(Map<String, String[]> param) throws Exception {
         if (param.get("pageSize") != null && param.get("pageNum") != null) {
             PageRequest pageRequest = new PageRequest(Integer.valueOf(param.get("pageNum")[0]), Integer.valueOf(param.get("pageSize")[0]), Sort.Direction.ASC, "sn");
