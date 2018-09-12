@@ -21,7 +21,7 @@ spring:
     useGlobalDataSourceStat: true
   jpa:
     database: MYSQL
-    show-sql: false
+    show-sql: true
     generate-ddl: true
     hibernate:
       ddl-auto: update

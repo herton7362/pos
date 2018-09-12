@@ -35,4 +35,15 @@ public interface SnInfoService extends CrudService<SnInfo> {
      * @return SN列表
      */
     List<String> getAvailableSn();
+
+    /**
+     * 查询SN信息
+     * @param startSn
+     * @param endSn
+     * @param status
+     * @param pageSize
+     * @param pageNum
+     * @return
+     */
+    List<SnInfo> getAllSnInfo(String startSn, String endSn, SnInfo.Status status, Integer pageSize, Integer pageNum) throws Exception;
 }

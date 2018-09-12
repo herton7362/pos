@@ -56,4 +56,16 @@ public class SnInfo extends BaseEntity {
     public void setShopId(String shopId) {
         this.shopId = shopId;
     }
+
+    public enum Status {
+        DISTRIBUTION("已分配"),
+        UN_DISTRIBUTION("未分配");
+        private String displayName;
+        Status(String displayName) {
+            this.displayName = displayName;
+        }
+        public String getDisplayName() {
+            return displayName;
+        }
+    }
 }
