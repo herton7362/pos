@@ -17,7 +17,7 @@ import com.kratos.common.AbstractCrudController;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 
-@Api(value = "SN管理1111")
+@Api(value = "SN管理")
 @RestController
 @RequestMapping("/api/sn")
 public class SnController extends AbstractCrudController<SnInfo> {
