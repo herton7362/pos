@@ -75,14 +75,14 @@ public class SnController extends AbstractCrudController<SnInfo> {
 
     @ApiOperation(value = "管理员查看所有信息")
     @RequestMapping(value = "/getAllSnInfo", method = RequestMethod.GET)
-    public ResponseEntity<List<SnInfo>> getAllSnInfo(@RequestParam(required = false) String startSn, @RequestParam(required = false) String endSn, @RequestParam(required = false) SnInfo.Status status, @RequestParam() Integer pageSize, @RequestParam() Integer pageNum) throws Exception {
-        return new ResponseEntity<>(snInfoService.getAllSnInfo(startSn, endSn, status, pageSize, pageNum), HttpStatus.OK);
+    public ResponseEntity<List<SnInfo>> getAllSnInfo(@RequestParam(required = false) String startSn, @RequestParam(required = false) String endSn, @RequestParam(required = false) SnInfo.Status status, @RequestParam(required = false) SnInfo.BindStatus bindStatus, @RequestParam() Integer pageSize, @RequestParam() Integer pageNum, @RequestParam(required = false) String memberId) throws Exception {
+        return new ResponseEntity<>(snInfoService.getAllSnInfo(startSn, endSn, status, bindStatus, pageSize, pageNum, memberId), HttpStatus.OK);
     }
 
     @ApiOperation(value = "查询待分配列表")
     @RequestMapping(value = "/getUnDistributionList", method = RequestMethod.GET)
     public ResponseEntity<List<SnInfo>> getUnDistributionList(@RequestParam String memberId) {
         List<SnInfo> result = snInfoService.getUnDistributionList(memberId);
-        return new ResponseEntity<>(result,HttpStatus.OK);
+        return new ResponseEntity<>(result, HttpStatus.OK);
     }
 }

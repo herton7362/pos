@@ -1,9 +1,6 @@
 package com.framework.module.sn.service;
 
-import com.alipay.api.domain.ShopInfo;
 import com.framework.module.auth.MemberThread;
-import com.framework.module.shop.domain.Shop;
-import com.framework.module.shop.service.ShopServiceImpl;
 import com.framework.module.sn.domain.SnInfo;
 import com.framework.module.sn.domain.SnInfoHistory;
 import com.framework.module.sn.domain.SnInfoRepository;
@@ -18,7 +15,6 @@ import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
@@ -151,7 +147,7 @@ public class SnInfoServiceImpl extends AbstractCrudService<SnInfo> implements Sn
     }
 
     @Override
-    public List<SnInfo> getAllSnInfo(String startSn, String endSn, SnInfo.Status status, Integer pageSize, Integer pageNum) throws Exception {
+    public List<SnInfo> getAllSnInfo(String startSn, String endSn, SnInfo.Status status, SnInfo.BindStatus bindStatus, Integer pageSize, Integer pageNum, String memberId) throws Exception {
         if (startSn == null && endSn != null) {
             throw new BusinessException("请填写起始SN");
         }
@@ -165,6 +161,12 @@ public class SnInfoServiceImpl extends AbstractCrudService<SnInfo> implements Sn
         }
         if (status != null) {
             param.put("status", new String[]{status.toString()});
+        }
+        if (bindStatus != null) {
+            param.put("bindStatus", new String[]{bindStatus.toString()});
+        }
+        if (StringUtils.isNotBlank(memberId)) {
+            param.put("memberId", new String[]{memberId});
         }
         param.put("pageSize", new String[]{pageSize.toString()});
         param.put("pageNum", new String[]{pageNum.toString()});
@@ -212,9 +214,21 @@ public class SnInfoServiceImpl extends AbstractCrudService<SnInfo> implements Sn
                     predicates.add(criteriaBuilder.isNull(root.get("memberId")));
                 }
             }
+            if (params.containsKey("bindStatus")) {
+                String[] bindStatusValue = params.get("bindStatus");
+                if (SnInfo.BindStatus.BIND.toString().equals(bindStatusValue[0])) {
+                    predicates.add(criteriaBuilder.isNotNull(root.get("shopId")));
+                } else {
+                    predicates.add(criteriaBuilder.isNull(root.get("shopId")));
+                }
+            }
+            if (params.containsKey("memberId")) {
+                String[] memberId = params.get("memberId");
+                predicates.add(criteriaBuilder.equal(root.get("memberId"), memberId[0]));
+            }
 
             if (predicates.size() != 0) {
-                Predicate predicateTemp = criteriaBuilder.or(predicates.toArray(new Predicate[]{}));
+                Predicate predicateTemp = criteriaBuilder.and(predicates.toArray(new Predicate[]{}));
                 predicates.clear();
                 predicates.add(predicateTemp);
             }

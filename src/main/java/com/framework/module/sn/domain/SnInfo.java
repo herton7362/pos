@@ -68,4 +68,15 @@ public class SnInfo extends BaseEntity {
             return displayName;
         }
     }
+    public enum BindStatus {
+        BIND("绑定"),
+        UN_BIND("未绑定");
+        private String displayName;
+        BindStatus(String displayName) {
+            this.displayName = displayName;
+        }
+        public String getDisplayName() {
+            return displayName;
+        }
+    }
 }
