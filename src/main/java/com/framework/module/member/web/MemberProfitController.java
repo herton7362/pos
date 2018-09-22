@@ -153,8 +153,8 @@ public class MemberProfitController extends AbstractCrudController<MemberProfitR
 
     @ApiOperation(value = "获取历史总收益")
     @RequestMapping(value = "/getTotalProfit", method = RequestMethod.GET)
-    public ResponseEntity<Map<String, Double>> getTotalProfit() {
-        Map<String, Double> result = new HashMap<>();
+    public ResponseEntity<Map<String, String>> getTotalProfit() {
+        Map<String, String> result = new HashMap<>();
         String memberId = UserThread.getInstance().get().getId();
         result.put("TotalProfit", memberProfitService.getTotalProfit(memberId));
         return new ResponseEntity<>(result, HttpStatus.OK);

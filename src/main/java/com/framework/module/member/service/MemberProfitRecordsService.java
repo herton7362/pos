@@ -76,7 +76,7 @@ public interface MemberProfitRecordsService extends CrudService<MemberProfitReco
      * @return 新增商户数量
      * @throws ParseException 异常
      */
-    Double getTotalProfit(String memberId);
+    String getTotalProfit(String memberId);
 
     /**
      * 每月1号凌晨对所有会员进行升级

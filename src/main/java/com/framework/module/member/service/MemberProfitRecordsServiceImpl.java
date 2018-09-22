@@ -299,7 +299,7 @@ public class MemberProfitRecordsServiceImpl extends AbstractCrudService<MemberPr
     }
 
     @Override
-    public Double getTotalProfit(String memberId) {
+    public String getTotalProfit(String memberId) {
         Map<String, Double> resultMap = memberProfitRecordsRepository.staticTotalProfit(memberId);
         return setDouleScale(resultMap.get("totalProfit") == null ? 0d : resultMap.get("totalProfit"));
     }
@@ -667,8 +667,8 @@ public class MemberProfitRecordsServiceImpl extends AbstractCrudService<MemberPr
         return cell == null || StringUtils.isBlank(cell.getStringCellValue());
     }
 
-    private double setDouleScale(double inputDouble) {
-        return new BigDecimal(inputDouble).setScale(2, BigDecimal.ROUND_HALF_UP).doubleValue();
+    private String setDouleScale(double inputDouble) {
+        return new BigDecimal(String.valueOf(inputDouble)).setScale(2, BigDecimal.ROUND_HALF_UP).toString();
     }
 
     @Lazy

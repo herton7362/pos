@@ -13,98 +13,82 @@ import javax.persistence.Entity;
  */
 public class ProfitMonthDetail {
     @ApiModelProperty(value = "总收益")
-    private double totalProfit;
+    private String totalProfit;
     @ApiModelProperty(value = "激活奖")
-    private double activeAward;
+    private String activeAward;
     @ApiModelProperty(value = "直营奖")
-    private double directlyAward;
+    private String directlyAward;
     @ApiModelProperty(value = "管理奖")
-    private double managerAward;
+    private String managerAward;
     @ApiModelProperty(value = "团建奖")
-    private double teamBuildAward;
+    private String teamBuildAward;
     @ApiModelProperty(value = "总交易额")
-    private double totalTransactionAmount;
+    private String totalTransactionAmount;
     @ApiModelProperty(value = "交易月份/yyyyMM")
     private String month;
     @ApiModelProperty(value = "秒到/云闪付/理财收益")
-    private double profitMiaoDao;
+    private String profitMiaoDao;
     @ApiModelProperty(value = "扫码收益")
-    private double profitSaoMa;
+    private String profitSaoMa;
     @ApiModelProperty(value = "快捷支付收益")
-    private double profitKuaiJie;
+    private String profitKuaiJie;
     @ApiModelProperty(value = "代还收益")
-    private double profitDaiHuan;
+    private String profitDaiHuan;
     @ApiModelProperty(value = "秒到/云闪付/理财交易金额")
-    private double transactionAmountMiaoDao;
+    private String transactionAmountMiaoDao;
     @ApiModelProperty(value = "扫码交易金额")
-    private double transactionAmountSaoMa;
+    private String transactionAmountSaoMa;
     @ApiModelProperty(value = "快捷支付交易金额")
-    private double transactionAmountKuaiJie;
+    private String transactionAmountKuaiJie;
     @ApiModelProperty(value = "代还交易金额")
-    private double transactionAmountDaiHuan;
+    private String transactionAmountDaiHuan;
 
-    public double getProfitKuaiJie() {
-        return profitKuaiJie;
+    public String getTotalProfit() {
+        return totalProfit;
     }
 
-    public void setProfitKuaiJie(double profitKuaiJie) {
-        this.profitKuaiJie = profitKuaiJie;
+    public void setTotalProfit(String totalProfit) {
+        this.totalProfit = totalProfit;
     }
 
-    public double getTransactionAmountKuaiJie() {
-        return transactionAmountKuaiJie;
+    public String getActiveAward() {
+        return activeAward;
     }
 
-    public void setTransactionAmountKuaiJie(double transactionAmountKuaiJie) {
-        this.transactionAmountKuaiJie = transactionAmountKuaiJie;
+    public void setActiveAward(String activeAward) {
+        this.activeAward = activeAward;
     }
 
-    public double getProfitMiaoDao() {
-        return profitMiaoDao;
+    public String getDirectlyAward() {
+        return directlyAward;
     }
 
-    public void setProfitMiaoDao(double profitMiaoDao) {
-        this.profitMiaoDao = profitMiaoDao;
+    public void setDirectlyAward(String directlyAward) {
+        this.directlyAward = directlyAward;
     }
 
-    public double getProfitSaoMa() {
-        return profitSaoMa;
+    public String getManagerAward() {
+        return managerAward;
     }
 
-    public void setProfitSaoMa(double profitSaoMa) {
-        this.profitSaoMa = profitSaoMa;
+    public void setManagerAward(String managerAward) {
+        this.managerAward = managerAward;
     }
 
-    public double getProfitDaiHuan() {
-        return profitDaiHuan;
+    public String getTeamBuildAward() {
+        return teamBuildAward;
     }
 
-    public void setProfitDaiHuan(double profitDaiHuan) {
-        this.profitDaiHuan = profitDaiHuan;
+    public void setTeamBuildAward(String teamBuildAward) {
+        this.teamBuildAward = teamBuildAward;
     }
 
-    public double getTransactionAmountMiaoDao() {
-        return transactionAmountMiaoDao;
+    public String getTotalTransactionAmount() {
+        return totalTransactionAmount;
     }
 
-    public void setTransactionAmountMiaoDao(double transactionAmountMiaoDao) {
-        this.transactionAmountMiaoDao = transactionAmountMiaoDao;
-    }
-
-    public double getTransactionAmountSaoMa() {
-        return transactionAmountSaoMa;
-    }
-
-    public void setTransactionAmountSaoMa(double transactionAmountSaoMa) {
-        this.transactionAmountSaoMa = transactionAmountSaoMa;
-    }
-
-    public double getTransactionAmountDaiHuan() {
-        return transactionAmountDaiHuan;
-    }
-
-    public void setTransactionAmountDaiHuan(double transactionAmountDaiHuan) {
-        this.transactionAmountDaiHuan = transactionAmountDaiHuan;
+    public void setTotalTransactionAmount(String totalTransactionAmount) {
+        this.totalTransactionAmount = totalTransactionAmount;
     }
 
     public String getMonth() {
@@ -115,51 +99,67 @@ public class ProfitMonthDetail {
         this.month = month;
     }
 
-    public double getTotalProfit() {
-        return totalProfit;
+    public String getProfitMiaoDao() {
+        return profitMiaoDao;
     }
 
-    public void setTotalProfit(double totalProfit) {
-        this.totalProfit = totalProfit;
+    public void setProfitMiaoDao(String profitMiaoDao) {
+        this.profitMiaoDao = profitMiaoDao;
     }
 
-    public double getActiveAward() {
-        return activeAward;
+    public String getProfitSaoMa() {
+        return profitSaoMa;
     }
 
-    public void setActiveAward(double activeAward) {
-        this.activeAward = activeAward;
+    public void setProfitSaoMa(String profitSaoMa) {
+        this.profitSaoMa = profitSaoMa;
     }
 
-    public double getDirectlyAward() {
-        return directlyAward;
+    public String getProfitKuaiJie() {
+        return profitKuaiJie;
     }
 
-    public void setDirectlyAward(double directlyAward) {
-        this.directlyAward = directlyAward;
+    public void setProfitKuaiJie(String profitKuaiJie) {
+        this.profitKuaiJie = profitKuaiJie;
     }
 
-    public double getManagerAward() {
-        return managerAward;
+    public String getProfitDaiHuan() {
+        return profitDaiHuan;
     }
 
-    public void setManagerAward(double managerAward) {
-        this.managerAward = managerAward;
+    public void setProfitDaiHuan(String profitDaiHuan) {
+        this.profitDaiHuan = profitDaiHuan;
     }
 
-    public double getTeamBuildAward() {
-        return teamBuildAward;
+    public String getTransactionAmountMiaoDao() {
+        return transactionAmountMiaoDao;
     }
 
-    public void setTeamBuildAward(double teamBuildAward) {
-        this.teamBuildAward = teamBuildAward;
+    public void setTransactionAmountMiaoDao(String transactionAmountMiaoDao) {
+        this.transactionAmountMiaoDao = transactionAmountMiaoDao;
     }
 
-    public double getTotalTransactionAmount() {
-        return totalTransactionAmount;
+    public String getTransactionAmountSaoMa() {
+        return transactionAmountSaoMa;
     }
 
-    public void setTotalTransactionAmount(double totalTransactionAmount) {
-        this.totalTransactionAmount = totalTransactionAmount;
+    public void setTransactionAmountSaoMa(String transactionAmountSaoMa) {
+        this.transactionAmountSaoMa = transactionAmountSaoMa;
+    }
+
+    public String getTransactionAmountKuaiJie() {
+        return transactionAmountKuaiJie;
+    }
+
+    public void setTransactionAmountKuaiJie(String transactionAmountKuaiJie) {
+        this.transactionAmountKuaiJie = transactionAmountKuaiJie;
+    }
+
+    public String getTransactionAmountDaiHuan() {
+        return transactionAmountDaiHuan;
+    }
+
+    public void setTransactionAmountDaiHuan(String transactionAmountDaiHuan) {
+        this.transactionAmountDaiHuan = transactionAmountDaiHuan;
     }
 }
