@@ -668,7 +668,7 @@ public class MemberProfitRecordsServiceImpl extends AbstractCrudService<MemberPr
     }
 
     private String setDouleScale(double inputDouble) {
-        return new BigDecimal(String.valueOf(inputDouble)).setScale(2, BigDecimal.ROUND_HALF_UP).toString();
+        return new BigDecimal(inputDouble).setScale(2, BigDecimal.ROUND_HALF_UP).toString();
     }
 
     @Lazy
