@@ -7,13 +7,11 @@ import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
+import java.util.Map;
 
 @Api(value = "SN管理")
 @RestController
@@ -55,8 +53,11 @@ public class SnController extends AbstractCrudController<SnInfo> {
      * 会员划拨给儿子
      */
     @ApiOperation(value = "会员划拨给儿子")
-    @RequestMapping(value = "/transSnByMember", method = RequestMethod.GET)
-    public ResponseEntity<?> transSnByMember(@RequestParam String sns, @RequestParam String memberId, @RequestParam String currentMemberId) throws Exception {
+    @RequestMapping(value = "/transSnByMember", method = RequestMethod.POST)
+    public ResponseEntity<?> transSnByMember(@RequestBody Map<String,String> reqMap) throws Exception {
+        String sns = reqMap.get("sns");
+        String memberId = reqMap.get("memberId");
+        String currentMemberId = reqMap.get("currentMemberId");
         snInfoService.transSnByMember(sns, memberId, currentMemberId);
         return new ResponseEntity<>(HttpStatus.OK);
     }

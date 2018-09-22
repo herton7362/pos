@@ -50,13 +50,13 @@
                         <div class="col-md-6">
                             <div class="radio">
                                 <label>
-                                    <radio name="searchStatus" value="123"  v-model="datagrid.queryParams.clientId"></radio>全部
+                                    <radio name="searchStatus" value=""  v-model="queryParams.clientId"></radio>全部
                                 </label>
                                 <label>
-                                    <radio name="searchStatus" value="555"  v-model="datagrid.queryParams.clientId">></radio>已分配
+                                    <radio name="searchStatus" value="555"  v-model="queryParams.clientId">></radio>已分配
                                 </label>
                                 <label>
-                                    <radio name="searchStatus" value="12fe3"  v-model="datagrid.queryParams.clientId">></radio>待分配
+                                    <radio name="searchStatus" value="12fe3"  v-model="queryParams.clientId">></radio>待分配
                                 </label>
                             </div>
                         </div>
@@ -71,21 +71,47 @@
                                 <i class="fa fa-search"></i>
                                 搜索
                             </button>
-                            <button type="button" class="btn btn-flat btn-info pull-right margin-r-5">
+                            <button type="button" class="btn btn-flat btn-info pull-right margin-r-5"
+                                    :disabled="datagrid.$instance.selectedRows <= 0"
+                                    :class="{disabled: datagrid.$instance.selectedRows <= 0}"
+                                    @click="distribute(datagrid.$instance.selectedRows)">
                                 <i class="fa fa-trash"></i>
                                 分配
                             </button>
                         </div>
                     </div>
                 </div>          
-                 <div class="box-body">            
-                            <datagrid
-                                    :operator="true"
-                                    :columns="columns"
-                                    :pagination="true"
-                                    url="/api/sn"
-                                    :instance="datagrid"
-                            >
+                 <div class="box-body">
+                     <div>
+                         <button class="btn btn-flat btn-success" @click="add"><i class="fa fa-plus-square"></i> 添加</button>
+                         <button
+                             class="btn btn-flat btn-success"
+                             :disabled="datagrid.$instance.selectedRows <= 0"
+                             :class="{disabled: datagrid.$instance.selectedRows <= 0}"
+                             @click="edit(datagrid.$instance.selectedRows[0])">
+                            <i class="fa fa-pencil"></i> 修改
+                         </button>
+                         <button
+                             class="btn btn-flat btn-danger"
+                             :disabled="datagrid.$instance.selectedRows <= 0"
+                             :class="{disabled: datagrid.$instance.selectedRows <= 0}"
+                             @click="remove(datagrid.$instance.selectedRows)">
+                             <i class="fa fa-trash"></i> 删除
+                         </button>
+                     </div>
+                        <datagrid
+                            :checkbox="true"
+                            :operator="false"
+                            :columns="columns"
+                            :pagination="true"
+                            :data="data"
+                            :instance="datagrid"
+                            :page-size="pageSize"
+                            :current-page="currentPage"
+                            :pager-size="pagerSize"
+                            :count="count"
+                            @go="goToPage"
+                        >
                         <template slot="form-body" scope="props">
                             <div class="form-group">
                                 <label>sn号：</label>
@@ -96,7 +122,49 @@
                     </datagrid>
                 </div>                         
                 </div> 
-            </div>            
+            </div>
+            <!-- sidemodal -->
+            <validator :instance="validator">
+                <form @submit.prevent="save">
+                    <sidemodal title="维护窗口" :footer="true" :instance="modal">
+                        <template slot="body">
+                            <div class="form-group">
+                                <label>sn：</label>
+                                <input type="text" class="form-control" required v-model="formData.sn" placeholder="输入sn">
+                            </div>
+                        </template>
+                        <template slot="footer">
+                            <button type="button" class="btn btn-default margin-r-5 btn-flat" @click="modal.$instance.close()">取消编辑</button>
+                            <button type="submit" class="btn btn-primary btn-flat">保存数据</button>
+                        </template>
+                    </sidemodal>
+                </form>
+            </validator>
+            <!-- /.sidemodal -->
+
+            <!-- sidemodal -->
+            <validator :instance="distribution.validator">
+                <form @submit.prevent="submitDistribution">
+                    <sidemodal title="分配窗口" :footer="true" :instance="distribution.modal">
+                        <template slot="body">
+                            <div class="form-group">
+                                <label>会员：</label>
+                                <combobox
+                                        required
+                                        class="form-control"
+                                        :options="members"
+                                        v-model="distribution.formData.memberId">
+                                </combobox>
+                            </div>
+                        </template>
+                        <template slot="footer">
+                            <button type="button" class="btn btn-default margin-r-5 btn-flat" @click="distribution.modal.$instance.close()">取消编辑</button>
+                            <button type="submit" class="btn btn-primary btn-flat">保存数据</button>
+                        </template>
+                    </sidemodal>
+                </form>
+            </validator>
+            <!-- /.sidemodal -->
         </section>
         <!-- /.content -->
     </div>

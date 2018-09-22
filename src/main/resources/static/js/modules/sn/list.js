@@ -6,22 +6,44 @@ require(['jquery', 'vue', 'messager', 'utils'], function($, Vue, messager, utils
                       {field:'sn', title:'sn号'},
                       {field:'transDate', title:'划拨日期'}
                   ],
-            datagrid: {
-                queryParams: {
-                	clientId: '123'
-                }
-            },
             data: [],
+            datagrid:{
+                $instance: {}
+            },
             queryParams: {
+                clientId: ''
             },
             currentPage: 1,
-            pageSize: 15,
+            pageSize: 50,
+            pagerSize: 5,
             pageNum: 0,
+            count: 0,
             selectedRows: [],
             formData: {
                 id: null,
                 sn: null
-            }
+            },
+            modal: {
+                $instance: {}
+            },
+            validator: {
+                $instance: {}
+            },
+            distribution: {
+                validator: {
+                    $instance: {}
+                },
+                formData: {
+                    memberId: null,
+                    sns: null,
+                    currentMemberId: null
+                },
+                modal: {
+                    $instance: {}
+                }
+            },
+            members: [],
+            currentMemberId: null
         },
         methods: {
             choseFile: function () {
@@ -65,7 +87,7 @@ require(['jquery', 'vue', 'messager', 'utils'], function($, Vue, messager, utils
                 });
             },
             loadRecords: function () {
-                this.datagrid.$instance.load(this.datagrid.queryParams);
+                this.load();
             },
             clearSelected: function () {
                 this.selectedRows.splice(0);
@@ -73,13 +95,14 @@ require(['jquery', 'vue', 'messager', 'utils'], function($, Vue, messager, utils
             load: function () {
                 var self = this;
                 $.ajax({
-                    url: utils.patchUrl('/api/sn/getAllSnInfo'),
+                    url: utils.patchUrl('/api/sn'),
                     data: $.extend({
                         sort: 'updatedDate',
                         order: 'desc',
                         currentPage: this.currentPage,
                         pageSize: this.pageSize,
-                        pageNum: this.pageNum
+                        pageNum: this.pageNum,
+                        memberId: this.currentMemberId
                     }, this.queryParams),
                     success: function(data) {
                         self.data = data.content;
@@ -87,14 +110,127 @@ require(['jquery', 'vue', 'messager', 'utils'], function($, Vue, messager, utils
                         self.clearSelected();
                     }
                 })
+            },
+            goToPage: function (page) {
+                this.currentPage = page;
+                this.load();
+            },
+            add: function () {
+                this.validator.$instance.removeMark();
+                this.formData = {};
+                this.modal.$instance.open();
+            },
+            edit: function (row) {
+                var self = this;
+                this.validator.$instance.removeMark();
+                $.ajax({
+                    url: utils.patchUrl('/api/sn/' + row.id),
+                    success: function(data) {
+                        self.formData = data;
+                        self.modal.$instance.open();
+                    }
+                });
+            },
+            remove: function (row) {
+                var rows = [];
+                var self = this;
+                messager.alert('确定要删除吗？', event, function() {
+                    var ids = [];
+                    $.each(rows.concat(row), function() {
+                        ids.push(this.id);
+                    });
+                    $.ajax({
+                        url: utils.patchUrl('/api/sn/' + ids.join(',')),
+                        type: 'DELETE',
+                        success: function() {
+                            messager.bubble('删除成功');
+                            self.load();
+                            self.datagrid.$instance.selectedRows = [];
+                        }
+                    });
+                });
+            },
+            save: function () {
+                var self = this;
+                if(!this.validator.$instance.isFormValid()) {
+                    return;
+                }
+                $.ajax({
+                    url: utils.patchUrl('/api/sn'),
+                    contentType: 'application/json',
+                    type: 'POST',
+                    dataType: 'JSON',
+                    data: JSON.stringify($.extend(this.formData, {
+                        memberId: this.currentMemberId
+                    })),
+                    success: function(data) {
+                        self.modal.$instance.close();
+                        messager.bubble('保存成功！');
+                        self.load();
+                    }
+                })
+            },
+            distribute: function () {
+                this.distribution.modal.$instance.open();
+            },
+            submitDistribution: function () {
+                var self = this;
+                if(!this.distribution.validator.$instance.isFormValid()) {
+                    return;
+                }
+                var sns = [];
+                $.each(this.datagrid.$instance.selectedRows, function () {
+                    sns.push(this.sn);
+                });
+                $.ajax({
+                    url: utils.patchUrl('/api/sn/transSnByMember'),
+                    contentType: 'application/json',
+                    type: 'POST',
+                    dataType: 'JSON',
+                    data: JSON.stringify($.extend(this.distribution.formData, {
+                        sns: sns.join(','),
+                        currentMemberId: self.currentMemberId
+                    })),
+                    success: function(data) {
+                        self.distribution.modal.$instance.close();
+                        messager.bubble('保存成功！');
+                    }
+                })
             }
         },
         mounted: function() {
-        	this.loadRecords();
+        	var self = this;
+            $.ajax({
+                url: utils.patchUrl('/api/member'),
+                data: {
+                    sort: 'sortNumber',
+                    order: 'asc',
+                    logicallyDeleted: false
+                },
+                success: function(data) {
+                    $.each(data.content, function () {
+                        this.name = this.name + '(' + this.loginName + ')';
+                    });
+                    self.members = data.content;
+                }
+            });
+            $.ajax({
+                url: utils.patchUrl('/user/info'),
+                cache: false,
+                success: function (user) {
+                    self.currentMemberId = user.id;
+                    self.loadRecords();
+                }
+            })
         },
         watch: {
-            'datagrid.queryParams.clientId': function () {
-                this.loadRecords();
+            'queryParams.clientId': function (val) {
+                if(val == '555') {
+                    // 已分配
+                    console.log(this.currentMemberId)
+                } else {
+                    this.loadRecords();
+                }
             }
         }
     });
