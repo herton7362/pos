@@ -101,8 +101,8 @@ require(['jquery', 'vue', 'messager', 'utils'], function($, Vue, messager, utils
                         order: 'desc',
                         currentPage: this.currentPage,
                         pageSize: this.pageSize,
-                        pageNum: this.pageNum,
-                        memberId: this.currentMemberId
+                        pageNum: this.pageNum
+                        //memberId: this.currentMemberId
                     }, this.queryParams),
                     success: function(data) {
                         self.data = data.content;
@@ -183,7 +183,7 @@ require(['jquery', 'vue', 'messager', 'utils'], function($, Vue, messager, utils
                     sns.push(this.sn);
                 });
                 $.ajax({
-                    url: utils.patchUrl('/api/sn/transSnByMember'),
+                    url: utils.patchUrl('/api/sn/transSnByAdmin'),
                     contentType: 'application/json',
                     type: 'POST',
                     dataType: 'JSON',
@@ -224,12 +224,15 @@ require(['jquery', 'vue', 'messager', 'utils'], function($, Vue, messager, utils
             })
         },
         watch: {
-            'queryParams.clientId': function (val) {
-                if(val == '555') {
-                    // 已分配
-                    console.log(this.currentMemberId)
-                } else {
-                    this.loadRecords();
+            'queryParams.status': function (val) {
+                if(val == '') {
+                    this.load();
+                }
+                if(val == 'DISTRIBUTION') {
+                    alert(val);
+                }
+                if(val == 'UN_DISTRIBUTION') {
+                    alert(val);
                 }
             }
         }

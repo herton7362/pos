@@ -43,8 +43,10 @@ public class SnController extends AbstractCrudController<SnInfo> {
      * 管理员划拨未分配的SN
      */
     @ApiOperation(value = "管理员划拨未分配的SN")
-    @RequestMapping(value = "/transSnByAdmin", method = RequestMethod.GET)
-    public ResponseEntity<?> transSnByAdmin(@RequestParam String sns, @RequestParam String memberId) throws Exception {
+    @RequestMapping(value = "/transSnByAdmin", method = RequestMethod.POST)
+    public ResponseEntity<?> transSnByAdmin(@RequestBody Map<String, String> reqMap) throws Exception {
+        String sns = reqMap.get("sns");
+        String memberId = reqMap.get("memberId");
         snInfoService.transSnByAdmin(sns, memberId);
         return new ResponseEntity<>(HttpStatus.OK);
     }
@@ -54,7 +56,7 @@ public class SnController extends AbstractCrudController<SnInfo> {
      */
     @ApiOperation(value = "会员划拨给儿子")
     @RequestMapping(value = "/transSnByMember", method = RequestMethod.POST)
-    public ResponseEntity<?> transSnByMember(@RequestBody Map<String,String> reqMap) throws Exception {
+    public ResponseEntity<?> transSnByMember(@RequestBody Map<String, String> reqMap) throws Exception {
         String sns = reqMap.get("sns");
         String memberId = reqMap.get("memberId");
         String currentMemberId = reqMap.get("currentMemberId");

@@ -50,13 +50,13 @@
                         <div class="col-md-6">
                             <div class="radio">
                                 <label>
-                                    <radio name="searchStatus" value=""  v-model="queryParams.clientId"></radio>全部
+                                    <radio name="searchStatus" value=""  v-model="queryParams.status"></radio>全部
                                 </label>
                                 <label>
-                                    <radio name="searchStatus" value="555"  v-model="queryParams.clientId">></radio>已分配
+                                    <radio name="searchStatus" value="DISTRIBUTION"  v-model="queryParams.status">></radio>已分配
                                 </label>
                                 <label>
-                                    <radio name="searchStatus" value="12fe3"  v-model="queryParams.clientId">></radio>待分配
+                                    <radio name="searchStatus" value="UN_DISTRIBUTION"  v-model="queryParams.status">></radio>待分配
                                 </label>
                             </div>
                         </div>
