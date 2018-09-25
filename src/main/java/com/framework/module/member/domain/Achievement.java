@@ -10,29 +10,21 @@ import io.swagger.annotations.ApiModelProperty;
  */
 public class Achievement {
     @ApiModelProperty(value = "盟友交易总额")
-    private double allyTransactionAmount = 0;
+    private String allyTransactionAmount = "0";
     @ApiModelProperty(value = "盟友新增商户总数")
     private int allyNewShopNum = 0;
     @ApiModelProperty(value = "交易总额")
-    private double transactionAmount = 0;
+    private String transactionAmount = "0";
     @ApiModelProperty(value = "新增商户总数")
     private int newShopNum = 0;
     @ApiModelProperty(value = "统计月份")
     private String staticMonth;
 
-    public String getStaticMonth() {
-        return staticMonth;
-    }
-
-    public void setStaticMonth(String staticMonth) {
-        this.staticMonth = staticMonth;
-    }
-
-    public double getAllyTransactionAmount() {
+    public String getAllyTransactionAmount() {
         return allyTransactionAmount;
     }
 
-    public void setAllyTransactionAmount(double allyTransactionAmount) {
+    public void setAllyTransactionAmount(String allyTransactionAmount) {
         this.allyTransactionAmount = allyTransactionAmount;
     }
 
@@ -44,11 +36,11 @@ public class Achievement {
         this.allyNewShopNum = allyNewShopNum;
     }
 
-    public double getTransactionAmount() {
+    public String getTransactionAmount() {
         return transactionAmount;
     }
 
-    public void setTransactionAmount(double transactionAmount) {
+    public void setTransactionAmount(String transactionAmount) {
         this.transactionAmount = transactionAmount;
     }
 
@@ -58,5 +50,13 @@ public class Achievement {
 
     public void setNewShopNum(int newShopNum) {
         this.newShopNum = newShopNum;
+    }
+
+    public String getStaticMonth() {
+        return staticMonth;
+    }
+
+    public void setStaticMonth(String staticMonth) {
+        this.staticMonth = staticMonth;
     }
 }

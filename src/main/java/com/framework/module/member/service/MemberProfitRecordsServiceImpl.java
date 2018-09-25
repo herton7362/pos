@@ -252,7 +252,7 @@ public class MemberProfitRecordsServiceImpl extends AbstractCrudService<MemberPr
                 sonList.addAll(allyMembers.getGrandSonList());
             }
             int newSonShopNum = 0;
-            double totalTransactionAmount = 0;
+            Double totalTransactionAmount = 0d;
             for (String m : sonList) {
                 List<Shop> shops = shopRepository.findAllByMemberId(m, start, end);
                 newSonShopNum += shops == null ? 0 : shops.size();
@@ -261,13 +261,13 @@ public class MemberProfitRecordsServiceImpl extends AbstractCrudService<MemberPr
             }
             totalTransactionAmount = new BigDecimal(totalTransactionAmount).setScale(2, BigDecimal.ROUND_HALF_UP).doubleValue();
             achievement.setAllyNewShopNum(newSonShopNum);
-            achievement.setAllyTransactionAmount(totalTransactionAmount);
+            achievement.setAllyTransactionAmount(new BigDecimal(totalTransactionAmount.toString()).toString());
 
             List<Shop> shops1 = shopRepository.findAllByMemberId(memberId, start, end);
             Map<String, Double> resultMap1 = memberProfitRecordsRepository.staticProfitsByMonth(memberId, start, end);
             Double totalTransactionAmount1 = resultMap1.get("totalTransactionAmount") == null ? 0d : resultMap1.get("totalTransactionAmount");
             achievement.setNewShopNum(shops1.size());
-            achievement.setTransactionAmount(new BigDecimal(totalTransactionAmount1).setScale(2, BigDecimal.ROUND_HALF_UP).doubleValue());
+            achievement.setTransactionAmount(new BigDecimal(totalTransactionAmount1).setScale(2, BigDecimal.ROUND_HALF_UP).toString());
             achievement.setStaticMonth(firstDay);
             result.add(achievement);
         }
