@@ -318,7 +318,7 @@ public class MemberProfitRecordsServiceImpl extends AbstractCrudService<MemberPr
                 Map<String, Double> resultMap = memberProfitRecordsRepository.staticProfitsByTime(m, start, end);
                 totalTransactionAmount += resultMap.get("totalTransactionAmount") == null ? 0d : resultMap.get("totalTransactionAmount");
             }
-            achievementDetail.setTransactionAmount(new BigDecimal(totalTransactionAmount).setScale(2, BigDecimal.ROUND_HALF_UP).doubleValue());
+            achievementDetail.setTransactionAmount(new BigDecimal(totalTransactionAmount).setScale(2, BigDecimal.ROUND_HALF_UP).toString());
             achievementDetail.setTotalAllyShopNum(sonShopNum);
             achievementDetail.setNewAllyShopNum(newSonShopNum);
         }

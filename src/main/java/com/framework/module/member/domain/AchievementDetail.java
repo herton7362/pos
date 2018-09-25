@@ -19,7 +19,7 @@ public class AchievementDetail {
     @ApiModelProperty(value = "盟友新增商户总数")
     private int newAllyShopNum = 0;
     @ApiModelProperty(value = "盟友交易总额")
-    private double transactionAmount = 0;
+    private String transactionAmount = "0";
     @ApiModelProperty(value = "统计时间")
     private String staticDate;
 
@@ -47,11 +47,11 @@ public class AchievementDetail {
         this.newAllyShopNum = newAllyShopNum;
     }
 
-    public double getTransactionAmount() {
+    public String getTransactionAmount() {
         return transactionAmount;
     }
 
-    public void setTransactionAmount(double transactionAmount) {
+    public void setTransactionAmount(String transactionAmount) {
         this.transactionAmount = transactionAmount;
     }
 
