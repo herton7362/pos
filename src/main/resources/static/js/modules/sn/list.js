@@ -3,15 +3,17 @@ require(['jquery', 'vue', 'messager', 'utils'], function($, Vue, messager, utils
         el: '#content',
         data: {
             columns: [
-                      {field:'sn', title:'sn号'},
-                      {field:'transDate', title:'划拨日期'}
+                      {field:'sn', title:'sn号'}
+                  	
                   ],
             data: [],
             datagrid:{
                 $instance: {}
             },
             queryParams: {
-            	status: ''
+            	status: '',
+            	startSn:'',
+            	endSn:''
             },
             currentPage: 1,
             pageSize: 50,
@@ -102,8 +104,8 @@ require(['jquery', 'vue', 'messager', 'utils'], function($, Vue, messager, utils
                         currentPage: this.currentPage,
                         pageSize: this.pageSize,
                         pageNum: this.pageNum,
-                        memberId: this.currentMemberId,
-                        status: val
+                        //memberId: this.currentMemberId,
+                        status: ""
                     }, this.queryParams),
                     complete: function(data) {
                     data = data.responseJSON;
@@ -140,7 +142,7 @@ require(['jquery', 'vue', 'messager', 'utils'], function($, Vue, messager, utils
                         currentPage: this.currentPage,
                         pageSize: this.pageSize,
                         pageNum: this.pageNum,
-                        memberId: this.currentMemberId,
+                        //memberId: this.currentMemberId,
                         status: val
                     }, this.queryParams),
                     complete: function(data) {
