@@ -95,6 +95,25 @@ require(['jquery', 'vue', 'messager', 'utils'], function($, Vue, messager, utils
             load: function () {
                 var self = this;
                 $.ajax({
+                    url: utils.patchUrl('/api/sn/getAllSnInfo'),
+                    data: $.extend({
+                        sort: 'updatedDate',
+                        order: 'desc',
+                        currentPage: this.currentPage,
+                        pageSize: this.pageSize,
+                        pageNum: this.pageNum,
+                        memberId: this.currentMemberId,
+                        status: val
+                    }, this.queryParams),
+                    complete: function(data) {
+                    data = data.responseJSON;
+                        self.data = data.content;
+                        self.count = data.totalElements;
+                        self.clearSelected();
+                    }
+                })
+/*                var self = this;
+                $.ajax({
                     url: utils.patchUrl('/api/sn'),
                     data: $.extend({
                         sort: 'updatedDate',
@@ -109,7 +128,7 @@ require(['jquery', 'vue', 'messager', 'utils'], function($, Vue, messager, utils
                         self.count = data.totalElements;
                         self.clearSelected();
                     }
-                })
+                })*/
             },
             search: function (val) {
                 var self = this;
@@ -125,6 +144,7 @@ require(['jquery', 'vue', 'messager', 'utils'], function($, Vue, messager, utils
                         status: val
                     }, this.queryParams),
                     complete: function(data) {
+                    data = data.responseJSON;
                         self.data = data.content;
                         self.count = data.totalElements;
                         self.clearSelected();
@@ -177,6 +197,7 @@ require(['jquery', 'vue', 'messager', 'utils'], function($, Vue, messager, utils
                 }
                 $.ajax({
                     url: utils.patchUrl('/api/sn'),
+                    contentType: 'application/json',
                     type: 'POST',
                     data: JSON.stringify($.extend(this.formData, {
                         memberId: this.currentMemberId
