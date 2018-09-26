@@ -11,7 +11,7 @@ require(['jquery', 'vue', 'messager', 'utils'], function($, Vue, messager, utils
                 $instance: {}
             },
             queryParams: {
-                clientId: ''
+            	status: ''
             },
             currentPage: 1,
             pageSize: 50,
@@ -111,6 +111,26 @@ require(['jquery', 'vue', 'messager', 'utils'], function($, Vue, messager, utils
                     }
                 })
             },
+            search: function (val) {
+                var self = this;
+                $.ajax({
+                    url: utils.patchUrl('/api/sn/getAllSnInfo'),
+                    data: $.extend({
+                        sort: 'updatedDate',
+                        order: 'desc',
+                        currentPage: this.currentPage,
+                        pageSize: this.pageSize,
+                        pageNum: this.pageNum,
+                        memberId: this.currentMemberId,
+                        status: val
+                    }, this.queryParams),
+                    complete: function(data) {
+                        self.data = data.content;
+                        self.count = data.totalElements;
+                        self.clearSelected();
+                    }
+                })
+            },
             goToPage: function (page) {
                 this.currentPage = page;
                 this.load();
@@ -157,9 +177,7 @@ require(['jquery', 'vue', 'messager', 'utils'], function($, Vue, messager, utils
                 }
                 $.ajax({
                     url: utils.patchUrl('/api/sn'),
-                    contentType: 'application/json',
                     type: 'POST',
-                    dataType: 'JSON',
                     data: JSON.stringify($.extend(this.formData, {
                         memberId: this.currentMemberId
                     })),
@@ -186,15 +204,17 @@ require(['jquery', 'vue', 'messager', 'utils'], function($, Vue, messager, utils
                     url: utils.patchUrl('/api/sn/transSnByAdmin'),
                     contentType: 'application/json',
                     type: 'POST',
-                    dataType: 'JSON',
+                    dataType: 'text',
                     data: JSON.stringify($.extend(this.distribution.formData, {
                         sns: sns.join(','),
                         currentMemberId: self.currentMemberId
                     })),
-                    success: function(data) {
+                    success: function(data) {console.log(data);
                         self.distribution.modal.$instance.close();
                         messager.bubble('保存成功！');
+                        self.load();
                     }
+              
                 })
             }
         },
@@ -229,10 +249,10 @@ require(['jquery', 'vue', 'messager', 'utils'], function($, Vue, messager, utils
                     this.load();
                 }
                 if(val == 'DISTRIBUTION') {
-                    alert(val);
+                	this.search(val);
                 }
                 if(val == 'UN_DISTRIBUTION') {
-                    alert(val);
+                	this.search(val);
                 }
             }
         }
