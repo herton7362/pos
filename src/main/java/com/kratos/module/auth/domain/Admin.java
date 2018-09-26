@@ -10,6 +10,7 @@ import java.util.List;
 
 /**
  * 管理员
+ *
  * @author tang he
  * @since 1.0.0
  */
@@ -24,8 +25,19 @@ public class Admin extends BaseUser {
     private Attachment headPhoto;
     @ApiModelProperty(required = true, value = "角色")
     @ManyToMany(fetch = FetchType.EAGER)
-    @JoinTable(name="admin_roles",joinColumns={@JoinColumn(name="admin_id")},inverseJoinColumns={@JoinColumn(name="role_id")})
+    @JoinTable(name = "admin_roles", joinColumns = {@JoinColumn(name = "admin_id")}, inverseJoinColumns = {@JoinColumn(name = "role_id")})
     private List<Role> roles;
+    @ApiModelProperty(value = "绑定会员ID")
+    @Column(length = 60)
+    private String memberId;
+
+    public String getMemberId() {
+        return memberId;
+    }
+
+    public void setMemberId(String memberId) {
+        this.memberId = memberId;
+    }
 
     public Admin() {
         setUserType(UserType.ADMIN.name());
