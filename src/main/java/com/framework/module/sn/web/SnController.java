@@ -3,6 +3,7 @@ package com.framework.module.sn.web;
 import com.framework.module.sn.domain.SnInfo;
 import com.framework.module.sn.service.SnInfoService;
 import com.kratos.common.AbstractCrudController;
+import com.kratos.common.PageResult;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.http.HttpStatus;
@@ -75,7 +76,7 @@ public class SnController extends AbstractCrudController<SnInfo> {
 
     @ApiOperation(value = "查询所有SN信息，有筛选功能")
     @RequestMapping(value = "/getAllSnInfo", method = RequestMethod.GET)
-    public ResponseEntity<List<SnInfo>> getAllSnInfo(@RequestParam(required = false) String startSn, @RequestParam(required = false) String endSn, @RequestParam(required = false) SnInfo.Status status, @RequestParam(required = false) SnInfo.BindStatus bindStatus, @RequestParam() Integer pageSize, @RequestParam() Integer pageNum, @RequestParam(required = false) String memberId) throws Exception {
+    public ResponseEntity<PageResult<SnInfo>> getAllSnInfo(@RequestParam(required = false) String startSn, @RequestParam(required = false) String endSn, @RequestParam(required = false) SnInfo.Status status, @RequestParam(required = false) SnInfo.BindStatus bindStatus, @RequestParam() Integer pageSize, @RequestParam() Integer pageNum, @RequestParam(required = false) String memberId) throws Exception {
         return new ResponseEntity<>(snInfoService.getAllSnInfo(startSn, endSn, status, bindStatus, pageSize, pageNum, memberId), HttpStatus.OK);
     }
 

@@ -5,9 +5,11 @@ import com.framework.module.sn.domain.SnInfo;
 import com.framework.module.sn.domain.SnInfoHistory;
 import com.framework.module.sn.domain.SnInfoRepository;
 import com.kratos.common.AbstractCrudService;
+import com.kratos.common.PageResult;
 import com.kratos.exceptions.BusinessException;
 import org.apache.commons.lang.StringUtils;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
+import org.apache.poi.ss.formula.functions.T;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
@@ -147,7 +149,7 @@ public class SnInfoServiceImpl extends AbstractCrudService<SnInfo> implements Sn
     }
 
     @Override
-    public List<SnInfo> getAllSnInfo(String startSn, String endSn, SnInfo.Status status, SnInfo.BindStatus bindStatus, Integer pageSize, Integer pageNum, String memberId) throws Exception {
+    public PageResult<SnInfo> getAllSnInfo(String startSn, String endSn, SnInfo.Status status, SnInfo.BindStatus bindStatus, Integer pageSize, Integer pageNum, String memberId) throws Exception {
         if (startSn == null && endSn != null) {
             throw new BusinessException("请填写起始SN");
         }
@@ -170,7 +172,8 @@ public class SnInfoServiceImpl extends AbstractCrudService<SnInfo> implements Sn
         }
         param.put("pageSize", new String[]{pageSize.toString()});
         param.put("pageNum", new String[]{pageNum.toString()});
-        return findAll(param);
+        PageRequest pageRequest = new PageRequest(Integer.valueOf(param.get("pageNum")[0]), Integer.valueOf(param.get("pageSize")[0]), Sort.Direction.ASC, "sn");
+        return findAll(pageRequest, param);
     }
 
     @Override
@@ -179,17 +182,13 @@ public class SnInfoServiceImpl extends AbstractCrudService<SnInfo> implements Sn
     }
 
     @Override
-    public List<SnInfo> findAll(Map<String, String[]> param) throws Exception {
-        if (param.get("pageSize") != null && param.get("pageNum") != null) {
-            PageRequest pageRequest = new PageRequest(Integer.valueOf(param.get("pageNum")[0]), Integer.valueOf(param.get("pageSize")[0]), Sort.Direction.ASC, "sn");
-            Page<SnInfo> result = pageRepository.findAll(new SnInfoServiceImpl.MySpecification(param, true), pageRequest);
-            if (result != null) {
-                return result.getContent();
-            }
-        } else {
-            return pageRepository.findAll(new SnInfoServiceImpl.MySpecification(param, true));
-        }
-        return null;
+    public PageResult<SnInfo> findAll(PageRequest pageRequest, Map<String, String[]> param) throws Exception {
+        Page<SnInfo> all = pageRepository.findAll(new MySpecification(param, true), pageRequest);
+        PageResult<SnInfo> pageResult = new PageResult<>();
+        pageResult.setSize(all.getSize());
+        pageResult.setTotalElements(all.getTotalElements());
+        pageResult.setContent(all.getContent());
+        return pageResult;
     }
 
     class MySpecification extends SimpleSpecification {

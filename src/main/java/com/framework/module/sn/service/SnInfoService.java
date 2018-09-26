@@ -2,6 +2,7 @@ package com.framework.module.sn.service;
 
 import com.framework.module.sn.domain.SnInfo;
 import com.kratos.common.CrudService;
+import com.kratos.common.PageResult;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
@@ -46,7 +47,7 @@ public interface SnInfoService extends CrudService<SnInfo> {
      * @param memberId
      * @return
      */
-    List<SnInfo> getAllSnInfo(String startSn, String endSn, SnInfo.Status status, SnInfo.BindStatus bindStatus, Integer pageSize, Integer pageNum, String memberId) throws Exception;
+    PageResult<SnInfo> getAllSnInfo(String startSn, String endSn, SnInfo.Status status, SnInfo.BindStatus bindStatus, Integer pageSize, Integer pageNum, String memberId) throws Exception;
 
     List<SnInfo> getUnDistributionList(String memberId);
 }
