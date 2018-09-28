@@ -366,16 +366,16 @@ public class MemberProfitRecordsServiceImpl extends AbstractCrudService<MemberPr
             importProfit.setRelateId(relateId);
             Shop shop = shopRepository.findOneBySn(importProfit.getSn());
             if (shop == null) {
-                SnInfo snInfo = snInfoRepository.findFirstBySn(importProfit.getSn());
-                if (snInfo != null && StringUtils.isNotBlank(snInfo.getMemberId())) {
-                    shop = new Shop();
-                    shop.setMemberId(snInfo.getMemberId());
-                    shop.setSn(importProfit.getSn());
-                    shop.setName(importProfit.getUserName());
-                    shopRepository.save(shop);
-                }else {
-                    throw new BusinessException(String.format("第" + r + "行数据不合法,SN对应商户不存在。SN为:[%s]", importProfit.getSn()));
-                }
+//                SnInfo snInfo = snInfoRepository.findFirstBySn(importProfit.getSn());
+//                if (snInfo != null && StringUtils.isNotBlank(snInfo.getMemberId())) {
+//                    shop = new Shop();
+//                    shop.setMemberId(snInfo.getMemberId());
+//                    shop.setSn(importProfit.getSn());
+//                    shop.setName(importProfit.getUserName());
+//                    shopRepository.save(shop);
+//                }else {
+                throw new BusinessException(String.format("第" + r + "行数据不合法,SN对应商户不存在。SN为:[%s]", importProfit.getSn()));
+//                }
             }
             if (StringUtils.isBlank(shop.getMemberId())) {
                 throw new BusinessException(String.format("第" + r + "行数据不合法,SN对应商户会员信息不存在。SN为:[%s]", importProfit.getSn()));

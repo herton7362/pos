@@ -3,6 +3,7 @@ package com.framework.module.sn.web;
 import java.util.List;
 import java.util.Map;
 
+import com.kratos.module.auth.AdminThread;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -82,8 +83,9 @@ public class SnController extends AbstractCrudController<SnInfo> {
 
     @ApiOperation(value = "查询所有SN信息，有筛选功能")
     @RequestMapping(value = "/getAllSnInfo", method = RequestMethod.GET)
-    public ResponseEntity<PageResult<SnInfo>> getAllSnInfo(@RequestParam(required = false) String startSn, @RequestParam(required = false) String endSn, @RequestParam(required = false) SnInfo.Status status, @RequestParam(required = false) SnInfo.BindStatus bindStatus, @RequestParam() Integer pageSize, @RequestParam() Integer pageNum, @RequestParam(required = false) String memberId) throws Exception {
-        return new ResponseEntity<PageResult<SnInfo>>(snInfoService.getAllSnInfo(startSn, endSn, status, bindStatus, pageSize, pageNum, memberId), HttpStatus.OK);
+    public ResponseEntity<PageResult<SnInfo>> getAllSnInfo(@RequestParam(required = false) String startSn, @RequestParam(required = false) String endSn, @RequestParam(required = false) SnInfo.Status status, @RequestParam(required = false) SnInfo.BindStatus bindStatus, @RequestParam() Integer pageSize, @RequestParam() Integer pageNum) throws Exception {
+        String memberId = AdminThread.getInstance().get().getMemberId();
+        return new ResponseEntity<>(snInfoService.getAllSnInfo(startSn, endSn, status, bindStatus, pageSize, pageNum, memberId), HttpStatus.OK);
     }
 
     @ApiOperation(value = "查询待分配列表")
