@@ -93,15 +93,16 @@ public class LoginServiceImpl extends AbstractLoginService {
         clearVerifyCode(mobile);
 
         Attachment photoAttachment = attachmentService.findOne("00000000645eb26601645eb364130000");
-        Role role = roleService.findOne("402881c45effd975015effdcc87d0000");
+        Role role = roleService.findOne("00000000660fd3f401661dc161fe0970");
         List<Role> roleList = new ArrayList<>();
         roleList.add(role);
         Admin admin = new Admin();
-        admin.setLoginName(mobile);
+        admin.setLoginName("m" + mobile);
         admin.setPassword(password);
         admin.setMemberId(member.getId());
         admin.setMobile(mobile);
         admin.setName(mobile);
+        admin.setClientId("tonr");
         if (photoAttachment != null) {
             admin.setHeadPhoto(photoAttachment);
         }
@@ -111,7 +112,7 @@ public class LoginServiceImpl extends AbstractLoginService {
     }
 
     @Override
-    public BaseUser findUserByMobile(String mobile) throws Exception {
+    public BaseUser findUserByMobile(String mobile) {
         return memberService.findOneByLoginName(mobile);
     }
 
