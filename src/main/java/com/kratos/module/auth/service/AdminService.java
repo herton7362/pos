@@ -9,8 +9,11 @@ import java.util.List;
 public interface AdminService extends CrudService<Admin> {
     /**
      * 查询管理员菜单
+     *
      * @param id 管理员id
      * @return 菜单
      */
     List<Module> findModules(String id) throws Exception;
+
+    Admin findByMemberId(String memberId) throws Exception;
 }

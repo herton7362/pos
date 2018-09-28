@@ -69,6 +69,11 @@ public class AdminServiceImpl extends AbstractCrudService<Admin> implements Admi
     }
 
     @Override
+    public Admin findByMemberId(String memberId) throws Exception {
+        return adminRepository.findFirstByMemberId(memberId);
+    }
+
+    @Override
     protected AdminRepository getRepository() {
         return adminRepository;
     }

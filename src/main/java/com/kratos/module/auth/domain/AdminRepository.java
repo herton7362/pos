@@ -9,4 +9,6 @@ public interface AdminRepository extends PageRepository<Admin> {
     Admin findOneByLoginName(String account);
     @Query("select m from Admin m where m.loginName=?1 and m.clientId=?2")
     BaseUser findOneByLoginNameAndClientId(String account, String clientId);
+
+    Admin findFirstByMemberId(String memberId);
 }

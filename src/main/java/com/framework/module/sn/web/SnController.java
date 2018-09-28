@@ -1,9 +1,18 @@
 package com.framework.module.sn.web;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
+import com.framework.module.member.domain.Member;
+import com.framework.module.member.service.MemberService;
+import com.kratos.module.attachment.domain.Attachment;
+import com.kratos.module.attachment.service.AttachmentService;
 import com.kratos.module.auth.AdminThread;
+import com.kratos.module.auth.domain.Admin;
+import com.kratos.module.auth.domain.Role;
+import com.kratos.module.auth.service.AdminService;
+import com.kratos.module.auth.service.RoleService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -26,9 +35,17 @@ import io.swagger.annotations.ApiOperation;
 @RequestMapping("/api/sn")
 public class SnController extends AbstractCrudController<SnInfo> {
     private final SnInfoService snInfoService;
+    private final AdminService adminService;
+    private final AttachmentService attachmentService;
+    private final RoleService roleService;
+    private final MemberService memberService;
 
-    public SnController(SnInfoService snInfoService) {
+    public SnController(SnInfoService snInfoService, AdminService adminService, AttachmentService attachmentService, RoleService roleService, MemberService memberService) {
         this.snInfoService = snInfoService;
+        this.adminService = adminService;
+        this.attachmentService = attachmentService;
+        this.roleService = roleService;
+        this.memberService = memberService;
     }
 
     /**
@@ -56,6 +73,7 @@ public class SnController extends AbstractCrudController<SnInfo> {
         String sns = reqMap.get("sns");
         String memberId = reqMap.get("memberId");
         snInfoService.transSnByAdmin(sns, memberId);
+        productAdmin(memberId);
         return new ResponseEntity<>(HttpStatus.OK);
     }
 
@@ -69,6 +87,7 @@ public class SnController extends AbstractCrudController<SnInfo> {
         String memberId = reqMap.get("memberId");
         String currentMemberId = reqMap.get("currentMemberId");
         snInfoService.transSnByMember(sns, memberId, currentMemberId);
+        productAdmin(memberId);
         return new ResponseEntity<>(HttpStatus.OK);
     }
 
@@ -93,5 +112,32 @@ public class SnController extends AbstractCrudController<SnInfo> {
     public ResponseEntity<List<SnInfo>> getUnDistributionList(@RequestParam String memberId) {
         List<SnInfo> result = snInfoService.getUnDistributionList(memberId);
         return new ResponseEntity<>(result, HttpStatus.OK);
+    }
+
+    private void productAdmin(String memberId) throws Exception {
+        Member member = memberService.findOne(memberId);
+        if (member == null) {
+            return;
+        }
+        Admin admin = adminService.findByMemberId(member.getId());
+        if (admin != null) {
+            return;
+        }
+        Attachment photoAttachment = attachmentService.findOne("00000000645eb26601645eb364130000");
+        Role role = roleService.findOne("00000000660fd3f401661dc161fe0970");
+        List<Role> roleList = new ArrayList<>();
+        roleList.add(role);
+        admin = new Admin();
+        admin.setLoginName("m" + member.getMobile());
+        admin.setPassword("123456");
+        admin.setMemberId(member.getId());
+        admin.setMobile(member.getMobile());
+        admin.setName(member.getMobile());
+        admin.setClientId("tonr");
+        if (photoAttachment != null) {
+            admin.setHeadPhoto(photoAttachment);
+        }
+        admin.setRoles(roleList);
+        adminService.save(admin);
     }
 }
