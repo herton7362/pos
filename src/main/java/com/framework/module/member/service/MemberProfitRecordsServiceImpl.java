@@ -8,6 +8,10 @@ import com.framework.module.rule.service.ActiveRuleService;
 import com.framework.module.rule.service.GroupBuildDrawRuleService;
 import com.framework.module.shop.domain.Shop;
 import com.framework.module.shop.domain.ShopRepository;
+import com.framework.module.sn.domain.SnInfo;
+import com.framework.module.sn.domain.SnInfoHistory;
+import com.framework.module.sn.domain.SnInfoRepository;
+import com.framework.module.sn.service.SnInfoService;
 import com.kratos.common.AbstractCrudService;
 import com.kratos.exceptions.BusinessException;
 import com.kratos.module.dictionary.domain.Dictionary;
@@ -60,6 +64,7 @@ public class MemberProfitRecordsServiceImpl extends AbstractCrudService<MemberPr
     private final DictionaryCategoryService dictionaryCategoryService;
     private final MemberCashInRecordsService memberCashInRecordsService;
     private final MemberProfitTmpRecordsRepository memberProfitTmpRecordsRepository;
+    private final SnInfoRepository snInfoRepository;
 
     private final Logger logger = Logger.getLogger(MemberProfitRecordsServiceImpl.class);
 
@@ -361,7 +366,16 @@ public class MemberProfitRecordsServiceImpl extends AbstractCrudService<MemberPr
             importProfit.setRelateId(relateId);
             Shop shop = shopRepository.findOneBySn(importProfit.getSn());
             if (shop == null) {
-                throw new BusinessException(String.format("第" + r + "行数据不合法,SN对应商户不存在。SN为:[%s]", importProfit.getSn()));
+                SnInfo snInfo = snInfoRepository.findFirstBySn(importProfit.getSn());
+                if (snInfo != null && StringUtils.isNotBlank(snInfo.getMemberId())) {
+                    shop = new Shop();
+                    shop.setMemberId(snInfo.getMemberId());
+                    shop.setSn(importProfit.getSn());
+                    shop.setName(importProfit.getUserName());
+                    shopRepository.save(shop);
+                }else {
+                    throw new BusinessException(String.format("第" + r + "行数据不合法,SN对应商户不存在。SN为:[%s]", importProfit.getSn()));
+                }
             }
             if (StringUtils.isBlank(shop.getMemberId())) {
                 throw new BusinessException(String.format("第" + r + "行数据不合法,SN对应商户会员信息不存在。SN为:[%s]", importProfit.getSn()));
@@ -677,7 +691,7 @@ public class MemberProfitRecordsServiceImpl extends AbstractCrudService<MemberPr
             MemberRepository repository,
             MemberService memberService,
             MemberLevelParamService memberLevelParamService,
-            ShopRepository shopRepository, GroupBuildDrawRuleService groupBuildDrawRuleService, ActiveRuleService activeRuleService, MemberProfitRecordsRepository memberProfitRecordsRepository, DictionaryService dictionaryService, DictionaryCategoryService dictionaryCategoryService, MemberCashInRecordsService memberCashInRecordsService, MemberProfitTmpRecordsRepository memberProfitTmpRecordsRepository) {
+            ShopRepository shopRepository, GroupBuildDrawRuleService groupBuildDrawRuleService, ActiveRuleService activeRuleService, MemberProfitRecordsRepository memberProfitRecordsRepository, DictionaryService dictionaryService, DictionaryCategoryService dictionaryCategoryService, MemberCashInRecordsService memberCashInRecordsService, MemberProfitTmpRecordsRepository memberProfitTmpRecordsRepository, SnInfoRepository snInfoRepository) {
         this.repository = repository;
         this.memberService = memberService;
         this.memberLevelParamService = memberLevelParamService;
@@ -689,5 +703,6 @@ public class MemberProfitRecordsServiceImpl extends AbstractCrudService<MemberPr
         this.dictionaryCategoryService = dictionaryCategoryService;
         this.memberCashInRecordsService = memberCashInRecordsService;
         this.memberProfitTmpRecordsRepository = memberProfitTmpRecordsRepository;
+        this.snInfoRepository = snInfoRepository;
     }
 }
