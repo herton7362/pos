@@ -54,6 +54,12 @@ public class LoginServiceImpl extends AbstractLoginService {
         }
         member.setPassword(password);
         memberService.editPwd(member);
+
+        Admin admin = adminService.findByMemberId(member.getId());
+        if (admin != null) {
+            admin.setPassword(password);
+            adminService.save(admin);
+        }
     }
 
     @Override
