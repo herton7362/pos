@@ -99,7 +99,7 @@ public class SnController extends AbstractCrudController<SnInfo> {
     public ResponseEntity<?> transSnByMember(@RequestBody Map<String, String> reqMap) throws Exception {
         String sns = reqMap.get("sns");
         String memberId = reqMap.get("memberId");
-        String currentMemberId = reqMap.get("currentMemberId");
+        String currentMemberId = AdminThread.getInstance().get().getMemberId();
         snInfoService.transSnByMember(sns, memberId, currentMemberId);
         productAdmin(memberId);
         return new ResponseEntity<>(HttpStatus.OK);

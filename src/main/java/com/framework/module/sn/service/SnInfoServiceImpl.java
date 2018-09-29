@@ -101,8 +101,12 @@ public class SnInfoServiceImpl extends AbstractCrudService<SnInfo> implements Sn
         for (int i = 0; i < snArray.length; i++) {
             SnInfo snInfo = snInfoRepository.findFirstBySn(snArray[i]);
             if (StringUtils.isNotBlank(snInfo.getMemberId())) {
-                Member member = memberService.findOne(snInfo.getMemberId());
-                throw new BusinessException(snArray[i] + "已经划拨给会员【" + member.getName() + "】");
+                if (snInfo.getMemberId().equals(memberId)) {
+                    continue;
+                } else {
+                    Member member = memberService.findOne(snInfo.getMemberId());
+                    throw new BusinessException(snArray[i] + "已经划拨给会员【" + member.getName() + "】");
+                }
             }
             snInfo.setMemberId(memberId);
             snInfo.setTransDate(new Date());
