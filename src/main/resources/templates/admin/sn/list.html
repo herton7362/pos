@@ -29,7 +29,7 @@
 
         <!-- Main content -->
         <section id="content" class="content" v-cloak>
-            <div class="row">
+            <!-- <div class="row">
 				<div class="col-md-12">
 	                    <div style="background: #fff; margin-bottom: 10px; padding: 10px">
 		                    <span style="font-size: 15px; margin-top: 21px; display: inline-block;">请按模板要求上传文件</span>
@@ -42,7 +42,7 @@
 		                    <div >附件上传中请等待</div>
 	                    </div>
 				</div>
-            </div>
+            </div> -->
             <div class="row">
                 <div class="box">                
                 <div class="box-header">
@@ -82,22 +82,29 @@
                     </div>
                 </div>          
                  <div class="box-body">
-                     <div>
-                         <button class="btn btn-flat btn-success" @click="add"><i class="fa fa-plus-square"></i> 添加</button>
-                         <button
+                     <div style="overflow:hidden; margin-left:6px">
+                         <button style="float:left;" class="btn btn-flat btn-success" @click="add"><i class="fa fa-plus-square"></i> 添加</button>
+                         <button style="float:left; margin-left:6px"
                              class="btn btn-flat btn-success"
                              :disabled="datagrid.$instance.selectedRows <= 0"
                              :class="{disabled: datagrid.$instance.selectedRows <= 0}"
                              @click="edit(datagrid.$instance.selectedRows[0])">
                             <i class="fa fa-pencil"></i> 修改
                          </button>
-                         <button
+                         <button style="float:left; margin-left:6px"
                              class="btn btn-flat btn-danger"
                              :disabled="datagrid.$instance.selectedRows <= 0"
                              :class="{disabled: datagrid.$instance.selectedRows <= 0}"
                              @click="remove(datagrid.$instance.selectedRows)">
                              <i class="fa fa-trash"></i> 删除
                          </button>
+                         <form ref="uploadForm" style="float:left;; margin-left:6px">
+		                        <input ref="fileInput" type="file" name="snFile" :multiple="false" @change="upload" style="display: none;"/>
+		                        
+		                        <button type="button" class="btn btn-flat btn-success" @click="choseFile">
+		                            <i class="fa fa-trash"></i> 上传附件
+		                        </button>
+		                 </form>
                      </div>
                         <datagrid
                             :checkbox="true"

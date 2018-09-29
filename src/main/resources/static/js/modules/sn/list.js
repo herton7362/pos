@@ -112,6 +112,7 @@ require(['jquery', 'vue', 'messager', 'utils'], function($, Vue, messager, utils
                         self.data = data.content;
                         self.count = data.totalElements;
                         self.clearSelected();
+                        self.datagrid.$instance.selectedRows = [];
                     }
                 })
 /*                var self = this;
@@ -150,6 +151,7 @@ require(['jquery', 'vue', 'messager', 'utils'], function($, Vue, messager, utils
                         self.data = data.content;
                         self.count = data.totalElements;
                         self.clearSelected();
+                        self.datagrid.$instance.selectedRows = [];
                     }
                 })
             },
