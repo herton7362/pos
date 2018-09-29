@@ -100,6 +100,9 @@ public class SnInfoServiceImpl extends AbstractCrudService<SnInfo> implements Sn
         }
         for (int i = 0; i < snArray.length; i++) {
             SnInfo snInfo = snInfoRepository.findFirstBySn(snArray[i]);
+            if (StringUtils.isNotBlank(snInfo.getShopId())) {
+                throw new BusinessException("【" + snArray[i] + "】已经绑定，不能划拨给其他合伙人");
+            }
             if (StringUtils.isNotBlank(snInfo.getMemberId())) {
                 if (snInfo.getMemberId().equals(memberId)) {
                     continue;
@@ -136,6 +139,9 @@ public class SnInfoServiceImpl extends AbstractCrudService<SnInfo> implements Sn
             SnInfo snInfo = snInfoRepository.findFirstBySn(snArray[i]);
             if (!currentMemberId.equals(snInfo.getMemberId())) {
                 throw new BusinessException(snArray[i] + "不属于您，不能划拨");
+            }
+            if (StringUtils.isNotBlank(snInfo.getShopId())) {
+                throw new BusinessException("【" + snArray[i] + "】已经绑定，不能划拨给其他合伙人");
             }
             snInfo.setMemberId(memberId);
             snInfo.setTransDate(new Date());
