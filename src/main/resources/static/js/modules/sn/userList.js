@@ -103,7 +103,7 @@ require(['jquery', 'vue', 'messager', 'utils'], function($, Vue, messager, utils
                         sns: sns.join(','),
                         currentMemberId: self.currentMemberId
                     })),
-                    success: function(data) {console.log(data);
+                    success: function(data) {
                         self.distribution.modal.$instance.close();
                         messager.bubble('保存成功！');
                         self.load();
