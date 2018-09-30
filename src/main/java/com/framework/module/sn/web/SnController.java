@@ -6,6 +6,8 @@ import java.util.Map;
 
 import com.framework.module.member.domain.Member;
 import com.framework.module.member.service.MemberService;
+import com.framework.module.sn.domain.SnInfoRepository;
+import com.kratos.exceptions.BusinessException;
 import com.kratos.module.attachment.domain.Attachment;
 import com.kratos.module.attachment.service.AttachmentService;
 import com.kratos.module.auth.AdminThread;
@@ -39,13 +41,25 @@ public class SnController extends AbstractCrudController<SnInfo> {
     private final AttachmentService attachmentService;
     private final RoleService roleService;
     private final MemberService memberService;
+    private final SnInfoRepository snInfoRepository;
 
-    public SnController(SnInfoService snInfoService, AdminService adminService, AttachmentService attachmentService, RoleService roleService, MemberService memberService) {
+    public SnController(SnInfoService snInfoService, AdminService adminService, AttachmentService attachmentService, RoleService roleService, MemberService memberService, SnInfoRepository snInfoRepository) {
         this.snInfoService = snInfoService;
         this.adminService = adminService;
         this.attachmentService = attachmentService;
         this.roleService = roleService;
         this.memberService = memberService;
+        this.snInfoRepository = snInfoRepository;
+    }
+
+    @Override
+    public ResponseEntity<SnInfo> save(@RequestBody SnInfo snInfo) throws Exception {
+        SnInfo oleSn = snInfoRepository.findFirstBySn(snInfo.getSn());
+        if (oleSn != null && !oleSn.getId().equals(snInfo.getId())) {
+            throw new BusinessException("重复的SN数据");
+        }
+        snInfo = crudService.save(snInfo);
+        return new ResponseEntity<>(snInfo, HttpStatus.OK);
     }
 
     /**
@@ -85,7 +99,7 @@ public class SnController extends AbstractCrudController<SnInfo> {
     public ResponseEntity<?> transSnByMember(@RequestBody Map<String, String> reqMap) throws Exception {
         String sns = reqMap.get("sns");
         String memberId = reqMap.get("memberId");
-        String currentMemberId = reqMap.get("currentMemberId");
+        String currentMemberId = AdminThread.getInstance().get().getMemberId();
         snInfoService.transSnByMember(sns, memberId, currentMemberId);
         productAdmin(memberId);
         return new ResponseEntity<>(HttpStatus.OK);

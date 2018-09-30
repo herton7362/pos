@@ -4,6 +4,8 @@ import com.framework.module.auth.MemberThread;
 import com.framework.module.member.domain.Member;
 import com.framework.module.member.service.MemberService;
 import com.framework.module.shop.domain.Shop;
+import com.framework.module.sn.domain.SnInfo;
+import com.framework.module.sn.domain.SnInfoRepository;
 import com.kratos.common.AbstractCrudService;
 import com.kratos.common.PageResult;
 import com.kratos.common.utils.StringUtils;
@@ -30,10 +32,12 @@ public class ShopServiceImpl extends AbstractCrudService<Shop> implements ShopSe
 
     private final TokenStore tokenStore;
     private final MemberService memberService;
+    private final SnInfoRepository snInfoRepository;
 
-    public ShopServiceImpl(TokenStore tokenStore, MemberService memberService) {
+    public ShopServiceImpl(TokenStore tokenStore, MemberService memberService, SnInfoRepository snInfoRepository) {
         this.tokenStore = tokenStore;
         this.memberService = memberService;
+        this.snInfoRepository = snInfoRepository;
     }
 
     @Override
@@ -63,7 +67,13 @@ public class ShopServiceImpl extends AbstractCrudService<Shop> implements ShopSe
             }
             shop.setMemberId(member.getId());
         }
-        return super.save(shop);
+        Shop result = super.save(shop);
+        SnInfo snInfo = snInfoRepository.findFirstBySn(shop.getSn());
+        if (snInfo != null){
+            snInfo.setShopId(result.getId());
+            snInfoRepository.save(snInfo);
+        }
+        return result;
     }
 
     @Override

@@ -1,6 +1,8 @@
 package com.framework.module.sn.service;
 
 import com.framework.module.auth.MemberThread;
+import com.framework.module.member.domain.Member;
+import com.framework.module.member.service.MemberService;
 import com.framework.module.sn.domain.SnInfo;
 import com.framework.module.sn.domain.SnInfoHistory;
 import com.framework.module.sn.domain.SnInfoRepository;
@@ -9,7 +11,6 @@ import com.kratos.common.PageResult;
 import com.kratos.exceptions.BusinessException;
 import org.apache.commons.lang.StringUtils;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
-import org.apache.poi.ss.formula.functions.T;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
@@ -35,11 +36,13 @@ public class SnInfoServiceImpl extends AbstractCrudService<SnInfo> implements Sn
 
     private final SnInfoRepository snInfoRepository;
     private final SnInfoHistoryService snInfoHistoryService;
+    private final MemberService memberService;
 
 
-    public SnInfoServiceImpl(SnInfoRepository snInfoRepository, SnInfoHistoryService snInfoHistoryService) {
+    public SnInfoServiceImpl(SnInfoRepository snInfoRepository, SnInfoHistoryService snInfoHistoryService, MemberService memberService) {
         this.snInfoRepository = snInfoRepository;
         this.snInfoHistoryService = snInfoHistoryService;
+        this.memberService = memberService;
     }
 
 
@@ -92,13 +95,21 @@ public class SnInfoServiceImpl extends AbstractCrudService<SnInfo> implements Sn
         if (snArray.length == 0) {
             throw new BusinessException("sn信息填写的不正确");
         }
-        if (snInfoRepository.countAllByMemberId(memberId) <= 5 && snArray.length <= 5) {
+        if (snInfoRepository.countAllByMemberId(memberId) < 5 && snArray.length < 5) {
             throw new BusinessException("首次划分不得少于5个");
         }
         for (int i = 0; i < snArray.length; i++) {
             SnInfo snInfo = snInfoRepository.findFirstBySn(snArray[i]);
+            if (StringUtils.isNotBlank(snInfo.getShopId())) {
+                throw new BusinessException("【" + snArray[i] + "】已经绑定，不能划拨给其他合伙人");
+            }
             if (StringUtils.isNotBlank(snInfo.getMemberId())) {
-                throw new BusinessException(snArray[i] + "已经划拨给会员" + snInfo.getMemberId());
+                if (snInfo.getMemberId().equals(memberId)) {
+                    continue;
+                } else {
+                    Member member = memberService.findOne(snInfo.getMemberId());
+                    throw new BusinessException(snArray[i] + "已经划拨给会员【" + member.getName() + "】");
+                }
             }
             snInfo.setMemberId(memberId);
             snInfo.setTransDate(new Date());
@@ -120,7 +131,7 @@ public class SnInfoServiceImpl extends AbstractCrudService<SnInfo> implements Sn
             throw new BusinessException("sn信息填写的不正确");
         }
 
-        if (snInfoRepository.countAllByMemberId(memberId) <= 5 && snArray.length <= 5) {
+        if (snInfoRepository.countAllByMemberId(memberId) < 5 && snArray.length < 5) {
             throw new BusinessException("首次划分不得少于5个");
         }
 
@@ -128,6 +139,9 @@ public class SnInfoServiceImpl extends AbstractCrudService<SnInfo> implements Sn
             SnInfo snInfo = snInfoRepository.findFirstBySn(snArray[i]);
             if (!currentMemberId.equals(snInfo.getMemberId())) {
                 throw new BusinessException(snArray[i] + "不属于您，不能划拨");
+            }
+            if (StringUtils.isNotBlank(snInfo.getShopId())) {
+                throw new BusinessException("【" + snArray[i] + "】已经绑定，不能划拨给其他合伙人");
             }
             snInfo.setMemberId(memberId);
             snInfo.setTransDate(new Date());
