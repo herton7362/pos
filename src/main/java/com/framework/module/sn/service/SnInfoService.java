@@ -33,8 +33,9 @@ public interface SnInfoService extends CrudService<SnInfo> {
     /**
      * 获取可分配的SN列表
      * @return SN列表
+     * @param searchSn
      */
-    List<String> getAvailableSn();
+    List<String> getAvailableSn(String searchSn);
 
     /**
      * 查询SN信息
@@ -49,5 +50,4 @@ public interface SnInfoService extends CrudService<SnInfo> {
      */
     PageResult<SnInfo> getAllSnInfo(String startSn, String endSn, SnInfo.Status status, SnInfo.BindStatus bindStatus, Integer pageSize, Integer pageNum, String memberId) throws Exception;
 
-    List<SnInfo> getUnDistributionList(String memberId);
 }

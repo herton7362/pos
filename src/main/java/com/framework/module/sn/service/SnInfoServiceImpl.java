@@ -157,8 +157,11 @@ public class SnInfoServiceImpl extends AbstractCrudService<SnInfo> implements Sn
     }
 
     @Override
-    public List<String> getAvailableSn() {
+    public List<String> getAvailableSn(String searchSn) {
         String memberId = MemberThread.getInstance().get().getId();
+        if (StringUtils.isNotBlank(searchSn)) {
+            return snInfoRepository.getAvailableSnByMemberIdAndSearchInfo(memberId, searchSn);
+        }
         return snInfoRepository.getAvailableSnByMemberId(memberId);
     }
 
@@ -190,10 +193,10 @@ public class SnInfoServiceImpl extends AbstractCrudService<SnInfo> implements Sn
         return findAll(pageRequest, param);
     }
 
-    @Override
-    public List<SnInfo> getUnDistributionList(String memberId) {
-        return snInfoRepository.findAllByMemberIdAndShopIdNull(memberId);
-    }
+//    @Override
+//    public List<SnInfo> getUnDistributionList(String memberId) {
+//        return snInfoRepository.findAllByMemberIdAndShopIdNull(memberId);
+//    }
 
     @Override
     public PageResult<SnInfo> findAll(PageRequest pageRequest, Map<String, String[]> param) throws Exception {
