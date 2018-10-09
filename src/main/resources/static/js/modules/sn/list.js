@@ -3,7 +3,11 @@ require(['jquery', 'vue', 'messager', 'utils'], function($, Vue, messager, utils
         el: '#content',
         data: {
             columns: [
-                      {field:'sn', title:'sn号'}
+                      {field:'sn', title:'sn号'},
+                      {field:'bindStatus', title:'绑定状态'},
+                      {field:'memberName', title:'归属合伙人'},
+                      {field:'transMemberName', title:'划拨人'},
+                      {field:'shopName', title:'归属用户'}
                   	
                   ],
             data: [],
