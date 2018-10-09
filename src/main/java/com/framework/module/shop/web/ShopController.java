@@ -13,6 +13,7 @@ import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.util.CollectionUtils;
 import org.springframework.web.bind.annotation.*;
 
 import java.text.ParseException;
@@ -121,6 +122,29 @@ public class ShopController extends AbstractCrudController<Shop> {
     public ResponseEntity<?> exchangeMachine(@RequestParam String shopIds) throws BusinessException {
         String memberId = UserThread.getInstance().get().getId();
         shopExchangeRecordsService.exchangeMachine(shopIds, memberId);
+        return new ResponseEntity<>(HttpStatus.OK);
+    }
+
+    @ApiOperation(value = "兑换机器")
+    @RequestMapping(value = "/exchangeMachineNew", method = RequestMethod.POST)
+    public ResponseEntity<?> exchangeMachineNew(@RequestParam Integer num) throws BusinessException {
+        String memberId = UserThread.getInstance().get().getId();
+        List<Shop> list = shopRepository.findAllUnExchangeByMemberId(memberId);
+        if (num < 1) {
+            throw new BusinessException("兑换数量不能小于1");
+        }
+        if (CollectionUtils.isEmpty(list)) {
+            throw new BusinessException("无可兑换的机器");
+        }
+        if (num > list.size()) {
+            throw new BusinessException("超过最大可兑换数量");
+        }
+        StringBuilder shopIds = new StringBuilder();
+        for (int i = 0; i < num; i++) {
+            shopIds.append(list.get(i).getId()).append("|");
+        }
+        shopIds.deleteCharAt(shopIds.lastIndexOf("|"));
+        shopExchangeRecordsService.exchangeMachine(shopIds.toString(), memberId);
         return new ResponseEntity<>(HttpStatus.OK);
     }
 

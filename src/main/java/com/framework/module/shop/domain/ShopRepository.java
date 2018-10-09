@@ -19,4 +19,6 @@ public interface ShopRepository extends PageRepository<Shop> {
     @Query("SELECT sum(p.transactionAmount) AS totalTransactionAmount FROM Shop p where p.memberId=?1")
     Map<String, Double> staticTotalTransaction(String memberId);
 
+    @Query("select m from Shop m where m.memberId=?1 and m.status='ACTIVE' and (m.exchangePosMachine=0 or m.exchangePosMachine IS null)")
+    List<Shop> findAllUnExchangeByMemberId(String memberId);
 }
