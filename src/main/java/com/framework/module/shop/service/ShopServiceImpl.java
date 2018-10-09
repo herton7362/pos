@@ -42,25 +42,25 @@ public class ShopServiceImpl extends AbstractCrudService<Shop> implements ShopSe
 
     @Override
     public Shop save(Shop shop) throws Exception {
-        if(StringUtils.isNotBlank(shop.getSn())) {
+        if (StringUtils.isNotBlank(shop.getSn())) {
             Map<String, String[]> param = new HashMap<>();
-            param.put("sn", new String[]{ shop.getSn() });
+            param.put("sn", new String[]{shop.getSn()});
             List<Shop> shops = findAll(param);
-            if(shops != null && !shops.isEmpty() && !shops.get(0).getId().equals(shop.getId())) {
-                throw new BusinessException("SN码【"+shop.getSn()+"】不能重复");
+            if (shops != null && !shops.isEmpty() && !shops.get(0).getId().equals(shop.getId())) {
+                throw new BusinessException("SN码【" + shop.getSn() + "】不能重复");
             }
         }
-        if(StringUtils.isBlank(shop.getId())) {
+        if (StringUtils.isBlank(shop.getId())) {
             Member member = MemberThread.getInstance().get();
-            if(member == null) {
+            if (member == null) {
                 OAuth2Authentication oAuth2Authentication = tokenStore.readAuthentication(shop.getAccess_token());
-                if(oAuth2Authentication != null) {
+                if (oAuth2Authentication != null) {
                     Object principal = oAuth2Authentication.getPrincipal();
-                    if(principal instanceof User) {
+                    if (principal instanceof User) {
                         User user = (User) principal;
                         member = memberService.findOneByLoginName(user.getUsername());
                     }
-                    if(member == null) {
+                    if (member == null) {
                         throw new BusinessException("未携带用户信息");
                     }
                 }
@@ -69,8 +69,10 @@ public class ShopServiceImpl extends AbstractCrudService<Shop> implements ShopSe
         }
         Shop result = super.save(shop);
         SnInfo snInfo = snInfoRepository.findFirstBySn(shop.getSn());
-        if (snInfo != null){
+        if (snInfo != null) {
             snInfo.setShopId(result.getId());
+            snInfo.setShopMobile(result.getMobile());
+            snInfo.setShopName(result.getName());
             snInfoRepository.save(snInfo);
         }
         return result;
@@ -95,11 +97,11 @@ public class ShopServiceImpl extends AbstractCrudService<Shop> implements ShopSe
         public Predicate toPredicate(Root<Shop> root, CriteriaQuery<?> criteriaQuery, CriteriaBuilder criteriaBuilder) {
             Predicate predicate = super.toPredicate(root, criteriaQuery, criteriaBuilder);
             List<Predicate> predicates = new ArrayList<>();
-            if(params.containsKey("quickSearch")) {
+            if (params.containsKey("quickSearch")) {
                 String[] value = params.get("quickSearch");
-                predicates.add(criteriaBuilder.like(root.get("name"), "%"+ value[0] +"%"));
-                predicates.add(criteriaBuilder.like(root.get("mobile"), "%"+ value[0] +"%"));
-                predicates.add(criteriaBuilder.like(root.get("sn"), "%"+ value[0] +"%"));
+                predicates.add(criteriaBuilder.like(root.get("name"), "%" + value[0] + "%"));
+                predicates.add(criteriaBuilder.like(root.get("mobile"), "%" + value[0] + "%"));
+                predicates.add(criteriaBuilder.like(root.get("sn"), "%" + value[0] + "%"));
                 Predicate predicateTemp = criteriaBuilder.or(predicates.toArray(new Predicate[]{}));
                 predicates.clear();
                 predicates.add(predicateTemp);
