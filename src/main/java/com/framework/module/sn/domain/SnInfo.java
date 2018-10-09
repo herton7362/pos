@@ -22,8 +22,29 @@ public class SnInfo extends BaseEntity {
     @ApiModelProperty(value = "memberId")
     private String memberId;
     @Column(length = 36)
+    @ApiModelProperty(value = "memberName")
+    private String memberName;
+    @Column(length = 36)
+    @ApiModelProperty(value = "memberMobile")
+    private String memberMobile;
+    @Column(length = 36)
+    @ApiModelProperty(value = "transMemberId")
+    private String transMemberId;
+    @Column(length = 36)
+    @ApiModelProperty(value = "transMemberName")
+    private String transMemberName;
+    @Column(length = 36)
+    @ApiModelProperty(value = "transMemberMobile")
+    private String transMemberMobile;
+    @Column(length = 36)
     @ApiModelProperty(value = "shopId")
     private String shopId;
+    @Column(length = 36)
+    @ApiModelProperty(value = "shopName")
+    private String shopName;
+    @Column(length = 36)
+    @ApiModelProperty(value = "shopMobile")
+    private String shopMobile;
 
     public String getSn() {
         return sn;
@@ -57,24 +78,85 @@ public class SnInfo extends BaseEntity {
         this.shopId = shopId;
     }
 
+    public String getMemberName() {
+        return memberName;
+    }
+
+    public void setMemberName(String memberName) {
+        this.memberName = memberName;
+    }
+
+    public String getTransMemberId() {
+        return transMemberId;
+    }
+
+    public void setTransMemberId(String transMemberId) {
+        this.transMemberId = transMemberId;
+    }
+
+    public String getTransMemberName() {
+        return transMemberName;
+    }
+
+    public void setTransMemberName(String transMemberName) {
+        this.transMemberName = transMemberName;
+    }
+
+    public String getMemberMobile() {
+        return memberMobile;
+    }
+
+    public void setMemberMobile(String memberMobile) {
+        this.memberMobile = memberMobile;
+    }
+
+    public String getShopName() {
+        return shopName;
+    }
+
+    public void setShopName(String shopName) {
+        this.shopName = shopName;
+    }
+
+    public String getShopMobile() {
+        return shopMobile;
+    }
+
+    public void setShopMobile(String shopMobile) {
+        this.shopMobile = shopMobile;
+    }
+
+    public String getTransMemberMobile() {
+        return transMemberMobile;
+    }
+
+    public void setTransMemberMobile(String transMemberMobile) {
+        this.transMemberMobile = transMemberMobile;
+    }
+
     public enum Status {
         DISTRIBUTION("已分配"),
         UN_DISTRIBUTION("未分配");
         private String displayName;
+
         Status(String displayName) {
             this.displayName = displayName;
         }
+
         public String getDisplayName() {
             return displayName;
         }
     }
+
     public enum BindStatus {
         BIND("绑定"),
         UN_BIND("未绑定");
         private String displayName;
+
         BindStatus(String displayName) {
             this.displayName = displayName;
         }
+
         public String getDisplayName() {
             return displayName;
         }

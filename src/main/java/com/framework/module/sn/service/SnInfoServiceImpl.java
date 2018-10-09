@@ -98,6 +98,7 @@ public class SnInfoServiceImpl extends AbstractCrudService<SnInfo> implements Sn
         if (snInfoRepository.countAllByMemberId(memberId) < 5 && snArray.length < 5) {
             throw new BusinessException("首次划分不得少于5个");
         }
+        Member receiveMember = memberService.findOne(memberId);
         for (int i = 0; i < snArray.length; i++) {
             SnInfo snInfo = snInfoRepository.findFirstBySn(snArray[i]);
             if (StringUtils.isNotBlank(snInfo.getShopId())) {
@@ -112,12 +113,16 @@ public class SnInfoServiceImpl extends AbstractCrudService<SnInfo> implements Sn
                 }
             }
             snInfo.setMemberId(memberId);
+            snInfo.setMemberName(receiveMember.getName());
+            snInfo.setMemberMobile(receiveMember.getMobile());
             snInfo.setTransDate(new Date());
             save(snInfo);
 
             SnInfoHistory snInfoHistory = new SnInfoHistory();
             snInfoHistory.setSn(snInfo.getSn());
             snInfoHistory.setMemberId(snInfo.getMemberId());
+            snInfoHistory.setMemberName(receiveMember.getName());
+            snInfoHistory.setMemberMobile(receiveMember.getMobile());
             snInfoHistory.setTransDate(snInfo.getTransDate());
             snInfoHistoryService.save(snInfoHistory);
 
@@ -130,11 +135,11 @@ public class SnInfoServiceImpl extends AbstractCrudService<SnInfo> implements Sn
         if (snArray.length == 0) {
             throw new BusinessException("sn信息填写的不正确");
         }
-
         if (snInfoRepository.countAllByMemberId(memberId) < 5 && snArray.length < 5) {
             throw new BusinessException("首次划分不得少于5个");
         }
-
+        Member receiveMember = memberService.findOne(memberId);
+        Member transMember = memberService.findOne(currentMemberId);
         for (int i = 0; i < snArray.length; i++) {
             SnInfo snInfo = snInfoRepository.findFirstBySn(snArray[i]);
             if (!currentMemberId.equals(snInfo.getMemberId())) {
@@ -144,12 +149,22 @@ public class SnInfoServiceImpl extends AbstractCrudService<SnInfo> implements Sn
                 throw new BusinessException("【" + snArray[i] + "】已经绑定，不能划拨给其他合伙人");
             }
             snInfo.setMemberId(memberId);
+            snInfo.setMemberName(receiveMember.getName());
+            snInfo.setMemberMobile(receiveMember.getMobile());
+            snInfo.setTransMemberId(transMember.getId());
+            snInfo.setTransMemberName(transMember.getName());
+            snInfo.setTransMemberMobile(transMember.getMobile());
             snInfo.setTransDate(new Date());
             save(snInfo);
 
             SnInfoHistory snInfoHistory = new SnInfoHistory();
             snInfoHistory.setSn(snInfo.getSn());
             snInfoHistory.setMemberId(snInfo.getMemberId());
+            snInfoHistory.setMemberName(receiveMember.getName());
+            snInfoHistory.setMemberMobile(receiveMember.getMobile());
+            snInfoHistory.setTransMemberId(transMember.getId());
+            snInfoHistory.setTransMemberName(transMember.getName());
+            snInfoHistory.setTransMemberMobile(transMember.getMobile());
             snInfoHistory.setTransDate(snInfo.getTransDate());
             snInfoHistoryService.save(snInfoHistory);
 
@@ -157,8 +172,11 @@ public class SnInfoServiceImpl extends AbstractCrudService<SnInfo> implements Sn
     }
 
     @Override
-    public List<String> getAvailableSn() {
+    public List<String> getAvailableSn(String searchSn) {
         String memberId = MemberThread.getInstance().get().getId();
+        if (StringUtils.isNotBlank(searchSn)) {
+            return snInfoRepository.getAvailableSnByMemberIdAndSearchInfo(memberId, searchSn);
+        }
         return snInfoRepository.getAvailableSnByMemberId(memberId);
     }
 
@@ -190,10 +208,10 @@ public class SnInfoServiceImpl extends AbstractCrudService<SnInfo> implements Sn
         return findAll(pageRequest, param);
     }
 
-    @Override
-    public List<SnInfo> getUnDistributionList(String memberId) {
-        return snInfoRepository.findAllByMemberIdAndShopIdNull(memberId);
-    }
+//    @Override
+//    public List<SnInfo> getUnDistributionList(String memberId) {
+//        return snInfoRepository.findAllByMemberIdAndShopIdNull(memberId);
+//    }
 
     @Override
     public PageResult<SnInfo> findAll(PageRequest pageRequest, Map<String, String[]> param) throws Exception {

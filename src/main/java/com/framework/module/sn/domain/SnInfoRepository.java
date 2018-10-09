@@ -17,5 +17,7 @@ public interface SnInfoRepository extends PageRepository<SnInfo> {
     List<String> getAvailableSnByMemberId(String memberId);
     @Query("select m from SnInfo m where m.memberId=?1 and m.shopId is null")
     List<SnInfo> findAllByMemberIdAndShopIdNull(String memberId);
+    @Query("select m.sn from SnInfo m where m.memberId=?1 and m.shopId is null and m.sn like CONCAT('%',?2,'%')")
+    List<String> getAvailableSnByMemberIdAndSearchInfo(String memberId, String searchInfo);
 
 }

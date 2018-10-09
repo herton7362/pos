@@ -110,8 +110,8 @@ public class SnController extends AbstractCrudController<SnInfo> {
      */
     @ApiOperation(value = "查询会员下可分配的SN信息")
     @RequestMapping(value = "/getAvailableSn", method = RequestMethod.GET)
-    public ResponseEntity<List<String>> getAvailableSn() {
-        return new ResponseEntity<>(snInfoService.getAvailableSn(), HttpStatus.OK);
+    public ResponseEntity<List<String>> getAvailableSn(@RequestParam(required = false) String searchSn) {
+        return new ResponseEntity<>(snInfoService.getAvailableSn(searchSn), HttpStatus.OK);
     }
 
     @ApiOperation(value = "查询所有SN信息，有筛选功能")
@@ -121,12 +121,12 @@ public class SnController extends AbstractCrudController<SnInfo> {
         return new ResponseEntity<>(snInfoService.getAllSnInfo(startSn, endSn, status, bindStatus, pageSize, pageNum, memberId), HttpStatus.OK);
     }
 
-    @ApiOperation(value = "查询待分配列表")
-    @RequestMapping(value = "/getUnDistributionList", method = RequestMethod.GET)
-    public ResponseEntity<List<SnInfo>> getUnDistributionList(@RequestParam String memberId) {
-        List<SnInfo> result = snInfoService.getUnDistributionList(memberId);
-        return new ResponseEntity<>(result, HttpStatus.OK);
-    }
+//    @ApiOperation(value = "查询待分配列表")
+//    @RequestMapping(value = "/getUnDistributionList", method = RequestMethod.GET)
+//    public ResponseEntity<List<SnInfo>> getUnDistributionList(@RequestParam String memberId) {
+//        List<SnInfo> result = snInfoService.getUnDistributionList(memberId);
+//        return new ResponseEntity<>(result, HttpStatus.OK);
+//    }
 
     private void productAdmin(String memberId) throws Exception {
         Member member = memberService.findOne(memberId);

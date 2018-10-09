@@ -32,11 +32,11 @@ public class MemberCashInRecords extends BaseEntity {
     private Status status;
 
     @ApiModelProperty(value = "提现失败理由")
-    @Column(length = 20)
+    @Column(length = 200)
     private String reason;
 
     @ApiModelProperty(value = "收款银行卡卡号")
-    @Column(length = 20)
+    @Column(length = 50)
     private String collectAccount;
 
     @ApiModelProperty(value = "收款人")
@@ -44,11 +44,11 @@ public class MemberCashInRecords extends BaseEntity {
     private String collectName;
 
     @ApiModelProperty(value = "流水单号")
-    @Column(length = 20)
+    @Column(length = 200)
     private String serialNum;
 
     @ApiModelProperty(value = "银行卡银行")
-    @Column(length = 20)
+    @Column(length = 200)
     private String bankName;
 
     public String getMemberId() {
