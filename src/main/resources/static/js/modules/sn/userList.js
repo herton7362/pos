@@ -52,7 +52,8 @@ require(['jquery', 'vue', 'messager', 'utils'], function($, Vue, messager, utils
                 }
             },
             members: [],
-            currentMemberId: null
+            currentMemberId: null,
+            bindMemberId:null
         },
         methods: {
             loadRecords: function () {
@@ -122,27 +123,32 @@ require(['jquery', 'vue', 'messager', 'utils'], function($, Vue, messager, utils
         mounted: function() {
         	var self = this;
             $.ajax({
-                url: utils.patchUrl('/api/member'),
-                data: {
-                    sort: 'sortNumber',
-                    order: 'asc',
-                    logicallyDeleted: false
-                },
-                success: function(data) {
-                    $.each(data.content, function () {
-                        this.name = this.name + '(' + this.loginName + ')';
-                    });
-                    self.members = data.content;
-                }
-            });
-            $.ajax({
                 url: utils.patchUrl('/user/info'),
                 cache: false,
                 success: function (user) {
                     self.currentMemberId = user.id;
+                    self.bindMemberId = user.memberId;
                     self.loadRecords();
+
+                    $.ajax({
+                        url: utils.patchUrl('/api/member'),
+                        data: {
+                            sort: 'sortNumber',
+                            order: 'asc',
+                            logicallyDeleted: false,
+                            fatherId:self.bindMemberId,
+                        },
+                        success: function(data) {
+                            $.each(data.content, function () {
+                                this.name = this.name + '(' + this.loginName + ')';
+                            });
+                            self.members = data.content;
+                        }
+                    });
                 }
             })
+
+
         },
 
     });
