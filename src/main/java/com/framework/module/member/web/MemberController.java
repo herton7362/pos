@@ -9,6 +9,7 @@ import com.kratos.common.AbstractCrudController;
 import com.kratos.common.CrudService;
 import com.kratos.common.PageParam;
 import com.kratos.common.PageResult;
+import com.kratos.module.auth.AdminThread;
 import com.kratos.module.auth.UserThread;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiImplicitParam;
@@ -98,6 +99,7 @@ public class MemberController extends AbstractCrudController<Member> {
 
     /**
      * 查询盟友
+     *
      * @param sortType 排序类型
      * @return 响应
      * @throws Exception 异常
@@ -163,6 +165,37 @@ public class MemberController extends AbstractCrudController<Member> {
         }
         List<Member> list = crudService.findAll(param);
         return new ResponseEntity<>(list, HttpStatus.OK);
+    }
+
+    /**
+     * @return 查询所有子节点
+     * @throws Exception
+     */
+    @ApiOperation(value = "查询盟友总数")
+    @RequestMapping(value = "/queryAllies", method = RequestMethod.GET)
+    public ResponseEntity<List<Member>> queryAllies() throws Exception {
+        String memberId = AdminThread.getInstance().get().getMemberId();
+        AllyMemberInfos allyMembers = memberService.getAlliesInfosByMemberId(memberId, new Date().getTime());
+        List<Member> result = new ArrayList<>();
+
+        if (!CollectionUtils.isEmpty(allyMembers.getSonList())) {
+            for (Member m : allyMembers.getSonList()) {
+                RealIdentityAudit realIdentityAudit = realIdentityAuditRepository.findByMemberId(m.getId());
+                if (realIdentityAudit != null && RealIdentityAudit.Status.PASS.equals(realIdentityAudit.getStatus())) {
+                    result.add(m);
+                }
+            }
+        }
+        if (!CollectionUtils.isEmpty(allyMembers.getGrandSonList())) {
+            for (Member m : allyMembers.getGrandSonList()) {
+                RealIdentityAudit realIdentityAudit = realIdentityAuditRepository.findByMemberId(m.getId());
+                if (realIdentityAudit != null && RealIdentityAudit.Status.PASS.equals(realIdentityAudit.getStatus())) {
+                    result.add(m);
+                }
+            }
+        }
+
+        return new ResponseEntity<>(result, HttpStatus.OK);
     }
 
     @Autowired

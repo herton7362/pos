@@ -131,7 +131,7 @@ require(['jquery', 'vue', 'messager', 'utils'], function($, Vue, messager, utils
                     self.loadRecords();
 
                     $.ajax({
-                        url: utils.patchUrl('/api/member'),
+                        url: utils.patchUrl('/api/member/queryAllies'),
                         data: {
                             sort: 'sortNumber',
                             order: 'asc',
@@ -139,10 +139,10 @@ require(['jquery', 'vue', 'messager', 'utils'], function($, Vue, messager, utils
                             fatherId:self.bindMemberId,
                         },
                         success: function(data) {
-                            $.each(data.content, function () {
+                            $.each(data, function () {
                                 this.name = this.name + '(' + this.loginName + ')';
                             });
-                            self.members = data.content;
+                            self.members = data;
                         }
                     });
                 }
