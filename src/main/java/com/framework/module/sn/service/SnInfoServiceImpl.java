@@ -104,14 +104,14 @@ public class SnInfoServiceImpl extends AbstractCrudService<SnInfo> implements Sn
             if (StringUtils.isNotBlank(snInfo.getShopId())) {
                 throw new BusinessException("【" + snArray[i] + "】已经绑定，不能划拨给其他合伙人");
             }
-            if (StringUtils.isNotBlank(snInfo.getMemberId())) {
-                if (snInfo.getMemberId().equals(memberId)) {
-                    continue;
-                } else {
-                    Member member = memberService.findOne(snInfo.getMemberId());
-                    throw new BusinessException(snArray[i] + "已经划拨给会员【" + member.getName() + "】");
-                }
-            }
+//            if (StringUtils.isNotBlank(snInfo.getMemberId())) {
+//                if (snInfo.getMemberId().equals(memberId)) {
+//                    continue;
+//                } else {
+//                    Member member = memberService.findOne(snInfo.getMemberId());
+//                    throw new BusinessException(snArray[i] + "已经划拨给会员【" + member.getName() + "】");
+//                }
+//            }
             snInfo.setMemberId(memberId);
             snInfo.setMemberName(receiveMember.getName());
             snInfo.setMemberMobile(receiveMember.getMobile());

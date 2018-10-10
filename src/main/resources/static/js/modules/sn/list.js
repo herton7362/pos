@@ -210,7 +210,7 @@ require(['jquery', 'vue', 'messager', 'utils'], function($, Vue, messager, utils
                     contentType: 'application/json',
                     type: 'POST',
                     data: JSON.stringify($.extend(this.formData, {
-                        memberId: this.currentMemberId
+                        //memberId: this.currentMemberId
                     })),
                     success: function(data) {
                         self.modal.$instance.close();
