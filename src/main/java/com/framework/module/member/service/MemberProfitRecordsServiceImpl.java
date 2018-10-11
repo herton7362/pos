@@ -417,23 +417,23 @@ public class MemberProfitRecordsServiceImpl extends AbstractCrudService<MemberPr
     private void setActiveRewardProfit(List<ActiveRule> activeRules, Shop shop, String operatTransactionId, Long transactionDate) throws Exception {
         if ((null == shop.getStatus() || shop.getStatus().equals(Shop.Status.UN_ACTIVE)) && shop.getTransactionAmount() >= activeRules.get(0).getConditionValue()) {
             shop.setStatus(Shop.Status.ACTIVE);
-            Long rewardCount = shopRepository.count(
-                    (Root<Shop> root, CriteriaQuery<?> criteriaQuery, CriteriaBuilder criteriaBuilder) -> {
-                        List<Predicate> predicate = new ArrayList<>();
-                        predicate.add(criteriaBuilder.equal(root.get("mobile"), shop.getMobile()));
-                        predicate.add(criteriaBuilder.equal(root.get("activationReward"), Constant.ACTIVATION_REWARD_YES));
-                        return criteriaBuilder.and(predicate.toArray(new Predicate[]{}));
-                    });
-            if (rewardCount == 0) {
-                shop.setActivationReward(Constant.ACTIVATION_REWARD_YES);
-                MemberProfitRecords activationRewardProfit = new MemberProfitRecords();
-                activationRewardProfit.setOperateTransactionId(operatTransactionId);
-                activationRewardProfit.setProfitType(Constant.PROFIT_TYPE_FANXIAN);
-                activationRewardProfit.setProfit(activeRules.get(0).getAwardMoney());
-                activationRewardProfit.setMemberId(shop.getMemberId());
-                activationRewardProfit.setTransactionDate(transactionDate);
-                save(activationRewardProfit);
-            }
+//            Long rewardCount = shopRepository.count(
+//                    (Root<Shop> root, CriteriaQuery<?> criteriaQuery, CriteriaBuilder criteriaBuilder) -> {
+//                        List<Predicate> predicate = new ArrayList<>();
+//                        predicate.add(criteriaBuilder.equal(root.get("mobile"), shop.getMobile()));
+//                        predicate.add(criteriaBuilder.equal(root.get("activationReward"), Constant.ACTIVATION_REWARD_YES));
+//                        return criteriaBuilder.and(predicate.toArray(new Predicate[]{}));
+//                    });
+//            if (rewardCount == 0) {
+            shop.setActivationReward(Constant.ACTIVATION_REWARD_YES);
+            MemberProfitRecords activationRewardProfit = new MemberProfitRecords();
+            activationRewardProfit.setOperateTransactionId(operatTransactionId);
+            activationRewardProfit.setProfitType(Constant.PROFIT_TYPE_FANXIAN);
+            activationRewardProfit.setProfit(activeRules.get(0).getAwardMoney());
+            activationRewardProfit.setMemberId(shop.getMemberId());
+            activationRewardProfit.setTransactionDate(transactionDate);
+            save(activationRewardProfit);
+//            }
         }
     }
 

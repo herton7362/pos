@@ -67,8 +67,11 @@ public class ShopServiceImpl extends AbstractCrudService<Shop> implements ShopSe
             }
             shop.setMemberId(member.getId());
         }
-        Shop result = super.save(shop);
         SnInfo snInfo = snInfoRepository.findFirstBySn(shop.getSn());
+        if (snInfo != null && !shop.getMemberId().equals(snInfo.getMemberId())) {
+            throw new BusinessException("该SN不属于你，不能绑定");
+        }
+        Shop result = super.save(shop);
         if (snInfo != null) {
             snInfo.setShopId(result.getId());
             snInfo.setShopMobile(result.getMobile());
