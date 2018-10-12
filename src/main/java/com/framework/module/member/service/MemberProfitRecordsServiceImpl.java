@@ -458,7 +458,8 @@ public class MemberProfitRecordsServiceImpl extends AbstractCrudService<MemberPr
             fatherProfit.setProfitType(Constant.PROFIT_TYPE_GUANLI);
             fatherProfit.setMemberId(fatherMember.getId());
             MemberLevelParam fatherMemberParam = memberLevelParamService.getParamByLevel(String.valueOf(fatherMember.getMemberLevel()));
-            double fatherProfitRate = fatherMemberParam.getmPosProfit() / 10000 - profitRate;
+            double fatherProfitRate = setDoubleScale(fatherMemberParam.getmPosProfit() / 10000 - profitRate, 5);
+            profitRate = setDoubleScale(fatherMemberParam.getmPosProfit() / 10000, 5);
             fatherProfitRate = fatherProfitRate < 0 ? 0 : fatherProfitRate;
             fatherProfit.setProfit(new BigDecimal(fatherProfitRate * importProfit.getTransactionAmount()).setScale(2, BigDecimal.ROUND_HALF_UP).doubleValue());
             memberProfitTmpRecordsList.add(fatherProfit);
@@ -683,6 +684,10 @@ public class MemberProfitRecordsServiceImpl extends AbstractCrudService<MemberPr
 
     private String setDouleScale(double inputDouble) {
         return new BigDecimal(inputDouble).setScale(2, BigDecimal.ROUND_HALF_UP).toString();
+    }
+
+    private double setDoubleScale(double inputDouble, int length) {
+        return new BigDecimal(inputDouble).setScale(length, BigDecimal.ROUND_HALF_UP).doubleValue();
     }
 
     @Lazy
