@@ -13,6 +13,9 @@ public interface MemberProfitRecordsRepository extends PageRepository<MemberProf
         Map<String, Double> staticProfitsByMonth(String memberId, long start, long end);
 
         @Query("SELECT sum(p.transactionAmount) AS totalTransactionAmount FROM MemberProfitRecords p where p.memberId=?1 AND p.transactionDate>=?2 AND p.transactionDate<=?3")
+        Map<String, Double> staticProfitsByMonthNew(String memberId, long start, long end);
+
+        @Query("SELECT sum(p.transactionAmount) AS totalTransactionAmount FROM MemberProfitRecords p where p.memberId=?1 AND p.transactionDate>=?2 AND p.transactionDate<=?3")
         Map<String, Double> staticProfitsByTime(String memberId, long start, long end);
 
         @Query("SELECT sum(CASE p.transactionType WHEN 1 THEN p.transactionAmount ELSE 0 END) AS transaction1, sum(CASE p.transactionType WHEN 2 THEN p.transactionAmount ELSE 0 END) AS transaction2, sum(CASE p.transactionType WHEN 3 THEN p.transactionAmount ELSE 0 END) AS transaction3, sum(CASE p.transactionType WHEN 4 THEN p.transactionAmount ELSE 0 END) AS transaction4, sum(CASE p.transactionType WHEN 1 THEN p.profit ELSE 0 END) AS profit1, sum(CASE p.transactionType WHEN 2 THEN p.profit ELSE 0 END) AS profit2, sum(CASE p.transactionType WHEN 3 THEN p.profit ELSE 0 END) AS profit3, sum(CASE p.transactionType WHEN 4 THEN p.profit ELSE 0 END) AS profit4 FROM MemberProfitRecords p where p.memberId=?1 AND p.transactionDate>=?2 AND p.transactionDate<=?3 AND p.profitType=2")

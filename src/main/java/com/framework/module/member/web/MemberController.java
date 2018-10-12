@@ -135,6 +135,22 @@ public class MemberController extends AbstractCrudController<Member> {
         return new ResponseEntity<>(result, HttpStatus.OK);
     }
 
+    @ApiOperation(value = "查询盟友总数")
+    @RequestMapping(value = "/myAlliesId", method = RequestMethod.GET)
+    public ResponseEntity<List<String>> myAlliesId() throws Exception {
+        String memberId = UserThread.getInstance().get().getId();
+        AllyMemberInfos allyMembers = memberService.getAlliesInfosByMemberId(memberId, new Date().getTime());
+        List<Member> result = new ArrayList<>();
+        result.addAll(allyMembers.getSonList());
+        result.addAll(allyMembers.getGrandSonList());
+
+        List<String> result1 = new ArrayList<>();
+        for (Member member : result) {
+            result1.add(member.getId());
+        }
+
+        return new ResponseEntity<>(result1, HttpStatus.OK);
+    }
 
     /**
      * 查询总数

@@ -261,7 +261,7 @@ public class MemberProfitRecordsServiceImpl extends AbstractCrudService<MemberPr
             for (String m : sonList) {
                 List<Shop> shops = shopRepository.findAllByMemberId(m, start, end);
                 newSonShopNum += shops == null ? 0 : shops.size();
-                Map<String, Double> resultMap = memberProfitRecordsRepository.staticProfitsByMonth(m, start, end);
+                Map<String, Double> resultMap = memberProfitRecordsRepository.staticProfitsByMonthNew(m, start, end);
                 totalTransactionAmount += resultMap.get("totalTransactionAmount") == null ? 0d : resultMap.get("totalTransactionAmount");
             }
             totalTransactionAmount = new BigDecimal(totalTransactionAmount).setScale(2, BigDecimal.ROUND_HALF_UP).doubleValue();
