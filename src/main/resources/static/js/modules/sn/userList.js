@@ -25,7 +25,6 @@ require(['jquery', 'vue', 'messager', 'utils'], function($, Vue, messager, utils
             currentPage: 1,
             pageSize: 50,
             pagerSize: 5,
-            pageNum: 0,
             count: 0,
             selectedRows: [],
             formData: {
@@ -71,7 +70,6 @@ require(['jquery', 'vue', 'messager', 'utils'], function($, Vue, messager, utils
                         order: 'desc',
                         currentPage: this.currentPage,
                         pageSize: this.pageSize,
-                        pageNum: this.pageNum,
                         memberId: this.currentMemberId
                     }, this.queryParams),
                     complete: function(data) {

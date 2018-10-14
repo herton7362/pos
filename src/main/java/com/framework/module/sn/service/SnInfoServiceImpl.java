@@ -204,7 +204,7 @@ public class SnInfoServiceImpl extends AbstractCrudService<SnInfo> implements Sn
         }
         param.put("pageSize", new String[]{pageSize.toString()});
         param.put("pageNum", new String[]{pageNum.toString()});
-        PageRequest pageRequest = new PageRequest(Integer.valueOf(param.get("pageNum")[0]), Integer.valueOf(param.get("pageSize")[0]), Sort.Direction.ASC, "sn");
+        PageRequest pageRequest = new PageRequest(Integer.valueOf(param.get("pageNum")[0]) - 1, Integer.valueOf(param.get("pageSize")[0]), Sort.Direction.ASC, "sn");
         return findAll(pageRequest, param);
     }
 

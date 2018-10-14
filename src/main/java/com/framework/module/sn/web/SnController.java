@@ -116,9 +116,9 @@ public class SnController extends AbstractCrudController<SnInfo> {
 
     @ApiOperation(value = "查询所有SN信息，有筛选功能")
     @RequestMapping(value = "/getAllSnInfo", method = RequestMethod.GET)
-    public ResponseEntity<PageResult<SnInfo>> getAllSnInfo(@RequestParam(required = false) String startSn, @RequestParam(required = false) String endSn, @RequestParam(required = false) SnInfo.Status status, @RequestParam(required = false) SnInfo.BindStatus bindStatus, @RequestParam() Integer pageSize, @RequestParam() Integer pageNum) throws Exception {
+    public ResponseEntity<PageResult<SnInfo>> getAllSnInfo(@RequestParam(required = false) String startSn, @RequestParam(required = false) String endSn, @RequestParam(required = false) SnInfo.Status status, @RequestParam(required = false) SnInfo.BindStatus bindStatus, @RequestParam() Integer pageSize, @RequestParam() Integer currentPage) throws Exception {
         String memberId = AdminThread.getInstance().get().getMemberId();
-        return new ResponseEntity<>(snInfoService.getAllSnInfo(startSn, endSn, status, bindStatus, pageSize, pageNum, memberId), HttpStatus.OK);
+        return new ResponseEntity<>(snInfoService.getAllSnInfo(startSn, endSn, status, bindStatus, pageSize, currentPage, memberId), HttpStatus.OK);
     }
 
 //    @ApiOperation(value = "查询待分配列表")
