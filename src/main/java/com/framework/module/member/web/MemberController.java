@@ -34,6 +34,7 @@ public class MemberController extends AbstractCrudController<Member> {
     private final MemberProfitRecordsRepository memberProfitRecordsRepository;
     private final RealIdentityAuditRepository realIdentityAuditRepository;
     private final OrderFormService orderFormService;
+    private final MemberRepository memberRepository;
 
     @Override
     protected CrudService<Member> getService() {
@@ -210,18 +211,65 @@ public class MemberController extends AbstractCrudController<Member> {
                 }
             }
         }
-
         return new ResponseEntity<>(result, HttpStatus.OK);
+    }
+
+    /**
+     * 查询盟友
+     *
+     * @return 响应
+     * @throws Exception 异常
+     */
+    @ApiOperation(value = "查询盟友总数")
+    @RequestMapping(value = "/myAlliesV2", method = RequestMethod.GET)
+    @ApiImplicitParams({
+            @ApiImplicitParam(value = "登录返回token", name = "access_token", dataType = "String", paramType = "query")})
+    @ResponseBody
+    public ResponseEntity<List<Member>> myAlliesV2() throws Exception {
+        String memberId = UserThread.getInstance().get().getId();
+        List<Member> currentSons = memberRepository.findMemberInfosByFatherId(memberId, new Date().getTime());
+        if (CollectionUtils.isEmpty(currentSons)) {
+            return new ResponseEntity<>(new ArrayList<>(), HttpStatus.OK);
+        }
+        if (!CollectionUtils.isEmpty(currentSons)) {
+            for (Member m : currentSons) {
+                RealIdentityAudit realIdentityAudit = realIdentityAuditRepository.findByMemberId(m.getId());
+                if (realIdentityAudit != null && RealIdentityAudit.Status.PASS.equals(realIdentityAudit.getStatus())) {
+                    m.setRealIdentity(1);
+                } else {
+                    m.setRealIdentity(0);
+                }
+                List<Member> sonList = new ArrayList<>();
+                AllyMemberInfos allyMembers = memberService.getAlliesInfosByMemberId(m.getId(), new Date().getTime());
+                if (allyMembers != null) {
+                    sonList.addAll(allyMembers.getSonList());
+                    sonList.addAll(allyMembers.getGrandSonList());
+                }
+                if (!CollectionUtils.isEmpty(sonList)) {
+                    m.setPartnerNum(sonList.size());
+                    int activeNum = 0;
+                    for (Member t : sonList) {
+                        if (Member.Status.ACTIVE.equals(t.getStatus())) {
+                            activeNum++;
+                        }
+                    }
+                    m.setActivePartnerNum(activeNum);
+                }
+
+            }
+        }
+        return new ResponseEntity<>(currentSons, HttpStatus.OK);
     }
 
     @Autowired
     public MemberController(
             MemberService memberService,
-            MemberLevelService memberLevelService, MemberProfitRecordsRepository memberProfitRecordsRepository, RealIdentityAuditRepository realIdentityAuditRepository, OrderFormService orderFormService) {
+            MemberLevelService memberLevelService, MemberProfitRecordsRepository memberProfitRecordsRepository, RealIdentityAuditRepository realIdentityAuditRepository, OrderFormService orderFormService, MemberRepository memberRepository) {
         this.memberService = memberService;
         this.memberLevelService = memberLevelService;
         this.memberProfitRecordsRepository = memberProfitRecordsRepository;
         this.realIdentityAuditRepository = realIdentityAuditRepository;
         this.orderFormService = orderFormService;
+        this.memberRepository = memberRepository;
     }
 }

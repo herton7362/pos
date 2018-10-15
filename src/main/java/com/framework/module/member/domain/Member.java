@@ -110,6 +110,12 @@ public class Member extends BaseUser implements Comparable {
     @Transient
     @ApiModelProperty(value = "会员级别名称")
     private String memberLevelName;
+    @Transient
+    @ApiModelProperty(value = "合伙人数量")
+    private Integer partnerNum;
+    @Transient
+    @ApiModelProperty(value = "合伙人激活数量")
+    private Integer activePartnerNum;
 
     public String getBuyEquipmentNum() {
         return buyEquipmentNum;
@@ -344,6 +350,22 @@ public class Member extends BaseUser implements Comparable {
 
     public void setOpenAccountSubbranch(String openAccountSubbranch) {
         this.openAccountSubbranch = openAccountSubbranch;
+    }
+
+    public Integer getPartnerNum() {
+        return partnerNum;
+    }
+
+    public void setPartnerNum(Integer partnerNum) {
+        this.partnerNum = partnerNum;
+    }
+
+    public Integer getActivePartnerNum() {
+        return activePartnerNum;
+    }
+
+    public void setActivePartnerNum(Integer activePartnerNum) {
+        this.activePartnerNum = activePartnerNum;
     }
 
     public String getMemberLevelName() {
