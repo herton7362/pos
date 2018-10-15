@@ -95,9 +95,9 @@ public class SnInfoServiceImpl extends AbstractCrudService<SnInfo> implements Sn
         if (snArray.length == 0) {
             throw new BusinessException("sn信息填写的不正确");
         }
-        if (snInfoRepository.countAllByMemberId(memberId) < 5 && snArray.length < 5) {
-            throw new BusinessException("首次划分不得少于5个");
-        }
+//        if (snInfoRepository.countAllByMemberId(memberId) < 5 && snArray.length < 5) {
+//            throw new BusinessException("首次划分不得少于5个");
+//        }
         Member receiveMember = memberService.findOne(memberId);
         for (int i = 0; i < snArray.length; i++) {
             SnInfo snInfo = snInfoRepository.findFirstBySn(snArray[i]);
@@ -135,9 +135,9 @@ public class SnInfoServiceImpl extends AbstractCrudService<SnInfo> implements Sn
         if (snArray.length == 0) {
             throw new BusinessException("sn信息填写的不正确");
         }
-        if (snInfoRepository.countAllByMemberId(memberId) < 5 && snArray.length < 5) {
-            throw new BusinessException("首次划分不得少于5个");
-        }
+//        if (snInfoRepository.countAllByMemberId(memberId) < 5 && snArray.length < 5) {
+//            throw new BusinessException("首次划分不得少于5个");
+//        }
         Member receiveMember = memberService.findOne(memberId);
         Member transMember = memberService.findOne(currentMemberId);
         for (int i = 0; i < snArray.length; i++) {
