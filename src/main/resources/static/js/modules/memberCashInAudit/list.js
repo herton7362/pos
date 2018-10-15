@@ -23,6 +23,9 @@ require(['jquery', 'vue', 'messager', 'utils'], function($, Vue, messager, utils
                             return '未通过';
                         }
                         }},
+                    {field:'createdDate', title:'申请时间', formatter: function (value) {
+                        return new Date(value).format('yyyy-MM-dd HH:mm')
+                    }},
                     {field:'reason', title:'提现失败理由'}
                 ]
             },
@@ -35,6 +38,7 @@ require(['jquery', 'vue', 'messager', 'utils'], function($, Vue, messager, utils
                 serialNum: null,
                 bankName: null,
                 status: null,
+                createdDate: null,
                 reason: null
             },
             member: {
