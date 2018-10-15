@@ -6,6 +6,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.text.ParseException;
 import java.util.List;
+import java.util.Map;
 
 public interface MemberProfitRecordsService extends CrudService<MemberProfitRecords>  {
 
@@ -98,4 +99,10 @@ public interface MemberProfitRecordsService extends CrudService<MemberProfitReco
      */
     void examineImportProfit(String operateTransactionId, boolean examineResult) throws Exception;
 
+    /**
+     * 查询上个月大合伙人
+     * @param memberId
+     * @return
+     */
+    Map<String,Object> getBigPartner(String memberId);
 }
