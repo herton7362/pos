@@ -5,10 +5,13 @@ import com.framework.module.member.domain.*;
 import com.framework.module.member.service.MemberLevelService;
 import com.framework.module.member.service.MemberService;
 import com.framework.module.orderform.service.OrderFormService;
+import com.framework.module.shop.domain.Shop;
+import com.framework.module.shop.domain.ShopRepository;
 import com.kratos.common.AbstractCrudController;
 import com.kratos.common.CrudService;
 import com.kratos.common.PageParam;
 import com.kratos.common.PageResult;
+import com.kratos.exceptions.BusinessException;
 import com.kratos.module.auth.AdminThread;
 import com.kratos.module.auth.UserThread;
 import io.swagger.annotations.Api;
@@ -23,6 +26,7 @@ import org.springframework.util.CollectionUtils;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
+import java.math.BigDecimal;
 import java.util.*;
 
 @Api(value = "会员管理")
@@ -35,6 +39,7 @@ public class MemberController extends AbstractCrudController<Member> {
     private final RealIdentityAuditRepository realIdentityAuditRepository;
     private final OrderFormService orderFormService;
     private final MemberRepository memberRepository;
+    private final ShopRepository shopRepository;
 
     @Override
     protected CrudService<Member> getService() {
@@ -255,21 +260,67 @@ public class MemberController extends AbstractCrudController<Member> {
                     }
                     m.setActivePartnerNum(activeNum);
                 }
-
             }
         }
         return new ResponseEntity<>(currentSons, HttpStatus.OK);
     }
 
+    /**
+     * 查询盟友
+     *
+     * @return 响应
+     * @throws Exception 异常
+     */
+    @ApiOperation(value = "查询盟友总数")
+    @RequestMapping(value = "/searchAllies", method = RequestMethod.GET)
+    @ApiImplicitParams({
+            @ApiImplicitParam(value = "登录返回token", name = "access_token", dataType = "String", paramType = "query")})
+    @ResponseBody
+    public ResponseEntity<Map<String, Object>> searchAllies(@RequestParam String mobile, @RequestParam Long startTime, @RequestParam Long endTime) throws Exception {
+        Member searchMember = memberRepository.findOneByLoginName(mobile);
+        if (searchMember == null) {
+            throw new BusinessException("无该用户,用户手机号" + mobile);
+        }
+        List<Member> currentSons = memberRepository.findMemberInfosByFatherId(searchMember.getId(), new Date().getTime());
+        Map<String, Object> result = new HashMap<>();
+        if (CollectionUtils.isEmpty(currentSons)) {
+            return new ResponseEntity<>(result, HttpStatus.OK);
+        }
+        if (!CollectionUtils.isEmpty(currentSons)) {
+            for (Member m : currentSons) {
+                List<String> sonList = new ArrayList<>();
+                AllyMembers allyMembers = memberService.getAlliesByMemberId(m.getId(), new Date().getTime());
+                if (allyMembers != null) {
+                    sonList.addAll(allyMembers.getSonList());
+                    sonList.addAll(allyMembers.getGrandSonList());
+                }
+                result.put("partnerName", m.getName());
+                result.put("sonNum", sonList.size());
+                Double totalTransactionAmount = 0d;
+                for (String son : sonList) {
+                    Map<String, Double> resultMap = memberProfitRecordsRepository.staticProfitsByMonthNew(son, startTime, endTime);
+                    double transactionAmount = resultMap.get("totalTransactionAmount") == null ? 0d : resultMap.get("totalTransactionAmount");
+                    totalTransactionAmount += transactionAmount;
+                }
+                totalTransactionAmount = new BigDecimal(totalTransactionAmount).setScale(2, BigDecimal.ROUND_HALF_UP).doubleValue();
+                result.put("totalTransactionAmount", totalTransactionAmount);
+                List<Shop> shops = shopRepository.findAllByMemberId(m.getId(), 0, endTime);
+                result.put("shopNum", shops == null ? 0 : shops.size());
+            }
+        }
+        return new ResponseEntity<>(result, HttpStatus.OK);
+    }
+
     @Autowired
     public MemberController(
             MemberService memberService,
-            MemberLevelService memberLevelService, MemberProfitRecordsRepository memberProfitRecordsRepository, RealIdentityAuditRepository realIdentityAuditRepository, OrderFormService orderFormService, MemberRepository memberRepository) {
+            MemberLevelService memberLevelService, MemberProfitRecordsRepository memberProfitRecordsRepository, RealIdentityAuditRepository realIdentityAuditRepository, OrderFormService orderFormService, MemberRepository memberRepository, ShopRepository shopRepository) {
         this.memberService = memberService;
         this.memberLevelService = memberLevelService;
         this.memberProfitRecordsRepository = memberProfitRecordsRepository;
         this.realIdentityAuditRepository = realIdentityAuditRepository;
         this.orderFormService = orderFormService;
         this.memberRepository = memberRepository;
+        this.shopRepository = shopRepository;
     }
 }
