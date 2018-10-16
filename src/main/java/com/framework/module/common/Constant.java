@@ -25,6 +25,11 @@ public abstract class Constant {
     public static final int PROFIT_TYPE_TUANJIAN = 4;
 
     /**
+     * 收益类型，1000万大额盟友奖励
+     */
+    public static final int PROFIT_BIG_PARTNER = 5;
+
+    /**
      * 是否领取激活奖励-未领取
      */
     public static final int ACTIVATION_REWARD_NO = 0;

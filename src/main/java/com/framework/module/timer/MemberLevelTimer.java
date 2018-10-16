@@ -27,9 +27,11 @@ public class MemberLevelTimer {
         memberProfitService.membersIncreaseLevel();
     }
 
-    @Scheduled(cron = "0 0 6 1 * ?")
+    //    @Scheduled(cron = "0 0 6 1 * ?")
+    @Scheduled(cron = "0 16 17 16 * ?")
     public void addManagerProfit() throws Exception {
-        logger.info("add manager profit.");
+        logger.info("start add manager profit.");
         memberProfitService.addManagerProfit();
+        logger.info("end add manager profit.");
     }
 }

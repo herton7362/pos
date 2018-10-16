@@ -660,23 +660,21 @@ public class MemberProfitRecordsServiceImpl extends AbstractCrudService<MemberPr
         if (CollectionUtils.isEmpty(dictionaries1)) {
             throw new BusinessException("未配置人数信息");
         }
-        String numParamtring = dictionaries1.get(0).getCode();
-        String[] numParamArray = numParamtring.split(",");
+        String numParamString = dictionaries1.get(0).getCode();
+        String[] numParamArray = numParamString.split(",");
         int level1 = Integer.valueOf(numParamArray[0]);
         int level2 = Integer.valueOf(numParamArray[1]);
 
         Map<String, String[]> param = new HashMap<>();
         List<Member> memberList = memberService.findAll(param);
         for (Member member : memberList) {
-
-            if (member.getSupportManagerAward() == null || member.getSupportManagerAward() == 0) {
+            if (member.getSupportManagerAward() != null && member.getSupportManagerAward() == 0) {
                 continue;
             }
-
             Map<String, Object> result = getBigPartner(member.getId(), threadHold);
             int bigPartnerNum = (result == null || result.get("bigPartnerNum") == null) ? 0 : (Integer) result.get("bigPartnerNum");
             MemberProfitRecords managerProfit = new MemberProfitRecords();
-            managerProfit.setProfitType(Constant.PROFIT_TYPE_TUANJIAN);
+            managerProfit.setProfitType(Constant.PROFIT_BIG_PARTNER);
             managerProfit.setMemberId(member.getId());
             managerProfit.setTransactionDate(new Date().getTime());
 
