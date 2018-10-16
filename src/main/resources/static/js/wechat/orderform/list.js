@@ -54,6 +54,7 @@ require(['jquery', 'vue', 'utils', 'weui', 'messager'], function ($, Vue, utils,
                     data: $.extend({
                         sort: 'updatedDate',
                         order: 'desc',
+                        logicallyDeleted:false,
                         'member.id': this.member.id,
                         logicallyDeleted: false
                     }, status? {status: status}: {}),
