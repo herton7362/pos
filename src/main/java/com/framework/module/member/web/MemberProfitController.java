@@ -212,7 +212,7 @@ public class MemberProfitController extends AbstractCrudController<MemberProfitR
     @ApiImplicitParams({
             @ApiImplicitParam(value = "登录返回token", name = "access_token", dataType = "String", paramType = "query")})
     @ResponseBody
-    public ResponseEntity<Map<String, Object>> getBigPartner() {
+    public ResponseEntity<Map<String, Object>> getBigPartner() throws Exception {
         String memberId = UserThread.getInstance().get().getId();
         Map<String, Object> result = memberProfitService.getBigPartner(memberId);
         return new ResponseEntity<>(result, HttpStatus.OK);

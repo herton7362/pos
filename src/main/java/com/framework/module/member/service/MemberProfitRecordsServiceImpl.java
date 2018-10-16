@@ -595,7 +595,16 @@ public class MemberProfitRecordsServiceImpl extends AbstractCrudService<MemberPr
     }
 
     @Override
-    public Map<String, Object> getBigPartner(String memberId) {
+    public Map<String, Object> getBigPartner(String memberId) throws Exception {
+
+        Map<String, String[]> params = new HashMap<>();
+        params.put("code", new String[]{"BigTransaction"});
+        List<DictionaryCategory> dictionaryCategories = dictionaryCategoryService.findAll(params);
+        List<Dictionary> dictionaries = new ArrayList<>();
+        dictionaries = DictionaryController.getDictionaries(params, dictionaryCategories, dictionaries, dictionaryService);
+
+        double threadHold = CollectionUtils.isEmpty(dictionaries) ? BigPartner.BIG_THRESHOLD : Double.valueOf(dictionaries.get(0).getCode());
+
         Long lastMonthStart = DateTools.getLastMonthDayOne(new Date()).getTime();
         Long lastMonthEnd = DateTools.getLastMonthLastDay(new Date()).getTime();
         List<BigPartner> bigPartnerList = new ArrayList<>();
@@ -621,7 +630,7 @@ public class MemberProfitRecordsServiceImpl extends AbstractCrudService<MemberPr
                 totalTransactionAmount += transactionAmount;
             }
             totalTransactionAmount = new BigDecimal(totalTransactionAmount).setScale(2, BigDecimal.ROUND_HALF_UP).doubleValue();
-            if (totalTransactionAmount >= BigPartner.BIG_THRESHOLD) {
+            if (totalTransactionAmount >= threadHold) {
                 BigPartner bigPartner = new BigPartner();
                 bigPartner.setMemberId(currentSon.getId());
                 bigPartner.setMemberMobile(currentSon.getMobile());

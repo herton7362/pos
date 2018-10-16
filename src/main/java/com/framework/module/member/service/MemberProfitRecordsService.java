@@ -104,5 +104,5 @@ public interface MemberProfitRecordsService extends CrudService<MemberProfitReco
      * @param memberId
      * @return
      */
-    Map<String,Object> getBigPartner(String memberId);
+    Map<String,Object> getBigPartner(String memberId) throws Exception;
 }
