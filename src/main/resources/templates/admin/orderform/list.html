@@ -58,7 +58,11 @@
                             </div>
                         </div>
                         <div class="col-md-2">
-                            <button type="button" class="btn btn-flat btn-primary pull-right" @click="load">
+                            <!-- <button type="button" class="btn btn-flat btn-danger pull-right margin-r-5" @click="remove()">
+                                <i class="fa fa-trash"></i>
+                               删除
+                            </button> -->
+                            <button type="button" class="btn btn-flat btn-primary pull-right margin-r-5" @click="load">
                                 <i class="fa fa-search"></i>
                                 搜索
                             </button>
@@ -148,6 +152,7 @@
                                                class="btn btn-xs bg-red"
                                                title="退换货"
                                                @click="rejectModalOpen(row)"><i class="fa fa-reply"></i></a>
+                                             <a class="btn btn-xs bg-red" title="删除" @click="remove(row)"><i class="fa fa-fw fa-stop"></i></a>
                                         </td>
                                     </tr>
                                     <tr v-for="sub in row.items" v-if="row.expended">

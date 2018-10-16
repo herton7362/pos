@@ -116,6 +116,7 @@ require(['jquery', 'vue', 'messager', 'utils'], function($, Vue, messager, utils
                     data: $.extend({
                         sort: 'updatedDate',
                         order: 'desc',
+                        logicallyDeleted:false,
                         currentPage: this.currentPage,
                         pageSize: this.pageSize
                     }, this.queryParams),
@@ -244,6 +245,20 @@ require(['jquery', 'vue', 'messager', 'utils'], function($, Vue, messager, utils
                         self.load();
                     }
                 })
+            },
+            remove: function (row) {
+                var rows = [];
+                var self = this;
+                messager.alert('确定要删除吗？', event, function() {
+                    $.ajax({
+                        url: utils.patchUrl('/api/orderForm/disable/' + row.id),
+                        type: 'POST',
+                        success: function() {
+                            messager.bubble('删除成功');
+                            self.load();
+                        }
+                    });
+                });
             }
         },
         mounted: function() {
