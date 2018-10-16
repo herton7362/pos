@@ -233,21 +233,32 @@ public class MemberProfitController extends AbstractCrudController<MemberProfitR
     public ResponseEntity<List<AchievementDetail>> getDayAchievement(@RequestParam String startDate, @RequestParam String endDate) throws Exception {
         String memberId = UserThread.getInstance().get().getId();
         SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMdd");
-        int size = DateTools.differentDaysByMillisecond(sdf.parse(startDate), sdf.parse(endDate));
+        int size = DateTools.differentDays(sdf.parse(startDate), sdf.parse(endDate));
         List<AchievementDetail> result = memberProfitService.getAchievementByDate(memberId, endDate, size + 1);
         return new ResponseEntity<>(result, HttpStatus.OK);
     }
 
-//    @ApiOperation(value = "按照月份搜索历史业绩")
-//    @RequestMapping(value = "/searchMonthAchievement", method = RequestMethod.GET)
-//    public ResponseEntity<List<AchievementDetail>> getMonthAchievement(@RequestParam String startMonth, @RequestParam String endMonth) {
-//        String memberId = UserThread.getInstance().get().getId();
-//        List<AchievementDetail> result = new ArrayList<>();
-//        try {
-//            result = memberProfitService.getAchievementByMonth(memberId, startMonth, size);
-//        } catch (Exception e) {
-//            return new ResponseEntity<>(result, BAD_REQUEST);
-//        }
-//        return new ResponseEntity<>(result, HttpStatus.OK);
-//    }
+    @ApiOperation(value = "按照月份搜索历史业绩")
+    @RequestMapping(value = "/searchMonthAchievement", method = RequestMethod.GET)
+    @ApiImplicitParams({
+            @ApiImplicitParam(value = "登录返回token", name = "access_token", dataType = "String", paramType = "query")})
+    @ResponseBody
+    public ResponseEntity<List<AchievementDetail>> getMonthAchievement(@RequestParam String startMonth, @RequestParam String endMonth) throws BusinessException {
+        String memberId = UserThread.getInstance().get().getId();
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyyMM");
+        int size = 0;
+        try {
+            size = DateTools.differentMonths(sdf.parse(startMonth), sdf.parse(endMonth));
+        } catch (ParseException e) {
+            throw new BusinessException("月份格式不正确");
+        }
+
+        List<AchievementDetail> result = new ArrayList<>();
+        try {
+            result = memberProfitService.getAchievementByMonth(memberId, endMonth, size + 1);
+        } catch (Exception e) {
+            return new ResponseEntity<>(result, BAD_REQUEST);
+        }
+        return new ResponseEntity<>(result, HttpStatus.OK);
+    }
 }

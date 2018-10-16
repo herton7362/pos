@@ -35,8 +35,20 @@ public abstract class DateTools {
         return calendar2.getTime();
     }
 
-    public static int differentDaysByMillisecond(Date date1, Date date2) {
+    public static int differentDays(Date date1, Date date2) {
         int days = (int) ((date2.getTime() - date1.getTime()) / (1000 * 3600 * 24));
         return days;
     }
+
+    public static int differentMonths(Date date1, Date date2) {
+        Calendar bef = Calendar.getInstance();
+        Calendar aft = Calendar.getInstance();
+        bef.setTime(date1);
+        aft.setTime(date2);
+        int result = aft.get(Calendar.MONTH) - bef.get(Calendar.MONTH);
+        int month = (aft.get(Calendar.YEAR) - bef.get(Calendar.YEAR)) * 12;
+        return Math.abs(month + result);
+    }
+
+
 }
