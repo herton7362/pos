@@ -191,7 +191,6 @@ public class MemberController extends AbstractCrudController<Member> {
 
     /**
      * @return 查询所有子节点
-     * @throws Exception
      */
     @ApiOperation(value = "查询盟友总数")
     @RequestMapping(value = "/queryAllies", method = RequestMethod.GET)
@@ -281,33 +280,32 @@ public class MemberController extends AbstractCrudController<Member> {
         if (searchMember == null) {
             throw new BusinessException("无该用户,用户手机号" + mobile);
         }
-        List<Member> currentSons = memberRepository.findMemberInfosByFatherId(searchMember.getId(), new Date().getTime());
         Map<String, Object> result = new HashMap<>();
-        if (CollectionUtils.isEmpty(currentSons)) {
+        result.put("partnerName", searchMember.getName());
+        List<String> sonList = new ArrayList<>();
+        AllyMembers allyMembers = memberService.getAlliesByMemberId(searchMember.getId(), new Date().getTime());
+        if (allyMembers != null) {
+            sonList.addAll(allyMembers.getSonList());
+            sonList.addAll(allyMembers.getGrandSonList());
+        }
+
+        if (CollectionUtils.isEmpty(sonList)) {
             return new ResponseEntity<>(result, HttpStatus.OK);
         }
-        if (!CollectionUtils.isEmpty(currentSons)) {
-            for (Member m : currentSons) {
-                List<String> sonList = new ArrayList<>();
-                AllyMembers allyMembers = memberService.getAlliesByMemberId(m.getId(), new Date().getTime());
-                if (allyMembers != null) {
-                    sonList.addAll(allyMembers.getSonList());
-                    sonList.addAll(allyMembers.getGrandSonList());
-                }
-                result.put("partnerName", m.getName());
-                result.put("sonNum", sonList.size());
-                Double totalTransactionAmount = 0d;
-                for (String son : sonList) {
-                    Map<String, Double> resultMap = memberProfitRecordsRepository.staticProfitsByMonthNew(son, startTime, endTime);
-                    double transactionAmount = resultMap.get("totalTransactionAmount") == null ? 0d : resultMap.get("totalTransactionAmount");
-                    totalTransactionAmount += transactionAmount;
-                }
-                totalTransactionAmount = new BigDecimal(totalTransactionAmount).setScale(2, BigDecimal.ROUND_HALF_UP).doubleValue();
-                result.put("totalTransactionAmount", totalTransactionAmount);
-                List<Shop> shops = shopRepository.findAllByMemberId(m.getId(), 0, endTime);
-                result.put("shopNum", shops == null ? 0 : shops.size());
-            }
+        double totalTransactionAmount = 0d;
+        int shopSize = 0;
+        for (String son : sonList) {
+            Map<String, Double> resultMap = memberProfitRecordsRepository.staticProfitsByMonthNew(son, startTime, endTime);
+            double transactionAmount = resultMap.get("totalTransactionAmount") == null ? 0d : resultMap.get("totalTransactionAmount");
+            totalTransactionAmount += transactionAmount;
+
+            List<Shop> shops = shopRepository.findAllByMemberId(son, 0, endTime);
+            shopSize += (shops == null ? 0 : shops.size());
         }
+        totalTransactionAmount = new BigDecimal(totalTransactionAmount).setScale(2, BigDecimal.ROUND_HALF_UP).doubleValue();
+        result.put("totalTransactionAmount", totalTransactionAmount);
+        result.put("shopNum", shopSize);
+        result.put("partnerNum", sonList.size());
         return new ResponseEntity<>(result, HttpStatus.OK);
     }
 
