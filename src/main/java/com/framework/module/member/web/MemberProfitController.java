@@ -9,6 +9,11 @@ import com.kratos.common.AbstractCrudController;
 import com.kratos.common.CrudService;
 import com.kratos.exceptions.BusinessException;
 import com.kratos.module.auth.UserThread;
+import com.kratos.module.dictionary.domain.Dictionary;
+import com.kratos.module.dictionary.domain.DictionaryCategory;
+import com.kratos.module.dictionary.service.DictionaryCategoryService;
+import com.kratos.module.dictionary.service.DictionaryService;
+import com.kratos.module.dictionary.web.DictionaryController;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiImplicitParams;
@@ -16,6 +21,7 @@ import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.util.CollectionUtils;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -32,6 +38,8 @@ public class MemberProfitController extends AbstractCrudController<MemberProfitR
     private final MemberProfitRecordsService memberProfitService;
     private final MemberCashInRecordsService memberCashInRecordsService;
     private final MemberProfitTmpRecordsService memberProfitTmpRecordsService;
+    private final DictionaryService dictionaryService;
+    private final DictionaryCategoryService dictionaryCategoryService;
 
     @Override
     protected CrudService<MemberProfitRecords> getService() {
@@ -42,11 +50,13 @@ public class MemberProfitController extends AbstractCrudController<MemberProfitR
     public MemberProfitController(
             MemberProfitRecordsService memberProfitService,
             MemberCashInRecordsService memberCashInRecordsService,
-            MemberProfitTmpRecordsService memberProfitTmpRecordsService
-    ) {
+            MemberProfitTmpRecordsService memberProfitTmpRecordsService,
+            DictionaryService dictionaryService, DictionaryCategoryService dictionaryCategoryService) {
         this.memberProfitService = memberProfitService;
         this.memberCashInRecordsService = memberCashInRecordsService;
         this.memberProfitTmpRecordsService = memberProfitTmpRecordsService;
+        this.dictionaryService = dictionaryService;
+        this.dictionaryCategoryService = dictionaryCategoryService;
     }
 
     /**
@@ -221,7 +231,15 @@ public class MemberProfitController extends AbstractCrudController<MemberProfitR
     @ResponseBody
     public ResponseEntity<Map<String, Object>> getBigPartner() throws Exception {
         String memberId = UserThread.getInstance().get().getId();
-        Map<String, Object> result = memberProfitService.getBigPartner(memberId);
+
+        Map<String, String[]> params = new HashMap<>();
+        params.put("code", new String[]{"BigTransaction"});
+        List<DictionaryCategory> dictionaryCategories = dictionaryCategoryService.findAll(params);
+        List<Dictionary> dictionaries = new ArrayList<>();
+        dictionaries = DictionaryController.getDictionaries(params, dictionaryCategories, dictionaries, dictionaryService);
+        double threadHold = CollectionUtils.isEmpty(dictionaries) ? BigPartner.BIG_THRESHOLD : Double.valueOf(dictionaries.get(0).getCode());
+
+        Map<String, Object> result = memberProfitService.getBigPartner(memberId, threadHold);
         return new ResponseEntity<>(result, HttpStatus.OK);
     }
 

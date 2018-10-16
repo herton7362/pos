@@ -102,9 +102,12 @@ public interface MemberProfitRecordsService extends CrudService<MemberProfitReco
     /**
      * 查询上个月大合伙人
      * @param memberId
+     * @param threadHold
      * @return
      */
-    Map<String,Object> getBigPartner(String memberId) throws Exception;
+    Map<String,Object> getBigPartner(String memberId, double threadHold) throws Exception;
 
     double getSnTransactionAmount(String sn, Long startTime, Long endTime);
+
+    void addManagerProfit() throws Exception;
 }

@@ -595,16 +595,7 @@ public class MemberProfitRecordsServiceImpl extends AbstractCrudService<MemberPr
     }
 
     @Override
-    public Map<String, Object> getBigPartner(String memberId) throws Exception {
-
-        Map<String, String[]> params = new HashMap<>();
-        params.put("code", new String[]{"BigTransaction"});
-        List<DictionaryCategory> dictionaryCategories = dictionaryCategoryService.findAll(params);
-        List<Dictionary> dictionaries = new ArrayList<>();
-        dictionaries = DictionaryController.getDictionaries(params, dictionaryCategories, dictionaries, dictionaryService);
-
-        double threadHold = CollectionUtils.isEmpty(dictionaries) ? BigPartner.BIG_THRESHOLD : Double.valueOf(dictionaries.get(0).getCode());
-
+    public Map<String, Object> getBigPartner(String memberId, double threadHold) throws Exception {
         Long lastMonthStart = DateTools.getLastMonthDayOne(new Date()).getTime();
         Long lastMonthEnd = DateTools.getLastMonthLastDay(new Date()).getTime();
         List<BigPartner> bigPartnerList = new ArrayList<>();
@@ -643,7 +634,7 @@ public class MemberProfitRecordsServiceImpl extends AbstractCrudService<MemberPr
         Map<String, Object> result = new HashMap<>();
         result.put("bigPartnerList", bigPartnerList);
         result.put("totalAmount", setDouleScale(totalAmount));
-        result.put("memberSize", bigPartnerList.size());
+        result.put("bigPartnerNum", bigPartnerList.size());
         return result;
     }
 
@@ -651,6 +642,54 @@ public class MemberProfitRecordsServiceImpl extends AbstractCrudService<MemberPr
     public double getSnTransactionAmount(String sn, Long startTime, Long endTime) {
         Map<String, Double> result = memberProfitRecordsRepository.getSnTransactionAmount(sn, startTime, endTime);
         return (result == null || result.get("totalTransactionAmount") == null) ? 0 : result.get("totalTransactionAmount");
+    }
+
+    @Override
+    public void addManagerProfit() throws Exception {
+        Map<String, String[]> params = new HashMap<>();
+        params.put("code", new String[]{"ManagerAwardBigTransaction"});
+        List<DictionaryCategory> dictionaryCategories = dictionaryCategoryService.findAll(params);
+        List<Dictionary> dictionaries = new ArrayList<>();
+        dictionaries = DictionaryController.getDictionaries(params, dictionaryCategories, dictionaries, dictionaryService);
+        double threadHold = CollectionUtils.isEmpty(dictionaries) ? BigPartner.BIG_THRESHOLD : Double.valueOf(dictionaries.get(0).getCode());
+
+        params.put("code", new String[]{"ManagerAwardPartnerNum"});
+        List<DictionaryCategory> dictionaryCategories1 = dictionaryCategoryService.findAll(params);
+        List<Dictionary> dictionaries1 = new ArrayList<>();
+        dictionaries1 = DictionaryController.getDictionaries(params, dictionaryCategories1, dictionaries1, dictionaryService);
+        if (CollectionUtils.isEmpty(dictionaries1)) {
+            throw new BusinessException("未配置人数信息");
+        }
+        String numParamtring = dictionaries1.get(0).getCode();
+        String[] numParamArray = numParamtring.split(",");
+        int level1 = Integer.valueOf(numParamArray[0]);
+        int level2 = Integer.valueOf(numParamArray[1]);
+
+        Map<String, String[]> param = new HashMap<>();
+        List<Member> memberList = memberService.findAll(param);
+        for (Member member : memberList) {
+
+            if (member.getSupportManagerAward() == null || member.getSupportManagerAward() == 0) {
+                continue;
+            }
+
+            Map<String, Object> result = getBigPartner(member.getId(), threadHold);
+            int bigPartnerNum = (result == null || result.get("bigPartnerNum") == null) ? 0 : (Integer) result.get("bigPartnerNum");
+            MemberProfitRecords managerProfit = new MemberProfitRecords();
+            managerProfit.setProfitType(Constant.PROFIT_TYPE_TUANJIAN);
+            managerProfit.setMemberId(member.getId());
+            managerProfit.setTransactionDate(new Date().getTime());
+
+            if (bigPartnerNum >= level1 && bigPartnerNum < level2) {
+                managerProfit.setProfit(500 * bigPartnerNum);
+                save(managerProfit);
+            }
+            if (bigPartnerNum >= level2) {
+                managerProfit.setProfit(1000 * bigPartnerNum);
+                save(managerProfit);
+            }
+
+        }
     }
 
     /**

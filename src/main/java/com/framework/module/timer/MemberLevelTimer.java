@@ -26,4 +26,10 @@ public class MemberLevelTimer {
         logger.info("Increase Member Level.");
         memberProfitService.membersIncreaseLevel();
     }
+
+    @Scheduled(cron = "0 0 6 1 * ?")
+    public void addManagerProfit() throws Exception {
+        logger.info("add manager profit.");
+        memberProfitService.addManagerProfit();
+    }
 }

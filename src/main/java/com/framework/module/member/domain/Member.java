@@ -3,7 +3,6 @@ package com.framework.module.member.domain;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.framework.module.common.Constant;
-import com.kratos.common.utils.StringUtils;
 import com.kratos.entity.BaseUser;
 import com.kratos.module.attachment.domain.Attachment;
 import io.swagger.annotations.ApiModel;
@@ -11,7 +10,6 @@ import io.swagger.annotations.ApiModelProperty;
 import org.hibernate.annotations.Where;
 
 import javax.persistence.*;
-import java.util.Comparator;
 import java.util.List;
 
 /**
@@ -85,6 +83,9 @@ public class Member extends BaseUser implements Comparable {
     @ApiModelProperty(value = "支行网点")
     @Column(length = 500)
     private String openAccountSubbranch;
+    @ApiModelProperty(value = "支持领管理奖")
+    @Column()
+    private Integer supportManagerAward;
     @Transient
     @JsonIgnore
     private Integer sortType;
@@ -374,6 +375,18 @@ public class Member extends BaseUser implements Comparable {
 
     public void setMemberLevelName(String memberLevelName) {
         this.memberLevelName = memberLevelName;
+    }
+
+    public Integer getSupportManagerAward() {
+        return supportManagerAward;
+    }
+
+    public void setSupportManagerAward(Integer supportManagerAward) {
+        this.supportManagerAward = supportManagerAward;
+    }
+
+    public Integer getSortType() {
+        return sortType;
     }
 
     @Override
