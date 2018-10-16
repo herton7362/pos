@@ -21,4 +21,6 @@ public interface ShopRepository extends PageRepository<Shop> {
 
     @Query("select m from Shop m where m.memberId=?1 and m.status='ACTIVE' and (m.exchangePosMachine=0 or m.exchangePosMachine IS null)")
     List<Shop> findAllUnExchangeByMemberId(String memberId);
+
+    Integer countAllBySn(String sn);
 }

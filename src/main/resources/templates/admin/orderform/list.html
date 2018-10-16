@@ -58,7 +58,11 @@
                             </div>
                         </div>
                         <div class="col-md-2">
-                            <button type="button" class="btn btn-flat btn-primary pull-right" @click="load">
+                            <!-- <button type="button" class="btn btn-flat btn-danger pull-right margin-r-5" @click="remove()">
+                                <i class="fa fa-trash"></i>
+                               删除
+                            </button> -->
+                            <button type="button" class="btn btn-flat btn-primary pull-right margin-r-5" @click="load">
                                 <i class="fa fa-search"></i>
                                 搜索
                             </button>
@@ -119,6 +123,11 @@
                                             <div class="col-xs-4 cell-title">会员：</div>
                                             {{row.member.name}}
                                         </td>
+                                        <td>
+                                            <div class="col-xs-4 cell-title">配送方式：</div>
+                                            <span v-if="row.shippingCode == '自取'">自取</span>
+                                            <span v-else>邮寄</span>
+                                        </td>
                                         <td style="text-align: center;">
                                             <div class="col-xs-4 cell-title">状态：</div>
                                             <span class="label margin-r-5"
@@ -143,6 +152,7 @@
                                                class="btn btn-xs bg-red"
                                                title="退换货"
                                                @click="rejectModalOpen(row)"><i class="fa fa-reply"></i></a>
+                                             <a class="btn btn-xs bg-red" title="删除" @click="remove(row)"><i class="fa fa-fw fa-stop"></i></a>
                                         </td>
                                     </tr>
                                     <tr v-for="sub in row.items" v-if="row.expended">

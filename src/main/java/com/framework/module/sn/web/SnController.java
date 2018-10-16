@@ -1,10 +1,12 @@
 package com.framework.module.sn.web;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
 import com.framework.module.member.domain.Member;
+import com.framework.module.member.service.MemberProfitRecordsService;
 import com.framework.module.member.service.MemberService;
 import com.framework.module.sn.domain.SnInfoRepository;
 import com.kratos.exceptions.BusinessException;
@@ -15,13 +17,11 @@ import com.kratos.module.auth.domain.Admin;
 import com.kratos.module.auth.domain.Role;
 import com.kratos.module.auth.service.AdminService;
 import com.kratos.module.auth.service.RoleService;
+import io.swagger.annotations.ApiImplicitParam;
+import io.swagger.annotations.ApiImplicitParams;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import com.framework.module.sn.domain.SnInfo;
@@ -42,14 +42,16 @@ public class SnController extends AbstractCrudController<SnInfo> {
     private final RoleService roleService;
     private final MemberService memberService;
     private final SnInfoRepository snInfoRepository;
+    private final MemberProfitRecordsService memberProfitRecordsService;
 
-    public SnController(SnInfoService snInfoService, AdminService adminService, AttachmentService attachmentService, RoleService roleService, MemberService memberService, SnInfoRepository snInfoRepository) {
+    public SnController(SnInfoService snInfoService, AdminService adminService, AttachmentService attachmentService, RoleService roleService, MemberService memberService, SnInfoRepository snInfoRepository, MemberProfitRecordsService memberProfitRecordsService) {
         this.snInfoService = snInfoService;
         this.adminService = adminService;
         this.attachmentService = attachmentService;
         this.roleService = roleService;
         this.memberService = memberService;
         this.snInfoRepository = snInfoRepository;
+        this.memberProfitRecordsService = memberProfitRecordsService;
     }
 
     @Override
@@ -119,6 +121,26 @@ public class SnController extends AbstractCrudController<SnInfo> {
     public ResponseEntity<PageResult<SnInfo>> getAllSnInfo(@RequestParam(required = false) String startSn, @RequestParam(required = false) String endSn, @RequestParam(required = false) SnInfo.Status status, @RequestParam(required = false) SnInfo.BindStatus bindStatus, @RequestParam() Integer pageSize, @RequestParam() Integer currentPage) throws Exception {
         String memberId = AdminThread.getInstance().get().getMemberId();
         return new ResponseEntity<>(snInfoService.getAllSnInfo(startSn, endSn, status, bindStatus, pageSize, currentPage, memberId), HttpStatus.OK);
+    }
+
+    @ApiOperation(value = "查询Sn信息")
+    @RequestMapping(value = "/searchSn", method = RequestMethod.GET)
+    @ApiImplicitParams({
+            @ApiImplicitParam(value = "登录返回token", name = "access_token", dataType = "String", paramType = "query")})
+    @ResponseBody
+    public ResponseEntity<Map<String, Object>> searchSn(@RequestParam String sn, @RequestParam Long startTime, @RequestParam Long endTime) throws Exception {
+        SnInfo snInfo = snInfoRepository.findFirstBySn(sn);
+        if (snInfo == null) {
+            throw new BusinessException("无数据");
+        }
+        Map<String, Object> result = new HashMap<>();
+        result.put("SN", sn);
+        result.put("ShopName", snInfo.getShopName());
+        result.put("MemberName", memberService.findOne(snInfo.getMemberId()).getName());
+        double transactionAmount = memberProfitRecordsService.getSnTransactionAmount(sn, startTime, endTime);
+        result.put("transactionAmount", transactionAmount);
+
+        return new ResponseEntity<>(result, HttpStatus.OK);
     }
 
 //    @ApiOperation(value = "查询待分配列表")

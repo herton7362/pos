@@ -647,6 +647,12 @@ public class MemberProfitRecordsServiceImpl extends AbstractCrudService<MemberPr
         return result;
     }
 
+    @Override
+    public double getSnTransactionAmount(String sn, Long startTime, Long endTime) {
+        Map<String, Double> result = memberProfitRecordsRepository.getSnTransactionAmount(sn, startTime, endTime);
+        return (result == null || result.get("totalTransactionAmount") == null) ? 0 : result.get("totalTransactionAmount");
+    }
+
     /**
      * 再Excel中获取数据并校验，校验通过后加入到实体中
      *

@@ -3,6 +3,7 @@ package com.framework.module.sn.service;
 import com.framework.module.auth.MemberThread;
 import com.framework.module.member.domain.Member;
 import com.framework.module.member.service.MemberService;
+import com.framework.module.shop.domain.ShopRepository;
 import com.framework.module.sn.domain.SnInfo;
 import com.framework.module.sn.domain.SnInfoHistory;
 import com.framework.module.sn.domain.SnInfoRepository;
@@ -37,12 +38,14 @@ public class SnInfoServiceImpl extends AbstractCrudService<SnInfo> implements Sn
     private final SnInfoRepository snInfoRepository;
     private final SnInfoHistoryService snInfoHistoryService;
     private final MemberService memberService;
+    private final ShopRepository shopRepository;
 
 
-    public SnInfoServiceImpl(SnInfoRepository snInfoRepository, SnInfoHistoryService snInfoHistoryService, MemberService memberService) {
+    public SnInfoServiceImpl(SnInfoRepository snInfoRepository, SnInfoHistoryService snInfoHistoryService, MemberService memberService, ShopRepository shopRepository) {
         this.snInfoRepository = snInfoRepository;
         this.snInfoHistoryService = snInfoHistoryService;
         this.memberService = memberService;
+        this.shopRepository = shopRepository;
     }
 
 
@@ -75,6 +78,9 @@ public class SnInfoServiceImpl extends AbstractCrudService<SnInfo> implements Sn
                 continue;
             }
             if (snInfoRepository.countAllBySn(sn) > 0) {
+                continue;
+            }
+            if (shopRepository.countAllBySn(sn) > 0) {
                 continue;
             }
             SnInfo snInfo = new SnInfo();
