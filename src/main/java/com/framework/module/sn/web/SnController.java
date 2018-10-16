@@ -8,6 +8,8 @@ import java.util.Map;
 import com.framework.module.member.domain.Member;
 import com.framework.module.member.service.MemberProfitRecordsService;
 import com.framework.module.member.service.MemberService;
+import com.framework.module.shop.domain.Shop;
+import com.framework.module.shop.domain.ShopRepository;
 import com.framework.module.sn.domain.SnInfoRepository;
 import com.kratos.exceptions.BusinessException;
 import com.kratos.module.attachment.domain.Attachment;
@@ -43,8 +45,9 @@ public class SnController extends AbstractCrudController<SnInfo> {
     private final MemberService memberService;
     private final SnInfoRepository snInfoRepository;
     private final MemberProfitRecordsService memberProfitRecordsService;
+    private final ShopRepository shopRepository;
 
-    public SnController(SnInfoService snInfoService, AdminService adminService, AttachmentService attachmentService, RoleService roleService, MemberService memberService, SnInfoRepository snInfoRepository, MemberProfitRecordsService memberProfitRecordsService) {
+    public SnController(SnInfoService snInfoService, AdminService adminService, AttachmentService attachmentService, RoleService roleService, MemberService memberService, SnInfoRepository snInfoRepository, MemberProfitRecordsService memberProfitRecordsService, ShopRepository shopRepository) {
         this.snInfoService = snInfoService;
         this.adminService = adminService;
         this.attachmentService = attachmentService;
@@ -52,6 +55,7 @@ public class SnController extends AbstractCrudController<SnInfo> {
         this.memberService = memberService;
         this.snInfoRepository = snInfoRepository;
         this.memberProfitRecordsService = memberProfitRecordsService;
+        this.shopRepository = shopRepository;
     }
 
     @Override
@@ -129,14 +133,14 @@ public class SnController extends AbstractCrudController<SnInfo> {
             @ApiImplicitParam(value = "登录返回token", name = "access_token", dataType = "String", paramType = "query")})
     @ResponseBody
     public ResponseEntity<Map<String, Object>> searchSn(@RequestParam String sn, @RequestParam Long startTime, @RequestParam Long endTime) throws Exception {
-        SnInfo snInfo = snInfoRepository.findFirstBySn(sn);
-        if (snInfo == null) {
+        Shop shop = shopRepository.findOneBySn(sn);
+        if (shop == null) {
             throw new BusinessException("无数据");
         }
         Map<String, Object> result = new HashMap<>();
         result.put("SN", sn);
-        result.put("ShopName", snInfo.getShopName());
-        result.put("MemberName", memberService.findOne(snInfo.getMemberId()).getName());
+        result.put("ShopName", shop.getName());
+        result.put("MemberName", memberService.findOne(shop.getMemberId()).getName());
         double transactionAmount = memberProfitRecordsService.getSnTransactionAmount(sn, startTime, endTime);
         result.put("transactionAmount", transactionAmount);
 
