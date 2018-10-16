@@ -1,6 +1,7 @@
 package com.framework.module.member.service;
 
 import com.framework.module.common.Constant;
+import com.framework.module.common.DateTools;
 import com.framework.module.member.domain.*;
 import com.framework.module.rule.domain.ActiveRule;
 import com.framework.module.rule.domain.GroupBuildDrawRule;
@@ -8,10 +9,7 @@ import com.framework.module.rule.service.ActiveRuleService;
 import com.framework.module.rule.service.GroupBuildDrawRuleService;
 import com.framework.module.shop.domain.Shop;
 import com.framework.module.shop.domain.ShopRepository;
-import com.framework.module.sn.domain.SnInfo;
-import com.framework.module.sn.domain.SnInfoHistory;
 import com.framework.module.sn.domain.SnInfoRepository;
-import com.framework.module.sn.service.SnInfoService;
 import com.kratos.common.AbstractCrudService;
 import com.kratos.exceptions.BusinessException;
 import com.kratos.module.dictionary.domain.Dictionary;
@@ -594,6 +592,59 @@ public class MemberProfitRecordsServiceImpl extends AbstractCrudService<MemberPr
         }
         memberProfitRecordsRepository.save(memberProfitRecordsList);
         memberProfitTmpRecordsRepository.delete(records);
+    }
+
+    @Override
+    public Map<String, Object> getBigPartner(String memberId) throws Exception {
+
+        Map<String, String[]> params = new HashMap<>();
+        params.put("code", new String[]{"BigTransaction"});
+        List<DictionaryCategory> dictionaryCategories = dictionaryCategoryService.findAll(params);
+        List<Dictionary> dictionaries = new ArrayList<>();
+        dictionaries = DictionaryController.getDictionaries(params, dictionaryCategories, dictionaries, dictionaryService);
+
+        double threadHold = CollectionUtils.isEmpty(dictionaries) ? BigPartner.BIG_THRESHOLD : Double.valueOf(dictionaries.get(0).getCode());
+
+        Long lastMonthStart = DateTools.getLastMonthDayOne(new Date()).getTime();
+        Long lastMonthEnd = DateTools.getLastMonthLastDay(new Date()).getTime();
+        List<BigPartner> bigPartnerList = new ArrayList<>();
+        double totalAmount = 0d;
+        List<Member> currentSons = repository.findMemberInfosByFatherId(memberId, new Date().getTime());
+        if (CollectionUtils.isEmpty(currentSons)) {
+            return new HashMap<>();
+        }
+        for (Member currentSon : currentSons) {
+            List<String> sonList = new ArrayList<>();
+            AllyMembers allyMembers = memberService.getAlliesByMemberId(currentSon.getId(), new Date().getTime());
+            if (allyMembers != null) {
+                sonList.addAll(allyMembers.getSonList());
+                sonList.addAll(allyMembers.getGrandSonList());
+            }
+            if (CollectionUtils.isEmpty(sonList)) {
+                continue;
+            }
+            Double totalTransactionAmount = 0d;
+            for (String m : sonList) {
+                Map<String, Double> resultMap = memberProfitRecordsRepository.staticProfitsByMonthNew(m, lastMonthStart, lastMonthEnd);
+                double transactionAmount = resultMap.get("totalTransactionAmount") == null ? 0d : resultMap.get("totalTransactionAmount");
+                totalTransactionAmount += transactionAmount;
+            }
+            totalTransactionAmount = new BigDecimal(totalTransactionAmount).setScale(2, BigDecimal.ROUND_HALF_UP).doubleValue();
+            if (totalTransactionAmount >= threadHold) {
+                BigPartner bigPartner = new BigPartner();
+                bigPartner.setMemberId(currentSon.getId());
+                bigPartner.setMemberMobile(currentSon.getMobile());
+                bigPartner.setMemberName(currentSon.getName());
+                bigPartner.setTransactionAmount(totalTransactionAmount);
+                bigPartnerList.add(bigPartner);
+                totalAmount += totalTransactionAmount;
+            }
+        }
+        Map<String, Object> result = new HashMap<>();
+        result.put("bigPartnerList", bigPartnerList);
+        result.put("totalAmount", setDouleScale(totalAmount));
+        result.put("memberSize", bigPartnerList.size());
+        return result;
     }
 
     /**
