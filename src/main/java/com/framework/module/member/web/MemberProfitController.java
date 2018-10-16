@@ -1,5 +1,6 @@
 package com.framework.module.member.web;
 
+import com.framework.module.common.DateTools;
 import com.framework.module.member.domain.*;
 import com.framework.module.member.service.MemberCashInRecordsService;
 import com.framework.module.member.service.MemberProfitRecordsService;
@@ -106,6 +107,9 @@ public class MemberProfitController extends AbstractCrudController<MemberProfitR
 
     @ApiOperation(value = "按照月份获取历史业绩")
     @RequestMapping(value = "/getMonthAchievement/{startMonth}/{size}", method = RequestMethod.GET)
+    @ApiImplicitParams({
+            @ApiImplicitParam(value = "登录返回token", name = "access_token", dataType = "String", paramType = "query")})
+    @ResponseBody
     public ResponseEntity<List<AchievementDetail>> getMonthAchievement(@PathVariable String startMonth, @PathVariable Integer size) {
         String memberId = UserThread.getInstance().get().getId();
         List<AchievementDetail> result = new ArrayList<>();
@@ -119,6 +123,9 @@ public class MemberProfitController extends AbstractCrudController<MemberProfitR
 
     @ApiOperation(value = "按照天获取历史业绩")
     @RequestMapping(value = "/getDayAchievement/{startDate}/{size}", method = RequestMethod.GET)
+    @ApiImplicitParams({
+            @ApiImplicitParam(value = "登录返回token", name = "access_token", dataType = "String", paramType = "query")})
+    @ResponseBody
     public ResponseEntity<List<AchievementDetail>> getDayAchievement(@PathVariable String startDate, @PathVariable Integer size) throws Exception {
         String memberId = UserThread.getInstance().get().getId();
         List<AchievementDetail> result = memberProfitService.getAchievementByDate(memberId, startDate, size);
@@ -217,4 +224,30 @@ public class MemberProfitController extends AbstractCrudController<MemberProfitR
         Map<String, Object> result = memberProfitService.getBigPartner(memberId);
         return new ResponseEntity<>(result, HttpStatus.OK);
     }
+
+    @ApiOperation(value = "按照天搜索历史业绩")
+    @RequestMapping(value = "/searchDayAchievement", method = RequestMethod.GET)
+    @ApiImplicitParams({
+            @ApiImplicitParam(value = "登录返回token", name = "access_token", dataType = "String", paramType = "query")})
+    @ResponseBody
+    public ResponseEntity<List<AchievementDetail>> getDayAchievement(@RequestParam String startDate, @RequestParam String endDate) throws Exception {
+        String memberId = UserThread.getInstance().get().getId();
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMdd");
+        int size = DateTools.differentDaysByMillisecond(sdf.parse(startDate), sdf.parse(endDate));
+        List<AchievementDetail> result = memberProfitService.getAchievementByDate(memberId, endDate, size + 1);
+        return new ResponseEntity<>(result, HttpStatus.OK);
+    }
+
+//    @ApiOperation(value = "按照月份搜索历史业绩")
+//    @RequestMapping(value = "/searchMonthAchievement", method = RequestMethod.GET)
+//    public ResponseEntity<List<AchievementDetail>> getMonthAchievement(@RequestParam String startMonth, @RequestParam String endMonth) {
+//        String memberId = UserThread.getInstance().get().getId();
+//        List<AchievementDetail> result = new ArrayList<>();
+//        try {
+//            result = memberProfitService.getAchievementByMonth(memberId, startMonth, size);
+//        } catch (Exception e) {
+//            return new ResponseEntity<>(result, BAD_REQUEST);
+//        }
+//        return new ResponseEntity<>(result, HttpStatus.OK);
+//    }
 }
