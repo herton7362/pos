@@ -42,7 +42,7 @@ require(['jquery', 'vue', 'messager', 'utils'], function ($, Vue, messager, util
                             }
                         });
                         var length = data.length-1;
-                        $("#search").html("当前合伙人数"+length);
+                        $("#search").html("当前总人数"+data.length);
                         $(self.tree.$instance.$el).jstree("destroy");
                         $(self.tree.$instance.$el).jstree({
                             checkbox : {
