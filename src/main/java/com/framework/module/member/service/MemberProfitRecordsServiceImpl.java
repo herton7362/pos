@@ -668,7 +668,7 @@ public class MemberProfitRecordsServiceImpl extends AbstractCrudService<MemberPr
         Map<String, String[]> param = new HashMap<>();
         List<Member> memberList = memberService.findAll(param);
         for (Member member : memberList) {
-            if (member.getSupportManagerAward() != null && member.getSupportManagerAward() == 0) {
+            if (member.getSupportManagerAward() != null && "0".equals(member.getSupportManagerAward())) {
                 continue;
             }
             Map<String, Object> result = getBigPartner(member.getId(), threadHold);

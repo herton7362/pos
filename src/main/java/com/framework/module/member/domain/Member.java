@@ -85,7 +85,7 @@ public class Member extends BaseUser implements Comparable {
     private String openAccountSubbranch;
     @ApiModelProperty(value = "支持领管理奖")
     @Column()
-    private Integer supportManagerAward;
+    private String supportManagerAward;
     @Transient
     @JsonIgnore
     private Integer sortType;
@@ -377,11 +377,11 @@ public class Member extends BaseUser implements Comparable {
         this.memberLevelName = memberLevelName;
     }
 
-    public Integer getSupportManagerAward() {
+    public String getSupportManagerAward() {
         return supportManagerAward;
     }
 
-    public void setSupportManagerAward(Integer supportManagerAward) {
+    public void setSupportManagerAward(String supportManagerAward) {
         this.supportManagerAward = supportManagerAward;
     }
 

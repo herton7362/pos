@@ -18,22 +18,30 @@ require(['jquery', 'vue', 'messager', 'utils'], function($, Vue, messager, utils
                     {field:'loginName', title:'登录名'},
                     {field:'name', title:'姓名'},
                     {field:'mobile', title:'手机'},
-                    {field:'gender', title:'性别', formatter: function(value) {
-                        if(value === '0') {
-                            return '女士';
-                        } else if(value === '1') {
-                            return '先生';
-                        }
-                        return '未知';
-                    }},
-                    {field:'birthday', title:'生日', formatter: function(value) {
-                        if(!value) {
-                            return '';
-                        }
-                        return new Date(value).format("yyyy-MM-dd");
-                    }},
+                    // {field:'gender', title:'性别', formatter: function(value) {
+                    //     if(value === '0') {
+                    //         return '女士';
+                    //     } else if(value === '1') {
+                    //         return '先生';
+                    //     }
+                    //     return '未知';
+                    // }},
+                    {field:'supportManagerAward', title:'是否支持管理奖', formatter: function(value) {
+                            if(value === '0') {
+                                return '不支持';
+                            } else if(value === '1') {
+                                return '支持';
+                            }
+                            return '未配置（默认支持）';
+                        }},
+                    // {field:'birthday', title:'生日', formatter: function(value) {
+                    //     if(!value) {
+                    //         return '';
+                    //     }
+                    //     return new Date(value).format("yyyy-MM-dd");
+                    // }},
                     {field:'idCard', title:'身份证'},
-                    {field:'address', title:'所在地区'}
+                    // {field:'address', title:'所在地区'}
                 ]
             },
             cards: {
@@ -84,7 +92,8 @@ require(['jquery', 'vue', 'messager', 'utils'], function($, Vue, messager, utils
                 gender: '1',
                 birthday: null,
                 idCard: null,
-                address: null
+                address: null,
+                supportManagerAward: null
             },
             memberLevelParams: []
         },
