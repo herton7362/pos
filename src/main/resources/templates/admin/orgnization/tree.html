@@ -39,9 +39,34 @@
                     <button type="button" class="btn btn-sm btn-primary btn-flat" @click="openAll">
                         <i class="fa fa-plus"></i> 展开全部
                     </button>
+                    <button type="button" class="btn btn-sm btn-primary btn-flat" @click="search">
+                        <i class="fa fa-plus"></i> 查询
+                    </button>
                     <tree :data="tree.data" :instance="tree" :check-able="false" style="margin-top: 8px"></tree>
                 </div>
             </div>
+           <!-- sidemodal -->
+            <validator :instance="choose.validator">
+                <form @submit.prevent="submitChoose">
+                    <sidemodal title="查询窗口" :footer="true" :instance="choose.modal">
+                        <template slot="body">
+                            <div class="form-group">
+                                <label>会员：</label>
+                                <combobox
+                                        required
+                                        class="form-control"
+                                        :options="members"
+                                        v-model="choose.formData.memberId">
+                                </combobox>
+                            </div>
+                        </template>
+                        <template slot="footer">
+                            <button type="button" class="btn btn-default margin-r-5 btn-flat" @click="choose.modal.$instance.close()">取消</button>
+                            <button type="submit" class="btn btn-primary btn-flat">确认</button>
+                        </template>
+                    </sidemodal>
+                </form>
+            </validator>
         </section>
         <!-- /.content -->
     </div>
