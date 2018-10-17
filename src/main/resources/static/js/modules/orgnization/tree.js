@@ -41,9 +41,31 @@ require(['jquery', 'vue', 'messager', 'utils'], function ($, Vue, messager, util
                                 this.parent = self.findParent(data, this.fatherId);
                             }
                         });
-                        self.tree.data = data;
+                        $(self.tree.$instance.$el).jstree("destroy");
+                        $(self.tree.$instance.$el).jstree({
+                            checkbox : {
+                                keep_selected_style : false
+                            },
+                            core: {
+                                data: self._convertData(data)
+                            },
+                            plugins : []
+                        });
+                        $(self.tree.$instance.$el).jstree(true).refresh();
                     }
                 });
+            },
+            _convertData: function (data) {
+                var innerData = [];
+                $.each(data, function() {
+                    innerData.push({
+                        id: this.id,
+                        text: this.name,
+                        icon: this.icon,
+                        parent: this.parent? this.parent.id: '#'
+                    })
+                });
+                return innerData;
             },
             closeAll: function () {
                 this.tree.$instance.closeAll();
