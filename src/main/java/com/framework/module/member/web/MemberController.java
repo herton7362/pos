@@ -23,6 +23,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.util.CollectionUtils;
+import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
@@ -306,6 +307,21 @@ public class MemberController extends AbstractCrudController<Member> {
         result.put("totalTransactionAmount", totalTransactionAmount);
         result.put("shopNum", shopSize);
         result.put("partnerNum", sonList.size());
+        return new ResponseEntity<>(result, HttpStatus.OK);
+    }
+
+    @ApiOperation(value = "关系树查询", notes = "关系树查询")
+    @RequestMapping(value = "/searchForTree", method = RequestMethod.GET, produces = "application/json; charset=utf-8")
+    public ResponseEntity<List<Member>> searchForTree(@RequestParam(required = false) String memberId) throws Exception {
+        if (StringUtils.isEmpty(memberId)) {
+            Map<String, String[]> param = new HashMap<>();
+            return new ResponseEntity<>(getService().findAll(param), HttpStatus.OK);
+        }
+        AllyMemberInfos allyMemberInfos = memberService.getAlliesInfosByMemberId(memberId, new Date().getTime());
+        List<Member> result = new ArrayList<>();
+        result.addAll(allyMemberInfos.getGrandSonList());
+        result.addAll(allyMemberInfos.getSonList());
+        result.add(memberService.findOne(memberId));
         return new ResponseEntity<>(result, HttpStatus.OK);
     }
 

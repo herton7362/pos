@@ -11,22 +11,23 @@ require(['jquery', 'vue', 'messager', 'utils'], function($, Vue, messager, utils
             loadSidebar: function() {
                 var self = this;
                 $.ajax({
-                    url: utils.patchUrl('/api/member'),
+                    url: utils.patchUrl('/api/member/searchForTree'),
                     data: {
                         sort:'sortNumber,updatedDate',
-                        order: 'asc,desc'
+                        order: 'asc,desc',
+                        // memberId:"000000006601505f01660eb749130c8d"
                     },
                     success: function(data) {
-                        $.each(data.content, function () {
+                        $.each(data, function () {
                             this.name = this.name || this.loginName;
                             this.icon = utils.patchUrlPrefixUrl('/static/image/person.png')
                             if(!this.fatherId) {
                                 this.parent = null;
                             } else {
-                                this.parent = self.findParent(data.content, this.fatherId);
+                                this.parent = self.findParent(data, this.fatherId);
                             }
                         });
-                        self.tree.data = data.content;
+                        self.tree.data = data;
                     }
                 });
             },
