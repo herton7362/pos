@@ -41,6 +41,8 @@ require(['jquery', 'vue', 'messager', 'utils'], function ($, Vue, messager, util
                                 this.parent = self.findParent(data, this.fatherId);
                             }
                         });
+                        var length = data.length-1;
+                        $("#search").html("当前合伙人数"+length);
                         $(self.tree.$instance.$el).jstree("destroy");
                         $(self.tree.$instance.$el).jstree({
                             checkbox : {
