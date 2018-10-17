@@ -42,16 +42,6 @@ require(['jquery', 'vue', 'messager', 'utils'], function ($, Vue, messager, util
                             }
                         });
                         self.tree.data = data;
-                        $(self.tree.$instance.$el).jstree({
-                            checkbox : {
-                                keep_selected_style : false
-                            },
-                            core: {
-                                data: data
-                            },
-                            plugins : []
-                        });
-                        $(self.tree.$instance.$el).jstree(true).refresh();
                     }
                 });
             },
