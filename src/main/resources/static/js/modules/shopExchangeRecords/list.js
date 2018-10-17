@@ -7,6 +7,9 @@ require(['jquery', 'vue', 'utils', 'messager'], function($, Vue, utils, messager
                 {field:'memberName', title:'合伙人姓名'},
                 {field:'memberMobile', title:'合伙人电话'},
                 {field:'activePosSn', title:'激活设备SN'},
+                {field:'createdDate', title:'兑换时间', formatter: function (value) {
+                    return new Date(value).format('yyyy-MM-dd HH:mm')
+                }},
                 {field:'status', title:'兑换状态', formatter: function(value) {
                     if('EXCHANGING' === value) {
                         return '兑换中';
@@ -19,7 +22,10 @@ require(['jquery', 'vue', 'utils', 'messager'], function($, Vue, utils, messager
             ],
             datagrid: {
                 queryParams: {
-                    status: 'EXCHANGING'
+                    status: 'EXCHANGING',
+                    memberName: null,
+                    memberMobile: null,
+                    activePosSn: null
                 }
             },
             shops: [],
@@ -61,6 +67,12 @@ require(['jquery', 'vue', 'utils', 'messager'], function($, Vue, utils, messager
                         callback();
                     }
                 })
+            },
+            search: function () {
+            	this.datagrid.queryParams.memberName = $("#memberName").val();
+            	this.datagrid.queryParams.memberMobile = $("#memberMobile").val();
+            	this.datagrid.queryParams.activePosSn = $("#activePosSn").val();
+            	 this.datagrid.$instance.load(this.datagrid.queryParams);
             }
         },
         mounted: function() {

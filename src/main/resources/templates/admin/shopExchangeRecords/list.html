@@ -30,19 +30,45 @@
         <!-- Main content -->
         <section id="content" class="content" v-cloak>
             <div class="row">
-                <div class="col-md-12">
+                <div class="col-md-20">
                     <div class="box">
                         <div class="box-header">
-                            <label>认证状态：</label>
-                            <label style="margin-right: 5px">
-                                <radio name="searchStatus" value="EXCHANGING" v-model="datagrid.queryParams.status"></radio> 兑换中
-                            </label>
-                            <label style="margin-right: 5px">
-                                <radio name="searchStatus" value="EXCHANGED" v-model="datagrid.queryParams.status"></radio> 兑换完成
-                            </label>
-                            <label style="margin-right: 5px">
-                                <radio name="searchStatus" value="EXCHANGE_FAIL" v-model="datagrid.queryParams.status"></radio> 兑换失败
-                            </label>
+                        	<div class="row">
+                        	<div class="col-md-5">
+	                            <label>认证状态：</label>
+	                            <label style="margin-right: 5px">
+	                                <radio name="searchStatus" value="EXCHANGING" v-model="datagrid.queryParams.status"></radio> 兑换中
+	                            </label>
+	                            <label style="margin-right: 5px">
+	                                <radio name="searchStatus" value="EXCHANGED" v-model="datagrid.queryParams.status"></radio> 兑换完成
+	                            </label>
+	                            <label style="margin-right: 5px">
+	                                <radio name="searchStatus" value="EXCHANGE_FAIL" v-model="datagrid.queryParams.status"></radio> 兑换失败
+	                            </label>
+	                            <label>排序状态：</label>
+	                            <label style="margin-right: 5px">
+	                                <radio name="sortStatus" value="date" checked="checked"></radio> 时间
+	                            </label>
+	                            <label style="margin-right: 5px">
+	                                <radio name="sortStatus" value="name" ></radio> 合伙人姓名
+	                            </label>
+                            </div>
+	                            <div class="col-md-2">
+	                            <input type="text" placeholder="合伙人姓名" class="form-control" id="memberName">
+		                        </div>
+		                        <div class="col-md-2">
+		                            <input type="text" placeholder="电话" class="form-control"  id="memberMobile">
+		                        </div>
+		                        <div class="col-md-2">
+		                            <input type="text" placeholder="sn号" class="form-control"  id="activePosSn">
+		                        </div>
+		                        <div class="col-md-1">
+		                            <button type="button" class="btn btn-flat btn-primary pull-right"  @click="search">
+		                                <i class="fa fa-search"></i>
+		                                搜索
+		                            </button>
+		                        </div>
+                       		 </div>
                         </div>
                         <div class="box-body">
                             <datagrid
