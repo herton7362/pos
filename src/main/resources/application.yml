@@ -80,5 +80,5 @@ spring:
     username: posproduct
     password: posP@$$W0rd
 server:
-  port: 8070
+  port: 8050
   context-path:
