@@ -43,14 +43,14 @@
 	                                <radio name="searchStatus" value="EXCHANGED" v-model="datagrid.queryParams.status"></radio> 兑换完成
 	                            </label>
 	                            <label style="margin-right: 5px">
-	                                <radio name="searchStatus" value="EXCHANGE_FAIL" v-model="datagrid.queryParams.status"></radio> 兑换失败
+	                                <radio name="searchStatus" value="EXCHANGE_FAIL" v-model="datagrid.queryParams.status" ></radio> 兑换失败
 	                            </label>
 	                            <label>排序状态：</label>
 	                            <label style="margin-right: 5px">
-	                                <radio name="sortStatus" value="date" checked="checked"></radio> 时间
+	                                <input type="radio" name="sortStatus" value="createdDate" checked="checked" @click="sortChange"/> 时间
 	                            </label>
 	                            <label style="margin-right: 5px">
-	                                <radio name="sortStatus" value="name" ></radio> 合伙人姓名
+	                                <input type="radio" name="sortStatus" value="memberName"  @click="sortChange"/> 合伙人姓名
 	                            </label>
                             </div>
 	                            <div class="col-md-2">

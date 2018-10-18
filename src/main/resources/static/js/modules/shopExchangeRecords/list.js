@@ -30,6 +30,8 @@ require(['jquery', 'vue', 'utils', 'messager'], function($, Vue, utils, messager
             datagrid: {
                 queryParams: {
                     status: 'EXCHANGING',
+                    sort: 'createdDate',
+                    order: 'desc',
                     memberName: null,
                     memberMobile: null,
                     activePosSn: null
@@ -80,6 +82,11 @@ require(['jquery', 'vue', 'utils', 'messager'], function($, Vue, utils, messager
             	this.datagrid.queryParams.memberMobile = $("#memberMobile").val();
             	this.datagrid.queryParams.activePosSn = $("#activePosSn").val();
             	 this.datagrid.$instance.load(this.datagrid.queryParams);
+            },
+            sortChange:function(){
+                this.datagrid.queryParams.sort = $('input:radio[name="sortStatus"]:checked').val();
+                this.datagrid.$instance.load(this.datagrid.queryParams);
+                
             }
         },
         mounted: function() {
