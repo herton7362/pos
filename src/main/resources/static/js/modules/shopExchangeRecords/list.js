@@ -86,7 +86,7 @@ require(['jquery', 'vue', 'utils', 'messager'], function($, Vue, utils, messager
             sortChange:function(){
                 this.datagrid.queryParams.sort = $('input:radio[name="sortStatus"]:checked').val();
                 this.datagrid.$instance.load(this.datagrid.queryParams);
-                
+
             }
         },
         mounted: function() {
