@@ -10,6 +10,13 @@ require(['jquery', 'vue', 'utils', 'messager'], function($, Vue, utils, messager
                 {field:'createdDate', title:'兑换时间', formatter: function (value) {
                     return new Date(value).format('yyyy-MM-dd HH:mm')
                 }},
+                {field:'shippingAddress', title:'获取方式', formatter: function (value) {
+                        if(null != value) {
+                            return '邮寄：'+ value;
+                        } else {
+                            return '自取';
+                        }
+                    }},
                 {field:'status', title:'兑换状态', formatter: function(value) {
                     if('EXCHANGING' === value) {
                         return '兑换中';

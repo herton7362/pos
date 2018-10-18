@@ -63,6 +63,7 @@ public class ShopExchangeRecordsServiceImpl extends AbstractCrudService<ShopExch
             shopExchangeRecords.setMemberId(memberId);
             shopExchangeRecords.setShopId(shopList[i]);
             shopExchangeRecords.setMemberMobile(member.getMobile());
+            shopExchangeRecords.setShippingAddress(shippingAddress);
             shopExchangeRecords.setMemberName(member.getName());
             shopExchangeRecords.setActivePosSn(shop.getSn());
             saveList.add(shopExchangeRecords);
