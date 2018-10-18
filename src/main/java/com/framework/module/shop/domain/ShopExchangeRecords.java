@@ -19,6 +19,8 @@ public class ShopExchangeRecords extends BaseEntity {
     private String memberMobile;
     @ApiModelProperty(value = "激活设备SN")
     private String activePosSn;
+    @ApiModelProperty(value = "激活设备SN")
+    private String shippingAddress;
     @ApiModelProperty(value = "兑换状态")
     @Column(length = 20)
     @Enumerated(EnumType.STRING)
@@ -71,6 +73,14 @@ public class ShopExchangeRecords extends BaseEntity {
 
     public void setActivePosSn(String activePosSn) {
         this.activePosSn = activePosSn;
+    }
+
+    public String getShippingAddress() {
+        return shippingAddress;
+    }
+
+    public void setShippingAddress(String shippingAddress) {
+        this.shippingAddress = shippingAddress;
     }
 
     public enum Status {

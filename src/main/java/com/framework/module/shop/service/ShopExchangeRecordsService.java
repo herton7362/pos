@@ -6,7 +6,7 @@ import com.kratos.exceptions.BusinessException;
 
 public interface ShopExchangeRecordsService extends CrudService<ShopExchangeRecords> {
 
-    void exchangeMachine(String shopIds, String memberId) throws BusinessException;
+    void exchangeMachine(String shopIds, String memberId, String shippingAddress) throws BusinessException;
 
     void examineExchangeMachine(String exchangeId, boolean examineResult) throws BusinessException;
 }

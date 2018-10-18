@@ -16,7 +16,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.util.CollectionUtils;
 import org.springframework.web.bind.annotation.*;
 
-import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.*;
 
@@ -121,13 +120,13 @@ public class ShopController extends AbstractCrudController<Shop> {
     @RequestMapping(value = "/exchangeMachine", method = RequestMethod.POST)
     public ResponseEntity<?> exchangeMachine(@RequestParam String shopIds) throws BusinessException {
         String memberId = UserThread.getInstance().get().getId();
-        shopExchangeRecordsService.exchangeMachine(shopIds, memberId);
+        shopExchangeRecordsService.exchangeMachine(shopIds, memberId, "");
         return new ResponseEntity<>(HttpStatus.OK);
     }
 
     @ApiOperation(value = "兑换机器")
     @RequestMapping(value = "/exchangeMachineNew", method = RequestMethod.POST)
-    public ResponseEntity<?> exchangeMachineNew(@RequestParam Integer num) throws BusinessException {
+    public ResponseEntity<?> exchangeMachineNew(@RequestParam Integer num, @RequestParam(required = false) String shippingAddress) throws BusinessException {
         String memberId = UserThread.getInstance().get().getId();
         List<Shop> list = shopRepository.findAllUnExchangeByMemberId(memberId);
         if (num < 1) {
@@ -144,7 +143,7 @@ public class ShopController extends AbstractCrudController<Shop> {
             shopIds.append(list.get(i).getId()).append("|");
         }
         shopIds.deleteCharAt(shopIds.lastIndexOf("|"));
-        shopExchangeRecordsService.exchangeMachine(shopIds.toString(), memberId);
+        shopExchangeRecordsService.exchangeMachine(shopIds.toString(), memberId, shippingAddress);
         return new ResponseEntity<>(HttpStatus.OK);
     }
 

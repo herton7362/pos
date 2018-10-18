@@ -33,7 +33,7 @@ public class ShopExchangeRecordsServiceImpl extends AbstractCrudService<ShopExch
     }
 
     @Override
-    public void exchangeMachine(String shopIds, String memberId) throws BusinessException {
+    public void exchangeMachine(String shopIds, String memberId, String shippingAddress) throws BusinessException {
         logger.info("shopIds=" + shopIds + ",memberId=" + memberId);
         List<ShopExchangeRecords> saveList = new ArrayList<>();
         List<Shop> shops = new ArrayList<>();
