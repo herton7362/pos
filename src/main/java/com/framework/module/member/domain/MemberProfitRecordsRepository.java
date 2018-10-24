@@ -9,7 +9,7 @@ import java.util.Map;
 
 public interface MemberProfitRecordsRepository extends PageRepository<MemberProfitRecords> {
 
-    @Query("SELECT sum(CASE p.profitType WHEN 1 THEN p.profit ELSE 0 END) AS activeAward, sum(CASE p.profitType WHEN 2 THEN p.profit ELSE 0 END) AS directlyAward, sum(CASE p.profitType WHEN 3 THEN p.profit ELSE 0 END) AS managerAward, sum(CASE p.profitType WHEN 4 THEN p.profit ELSE 0 END) AS teamBuildAward, sum(p.profit) AS totalProfit, sum(p.transactionAmount) AS totalTransactionAmount FROM MemberProfitRecords p where p.memberId=?1 AND p.transactionDate>=?2 AND p.transactionDate<=?3")
+    @Query("SELECT sum(CASE p.profitType WHEN 1 THEN p.profit ELSE 0 END) AS activeAward, sum(CASE p.profitType WHEN 2 THEN p.profit ELSE 0 END) AS directlyAward, sum(CASE p.profitType WHEN 3 THEN p.profit ELSE 0 END) AS managerAward, sum(CASE p.profitType WHEN 4 THEN p.profit ELSE 0 END) AS teamBuildAward,sum(CASE p.profitType WHEN 5 THEN p.profit ELSE 0 END) AS bigPartnerAward, sum(p.profit) AS totalProfit, sum(p.transactionAmount) AS totalTransactionAmount FROM MemberProfitRecords p where p.memberId=?1 AND p.transactionDate>=?2 AND p.transactionDate<=?3")
     Map<String, Double> staticProfitsByMonth(String memberId, long start, long end);
 
     @Query("SELECT sum(p.transactionAmount) AS totalTransactionAmount FROM MemberProfitRecords p where p.memberId=?1 AND p.transactionDate>=?2 AND p.transactionDate<=?3")

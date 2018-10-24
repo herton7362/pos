@@ -124,6 +124,7 @@ public class MemberProfitRecordsServiceImpl extends AbstractCrudService<MemberPr
             profitMonthDetail.setDirectlyAward(setDouleScale(resultMap.get("directlyAward") == null ? 0 : resultMap.get("directlyAward")));
             profitMonthDetail.setManagerAward(setDouleScale(resultMap.get("managerAward") == null ? 0 : resultMap.get("managerAward")));
             profitMonthDetail.setTeamBuildAward(setDouleScale(resultMap.get("teamBuildAward") == null ? 0 : resultMap.get("teamBuildAward")));
+            profitMonthDetail.setBigPartnerAward(setDouleScale(resultMap.get("bigPartnerAward") == null ? 0 : resultMap.get("bigPartnerAward")));
             profitMonthDetail.setTotalTransactionAmount(setDouleScale(resultMap.get("totalTransactionAmount") == null ? 0 : resultMap.get("totalTransactionAmount")));
             profitMonthDetail.setMonth(sdf.format(calendar.getTime()));
 

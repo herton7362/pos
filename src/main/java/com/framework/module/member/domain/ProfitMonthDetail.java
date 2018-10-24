@@ -22,6 +22,8 @@ public class ProfitMonthDetail {
     private String managerAward;
     @ApiModelProperty(value = "团建奖")
     private String teamBuildAward;
+    @ApiModelProperty(value = "大额1000万用户将")
+    private String bigPartnerAward;
     @ApiModelProperty(value = "总交易额")
     private String totalTransactionAmount;
     @ApiModelProperty(value = "交易月份/yyyyMM")
@@ -161,5 +163,13 @@ public class ProfitMonthDetail {
 
     public void setTransactionAmountDaiHuan(String transactionAmountDaiHuan) {
         this.transactionAmountDaiHuan = transactionAmountDaiHuan;
+    }
+
+    public String getBigPartnerAward() {
+        return bigPartnerAward;
+    }
+
+    public void setBigPartnerAward(String bigPartnerAward) {
+        this.bigPartnerAward = bigPartnerAward;
     }
 }
