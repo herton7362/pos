@@ -63,6 +63,8 @@ public interface MemberProfitRecordsService extends CrudService<MemberProfitReco
      */
     List<Achievement> getAchievement(String memberId) throws ParseException;
 
+    List<Achievement> getAchievementNew(String memberId) throws ParseException;
+
     /**
      * 获取联盟今日新增商户
      * @param memberId 会员ID

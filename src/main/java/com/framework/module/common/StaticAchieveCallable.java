@@ -34,13 +34,11 @@ public class StaticAchieveCallable implements Callable<StaticStaticAchievement> 
 
     @Override
     public StaticStaticAchievement call() {
-//        logger.info("start static:" + memberId);
         StaticStaticAchievement achievement = new StaticStaticAchievement();
         Integer shops = shopRepository.countAllByMemberId(memberId, start, end);
         achievement.setNewShopNum(shops == null ? 0 : shops);
         Map<String, Double> resultMap = memberProfitRecordsRepository.staticProfitsByMonthNew(memberId, start, end);
         achievement.setTransactionAmount(resultMap.get("totalTransactionAmount") == null ? 0d : resultMap.get("totalTransactionAmount"));
-//        logger.info("end static:" + memberId);
         return achievement;
     }
 }

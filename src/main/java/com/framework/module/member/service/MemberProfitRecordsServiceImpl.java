@@ -2,6 +2,8 @@ package com.framework.module.member.service;
 
 import com.framework.module.common.Constant;
 import com.framework.module.common.DateTools;
+import com.framework.module.common.StaticAchieveCallable;
+import com.framework.module.common.StaticThreadPool;
 import com.framework.module.member.domain.*;
 import com.framework.module.rule.domain.ActiveRule;
 import com.framework.module.rule.domain.GroupBuildDrawRule;
@@ -48,6 +50,8 @@ import java.time.LocalDate;
 import java.time.ZoneId;
 import java.time.ZonedDateTime;
 import java.util.*;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.Future;
 
 @Component
 @Transactional
@@ -277,6 +281,62 @@ public class MemberProfitRecordsServiceImpl extends AbstractCrudService<MemberPr
             result.add(achievement);
         }
 
+        return result;
+    }
+
+    @Override
+    public List<Achievement> getAchievementNew(String memberId) throws ParseException {
+        List<Achievement> result = new ArrayList<>(2);
+        SimpleDateFormat sdf1 = new SimpleDateFormat("yyyy-MM-dd");
+        SimpleDateFormat sdf2 = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+        Calendar calendar = Calendar.getInstance();
+        List<String> sonList = new ArrayList<>();
+        AllyMembers allyMembers = memberService.getAlliesByMemberId(memberId, new Date().getTime());
+        if (allyMembers != null) {
+            sonList.addAll(allyMembers.getSonList());
+            sonList.addAll(allyMembers.getGrandSonList());
+        }
+        for (int i = 0; i < 2; i++) {
+            Achievement achievement = new Achievement();
+            calendar.add(Calendar.MONTH, -i);
+            calendar.set(Calendar.DAY_OF_MONTH, 1);
+            String firstDay = sdf1.format(calendar.getTime()) + " 00:00:00";
+            // 获取前一个月最后一天
+            calendar.add(Calendar.MONTH, 1);
+            calendar.set(Calendar.DAY_OF_MONTH, 0);
+            String lastDay = sdf1.format(calendar.getTime()) + " 23:59:59";
+            long start = sdf2.parse(firstDay).getTime();
+            long end = sdf2.parse(lastDay).getTime();
+            int newSonShopNum = 0;
+            Double totalTransactionAmount = 0d;
+            List<Future<StaticStaticAchievement>> resultList = new ArrayList<>();
+            for (String m : sonList) {
+                StaticAchieveCallable staticAchieveCallable = new StaticAchieveCallable(start, end, m, shopRepository, memberProfitRecordsRepository);
+                Future<StaticStaticAchievement> tempAchievement = StaticThreadPool.getInstance().getExecutor().submit(staticAchieveCallable);
+                resultList.add(tempAchievement);
+            }
+            for (Future<StaticStaticAchievement> future : resultList) {
+                try {
+                    StaticStaticAchievement temp = future.get();
+                    newSonShopNum += temp.getNewShopNum();
+                    totalTransactionAmount += temp.getTransactionAmount();
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                } catch (ExecutionException e) {
+                    e.printStackTrace();
+                }
+            }
+            totalTransactionAmount = new BigDecimal(totalTransactionAmount).setScale(2, BigDecimal.ROUND_HALF_UP).doubleValue();
+            achievement.setAllyNewShopNum(newSonShopNum);
+            achievement.setAllyTransactionAmount(new BigDecimal(totalTransactionAmount.toString()).toString());
+            Integer shops1 = shopRepository.countAllByMemberId(memberId, start, end);
+            Map<String, Double> resultMap1 = memberProfitRecordsRepository.staticProfitsByMonthNew(memberId, start, end);
+            Double totalTransactionAmount1 = resultMap1.get("totalTransactionAmount") == null ? 0d : resultMap1.get("totalTransactionAmount");
+            achievement.setNewShopNum(shops1);
+            achievement.setTransactionAmount(new BigDecimal(totalTransactionAmount1).setScale(2, BigDecimal.ROUND_HALF_UP).toString());
+            achievement.setStaticMonth(firstDay);
+            result.add(achievement);
+        }
         return result;
     }
 
