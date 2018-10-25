@@ -155,6 +155,19 @@ public class MemberProfitController extends AbstractCrudController<MemberProfitR
         return new ResponseEntity<>(result, HttpStatus.OK);
     }
 
+    @ApiOperation(value = "test")
+    @RequestMapping(value = "/test", method = RequestMethod.GET)
+    public ResponseEntity<List<Achievement>> test() {
+        String memberId = UserThread.getInstance().get().getId();
+        List<Achievement> result = new ArrayList<>();
+        try {
+            result = memberProfitService.getAchievementNew(memberId);
+        } catch (ParseException e) {
+            return new ResponseEntity<>(result, BAD_REQUEST);
+        }
+        return new ResponseEntity<>(result, HttpStatus.OK);
+    }
+
     @ApiOperation(value = "今日盟友登记商户")
     @RequestMapping(value = "/getAllyNewShopToday", method = RequestMethod.GET)
     public ResponseEntity<Map<String, Integer>> getAllyNewShopToday() {
