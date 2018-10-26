@@ -99,12 +99,32 @@ define(function() {
             }
         },
         methods: {
-            _goToPage: function(page) {
-                if(page <= 0 || page > this.totalPage || this.innerProps.currentPage === page) {
+            _goToPage: function(val) {
+                if(val <= 0 || val > this.totalPage || this.innerProps.currentPage === val) {
                     return;
                 }
-                this.innerProps.currentPage = page;
-                this.$emit('go', page);
+                this.innerProps.currentPage = val;
+                this.$emit('go', val);
+                var step1 = (this.pagerSize - 1) / 2;
+                var step2 = step1;
+                if(this.innerProps.currentPage - step1 > 1){
+                	this.page = [];
+                    for(i = this.innerProps.currentPage - 2,l = this.innerProps.currentPage + 2; i <= l; i++) {
+                        this.page.push(i);
+                    };
+                    if(this.innerProps.currentPage + this.pagerSize  > this.totalPage){
+                    	this.page = [];
+                        for(i = this.totalPage - this.pagerSize,l = this.totalPage; i <= l; i++) {
+                            this.page.push(i);
+                        }
+                    }
+                    
+                }else{
+                   	this.page = [];
+                    for(i = 1; i <= this.pagerSize; i++) {
+                        this.page.push(i);
+                    }
+                }
             }
         }
     };
