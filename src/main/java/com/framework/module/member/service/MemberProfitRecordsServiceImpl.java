@@ -540,11 +540,32 @@ public class MemberProfitRecordsServiceImpl extends AbstractCrudService<MemberPr
             Integer memberLevel = member.getMemberLevel() == null ? 1 : member.getMemberLevel();
             // 获得下一级别的升级要求
             MemberLevelParam memberLevelParam = memberLevelParamService.getParamByLevel(String.valueOf(memberLevel + 1));
+            if (memberLevelParam == null || null == memberLevelParam.getTotalTransactionVolume() || StringUtils.isBlank(memberLevelParam.getTeamScale())) {
+                logger.info("【" + member.getName() + "】用户等级配置错误，无法升级");
+                s++;
+                continue;
+            }
             List<Member> sons = repository.findMemberInfosByFatherId(member.getId(), new Date().getTime());
-            Map<String, Double> transactionAmount = shopRepository.staticTotalTransaction(member.getId());
-            double totalTransactionAmount = transactionAmount.get("totalTransactionAmount") == null ? 0 : transactionAmount.get("totalTransactionAmount");
+//            Map<String, Double> transactionAmount = shopRepository.staticTotalTransaction(member.getId());
+//            double totalTransactionAmount = transactionAmount.get("totalTransactionAmount") == null ? 0 : transactionAmount.get("totalTransactionAmount");
+            logger.info("【" + member.getName() + "】用户当前等级【" + memberLevel + "】，升级需要交易额【" + memberLevelParam.getTotalTransactionVolume() + "】，团队规模【" + memberLevelParam.getTeamScale() + "】");
+            List<String> sonList = new ArrayList<>();
+            sonList.add(member.getId());
+            AllyMembers allyMembers = memberService.getAlliesByMemberId(member.getId(), new Date().getTime());
+            if (allyMembers != null) {
+                sonList.addAll(allyMembers.getSonList());
+                sonList.addAll(allyMembers.getGrandSonList());
+            }
+            Double totalTransactionAmount = 0d;
+            for (String m : sonList) {
+                Map<String, Double> resultMap = memberProfitRecordsRepository.staticAllTransaction(m);
+                totalTransactionAmount += resultMap.get("totalTransactionAmount") == null ? 0d : resultMap.get("totalTransactionAmount");
+            }
+            totalTransactionAmount = new BigDecimal(totalTransactionAmount).setScale(2, BigDecimal.ROUND_HALF_UP).doubleValue();
+            logger.info("【" + member.getName() + "】用户交易额：" + totalTransactionAmount);
             double transAmountYuan = memberLevelParam.getTotalTransactionVolume() * 10000;
             if (totalTransactionAmount < transAmountYuan) {
+                logger.info("【" + member.getName() + "】用户交易额不满足要求不能升级");
                 s++;
                 continue;
             }
@@ -576,8 +597,10 @@ public class MemberProfitRecordsServiceImpl extends AbstractCrudService<MemberPr
             if (scaleRequired) {
                 // 如果用户升级，看一下是否符合下一级别的要求
                 member.setMemberLevel(memberLevel + 1);
+                logger.info("【" + member.getName() + "】成功升级到【" + member.getMemberLevel() + "】");
                 repository.save(member);
             } else {
+                logger.info("【" + member.getName() + "】用户团队规模不满足要求不能升级");
                 s++;
             }
         }

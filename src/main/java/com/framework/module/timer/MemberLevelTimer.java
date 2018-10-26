@@ -28,7 +28,6 @@ public class MemberLevelTimer {
     }
 
     @Scheduled(cron = "0 0 6 1 * ?")
-    // @Scheduled(cron = "0 41 08 17 * ?")
     public void addManagerProfit() throws Exception {
         logger.info("start add manager profit.");
         memberProfitService.addManagerProfit();

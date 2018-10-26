@@ -3,7 +3,6 @@ package com.framework.module.member.domain;
 import com.kratos.common.PageRepository;
 import org.springframework.data.jpa.repository.Query;
 
-import java.sql.Date;
 import java.util.List;
 import java.util.Map;
 
@@ -14,6 +13,8 @@ public interface MemberProfitRecordsRepository extends PageRepository<MemberProf
 
     @Query("SELECT sum(p.transactionAmount) AS totalTransactionAmount FROM MemberProfitRecords p where p.memberId=?1 AND p.transactionDate>=?2 AND p.transactionDate<=?3")
     Map<String, Double> staticProfitsByMonthNew(String memberId, long start, long end);
+    @Query("SELECT sum(p.transactionAmount) AS totalTransactionAmount FROM MemberProfitRecords p where p.memberId=?1")
+    Map<String, Double> staticAllTransaction(String memberId);
 
     @Query("SELECT sum(p.transactionAmount) AS totalTransactionAmount FROM MemberProfitRecords p where p.memberId=?1 AND p.transactionDate>=?2 AND p.transactionDate<=?3")
     Map<String, Double> staticProfitsByTime(String memberId, long start, long end);
