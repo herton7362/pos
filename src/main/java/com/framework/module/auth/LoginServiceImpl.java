@@ -86,6 +86,9 @@ public class LoginServiceImpl extends AbstractLoginService {
             if (father == null) {
                 throw new BusinessException("邀请人手机号不正确");
             }
+            if (!Member.Status.ACTIVE.equals(father.getStatus())) {
+                throw new BusinessException("邀请人未激活，暂不能发展合伙人");
+            }
         }
 
         Member member = new Member();

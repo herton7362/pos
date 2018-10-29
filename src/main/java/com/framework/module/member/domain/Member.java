@@ -100,6 +100,12 @@ public class Member extends BaseUser implements Comparable {
     @ApiModelProperty(value = "所有盟友")
     private Integer allyAllNumber;
     @Transient
+    @ApiModelProperty(value = "所有一级激活盟友")
+    private Integer allySonActiveNumber;
+    @Transient
+    @ApiModelProperty(value = "所有激活盟友")
+    private Integer allyAllActiveNumber;
+    @Transient
     @ApiModelProperty(value = "上级名称")
     private String fatherName;
     @Transient
@@ -387,6 +393,22 @@ public class Member extends BaseUser implements Comparable {
 
     public Integer getSortType() {
         return sortType;
+    }
+
+    public Integer getAllySonActiveNumber() {
+        return allySonActiveNumber;
+    }
+
+    public void setAllySonActiveNumber(Integer allySonActiveNumber) {
+        this.allySonActiveNumber = allySonActiveNumber;
+    }
+
+    public Integer getAllyAllActiveNumber() {
+        return allyAllActiveNumber;
+    }
+
+    public void setAllyAllActiveNumber(Integer allyAllActiveNumber) {
+        this.allyAllActiveNumber = allyAllActiveNumber;
     }
 
     @Override

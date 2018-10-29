@@ -822,9 +822,9 @@ public class MemberProfitRecordsServiceImpl extends AbstractCrudService<MemberPr
         } catch (Exception e) {
             throw new BusinessException("第" + r + "行数据不合法,文件中交易金额单元格 格式需要为【数值型】并且不能为空");
         }
-        if (transactionAmount == 0) {
-            throw new BusinessException(String.format("第" + r + "行数据不合法,[%s]数据不合法", "交易金额"));
-        }
+//        if (transactionAmount == 0) {
+//            throw new BusinessException(String.format("第" + r + "行数据不合法,[%s]数据不合法", "交易金额"));
+//        }
         row.getCell(5).setCellType(Cell.CELL_TYPE_STRING);
         String sn = row.getCell(5).getStringCellValue();
         if (StringUtils.isBlank(sn)) {

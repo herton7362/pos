@@ -1,6 +1,6 @@
 package com.kratos.common;
 
-import com.framework.module.member.domain.AllyMembers;
+import com.framework.module.member.domain.AllyMemberInfos;
 import com.framework.module.member.domain.Member;
 import com.framework.module.member.domain.MemberLevelParam;
 import com.framework.module.member.service.MemberLevelParamService;
@@ -21,6 +21,8 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
+
+import java.util.Date;
 
 /**
  * 提供登录注册等服务
@@ -238,6 +240,8 @@ public abstract class AbstractLoginController {
      * 查询登录用户
      */
     @ApiOperation(value = "查询登录用户")
+    @ApiImplicitParams({
+            @ApiImplicitParam(value = "登录返回token", name = "access_token", dataType = "String", paramType = "query")})
     @RequestMapping(value = "/user/info", method = RequestMethod.GET)
     public ResponseEntity<BaseUser> getOne() throws Exception {
         BaseUser user = UserThread.getInstance().get();
@@ -250,11 +254,25 @@ public abstract class AbstractLoginController {
                     member.setFatherName(father.getName());
                 }
             }
-            AllyMembers allyMembers = memberService.getAlliesByMemberId(member.getId());
+            AllyMemberInfos allyMembers = memberService.getAlliesInfosByMemberId(member.getId(), new Date().getTime());
+            int activeSonNum = 0;
+            int activeGrandSonNum = 0;
             if (allyMembers != null) {
                 member.setAllySonNumber(allyMembers.getSonList().size());
                 member.setAllyAllNumber(allyMembers.getTotalNum());
+                for (Member m : allyMembers.getSonList()) {
+                    if (Member.Status.ACTIVE.equals(m.getStatus())) {
+                        activeSonNum++;
+                    }
+                }
+                for (Member m : allyMembers.getGrandSonList()) {
+                    if (Member.Status.ACTIVE.equals(m.getStatus())) {
+                        activeGrandSonNum++;
+                    }
+                }
             }
+            member.setAllyAllActiveNumber(activeGrandSonNum + activeSonNum);
+            member.setAllySonActiveNumber(activeSonNum);
             MemberLevelParam levelParam = memberLevelParamService.getParamByLevel(String.valueOf(member.getMemberLevel()));
             if (levelParam != null) {
                 member.setMemberLevelName(levelParam.getLevelName());

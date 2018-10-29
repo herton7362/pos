@@ -321,7 +321,11 @@ public class MemberController extends AbstractCrudController<Member> {
         List<Member> result = new ArrayList<>();
         result.addAll(allyMemberInfos.getGrandSonList());
         result.addAll(allyMemberInfos.getSonList());
-        result.add(memberService.findOne(memberId));
+        do {
+            Member one = memberService.findOne(memberId);
+            result.add(one);
+            memberId = one.getFatherId();
+        } while (!StringUtils.isEmpty(memberId));
         return new ResponseEntity<>(result, HttpStatus.OK);
     }
 
