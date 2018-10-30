@@ -101,15 +101,17 @@ public class SnInfoServiceImpl extends AbstractCrudService<SnInfo> implements Sn
         if (snArray.length == 0) {
             throw new BusinessException("sn信息填写的不正确");
         }
-//        if (snInfoRepository.countAllByMemberId(memberId) < 5 && snArray.length < 5) {
-//            throw new BusinessException("首次划分不得少于5个");
-//        }
+        Integer snCount = snInfoRepository.countAllByMemberId(memberId);
+        Integer shopCount = shopRepository.countAllByMemberId(memberId, 0, new Date().getTime());
+        if ((snCount + shopCount + snArray.length) < 5) {
+            throw new BusinessException("首次划分不得少于5个");
+        }
         Member receiveMember = memberService.findOne(memberId);
         for (int i = 0; i < snArray.length; i++) {
             SnInfo snInfo = snInfoRepository.findFirstBySn(snArray[i]);
-            if (StringUtils.isNotBlank(snInfo.getShopId())) {
-                throw new BusinessException("【" + snArray[i] + "】已经绑定，不能划拨给其他合伙人");
-            }
+//            if (StringUtils.isNotBlank(snInfo.getShopId())) {
+//                throw new BusinessException("【" + snArray[i] + "】已经绑定，不能划拨给其他合伙人");
+//            }
 //            if (StringUtils.isNotBlank(snInfo.getMemberId())) {
 //                if (snInfo.getMemberId().equals(memberId)) {
 //                    continue;
@@ -141,9 +143,17 @@ public class SnInfoServiceImpl extends AbstractCrudService<SnInfo> implements Sn
         if (snArray.length == 0) {
             throw new BusinessException("sn信息填写的不正确");
         }
-//        if (snInfoRepository.countAllByMemberId(memberId) < 5 && snArray.length < 5) {
-//            throw new BusinessException("首次划分不得少于5个");
-//        }
+        Integer currentSnCount = snInfoRepository.countAllByMemberId(currentMemberId);
+        Integer currentShopCount = shopRepository.countAllByMemberId(currentMemberId, 0, new Date().getTime());
+        if (currentSnCount + currentShopCount - snArray.length < 5) {
+            throw new BusinessException("您划拨后的机器会少于5台，您最多划拨台数为" + (currentSnCount + currentShopCount - 5));
+        }
+
+        Integer snCount = snInfoRepository.countAllByMemberId(memberId);
+        Integer shopCount = shopRepository.countAllByMemberId(memberId, 0, new Date().getTime());
+        if ((snCount + shopCount) < 5 && snArray.length < 5) {
+            throw new BusinessException("首次划分不得少于5个");
+        }
         Member receiveMember = memberService.findOne(memberId);
         Member transMember = memberService.findOne(currentMemberId);
         for (int i = 0; i < snArray.length; i++) {
