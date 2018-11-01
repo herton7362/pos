@@ -5,6 +5,7 @@ import com.framework.module.member.domain.*;
 import com.framework.module.member.service.MemberCashInRecordsService;
 import com.framework.module.member.service.MemberProfitRecordsService;
 import com.framework.module.member.service.MemberProfitTmpRecordsService;
+import com.framework.module.member.service.MemberService;
 import com.kratos.common.AbstractCrudController;
 import com.kratos.common.CrudService;
 import com.kratos.exceptions.BusinessException;
@@ -40,6 +41,7 @@ public class MemberProfitController extends AbstractCrudController<MemberProfitR
     private final MemberProfitTmpRecordsService memberProfitTmpRecordsService;
     private final DictionaryService dictionaryService;
     private final DictionaryCategoryService dictionaryCategoryService;
+    private final MemberService memberService;
 
     @Override
     protected CrudService<MemberProfitRecords> getService() {
@@ -51,12 +53,13 @@ public class MemberProfitController extends AbstractCrudController<MemberProfitR
             MemberProfitRecordsService memberProfitService,
             MemberCashInRecordsService memberCashInRecordsService,
             MemberProfitTmpRecordsService memberProfitTmpRecordsService,
-            DictionaryService dictionaryService, DictionaryCategoryService dictionaryCategoryService) {
+            DictionaryService dictionaryService, DictionaryCategoryService dictionaryCategoryService, MemberService memberService) {
         this.memberProfitService = memberProfitService;
         this.memberCashInRecordsService = memberCashInRecordsService;
         this.memberProfitTmpRecordsService = memberProfitTmpRecordsService;
         this.dictionaryService = dictionaryService;
         this.dictionaryCategoryService = dictionaryCategoryService;
+        this.memberService = memberService;
     }
 
     /**
@@ -291,5 +294,20 @@ public class MemberProfitController extends AbstractCrudController<MemberProfitR
             return new ResponseEntity<>(result, BAD_REQUEST);
         }
         return new ResponseEntity<>(result, HttpStatus.OK);
+    }
+
+    @ApiOperation(value = "团建奖测试")
+    @RequestMapping(value = "/testTeamBuilder", method = RequestMethod.GET)
+    @ApiImplicitParams({
+            @ApiImplicitParam(value = "登录返回token", name = "access_token", dataType = "String", paramType = "query")})
+    @ResponseBody
+    public ResponseEntity<?> testTeamBuilder() throws Exception {
+        Map<String, String[]> param = new HashMap<>();
+        List<Member> allMember = memberService.findAll(param);
+        for (Member member : allMember) {
+            String name = member.getName();
+            memberProfitService.setTestTeamBuildProfit(member.getId());
+        }
+        return new ResponseEntity<>(HttpStatus.OK);
     }
 }

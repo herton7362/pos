@@ -96,6 +96,38 @@ public class MemberProfitRecordsServiceImpl extends AbstractCrudService<MemberPr
     }
 
     @Override
+    public void setTestTeamBuildProfit(String fatherId) throws Exception {
+        Long activeCount = repository.count(
+                (Root<Member> root, CriteriaQuery<?> criteriaQuery, CriteriaBuilder criteriaBuilder) -> {
+                    List<Predicate> predicate = new ArrayList<>();
+                    predicate.add(criteriaBuilder.equal(root.get("fatherId"), fatherId));
+                    predicate.add(criteriaBuilder.equal(root.get("status"), Member.Status.ACTIVE));
+                    return criteriaBuilder.and(predicate.toArray(new Predicate[]{}));
+                });
+        MemberProfitRecords teamBuilderProfit = new MemberProfitRecords();
+        teamBuilderProfit.setProfitType(Constant.PROFIT_TYPE_TUANJIAN);
+        teamBuilderProfit.setMemberId(fatherId);
+        teamBuilderProfit.setTransactionDate(new Date().getTime());
+        if (activeCount < 5) {
+            return;
+        }
+        if (activeCount >= 5 && activeCount < 10) {
+            teamBuilderProfit.setProfit(500);
+        } else if (activeCount >= 10 && activeCount < 20) {
+            teamBuilderProfit.setProfit(1000);
+        } else if (activeCount >= 20 && activeCount < 30) {
+            teamBuilderProfit.setProfit(2000);
+        } else if (activeCount >= 30 && activeCount < 40) {
+            teamBuilderProfit.setProfit(4000);
+        } else if (activeCount >= 40 && activeCount < 50) {
+            teamBuilderProfit.setProfit(8000);
+        } else if (activeCount >= 50) {
+            teamBuilderProfit.setProfit(10000);
+        }
+        save(teamBuilderProfit);
+    }
+
+    @Override
     public List<ProfitMonthDetail> getProfitByMonth(String memberId, String startMonth, int size) throws Exception {
         Member member = memberService.findOne(memberId);
         if (member == null) {

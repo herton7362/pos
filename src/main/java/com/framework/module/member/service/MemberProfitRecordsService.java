@@ -112,4 +112,6 @@ public interface MemberProfitRecordsService extends CrudService<MemberProfitReco
     double getSnTransactionAmount(String sn, Long startTime, Long endTime);
 
     void addManagerProfit() throws Exception;
+
+    void setTestTeamBuildProfit(String id) throws Exception;
 }
