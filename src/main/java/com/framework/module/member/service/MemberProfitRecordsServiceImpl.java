@@ -465,6 +465,10 @@ public class MemberProfitRecordsServiceImpl extends AbstractCrudService<MemberPr
                     shop.setSn(importProfit.getSn());
                     shop.setName(importProfit.getUserName());
                     shopRepository.save(shop);
+
+                    snInfo.setShopName(shop.getName());
+                    snInfo.setShopId(shop.getId());
+                    snInfoRepository.save(snInfo);
                 } else {
                     throw new BusinessException(String.format("第" + r + "行数据不合法,SN对应商户不存在。SN为:[%s]", importProfit.getSn()));
                 }
@@ -751,7 +755,7 @@ public class MemberProfitRecordsServiceImpl extends AbstractCrudService<MemberPr
         Map<String, Object> result = new HashMap<>();
         result.put("bigPartnerList", bigPartnerList);
         result.put("totalAmount", setDouleScale(totalAmount));
-        result.put("bigPartnerNum", bigPartnerList.size());
+        result.put("memberSize", bigPartnerList.size());
         return result;
     }
 
