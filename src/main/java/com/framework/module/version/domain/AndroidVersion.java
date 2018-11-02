@@ -29,6 +29,9 @@ public class AndroidVersion extends BaseEntity {
     @ApiModelProperty(value = "downloadUrl")
     @Column(length = 100)
     private String downloadUrl;
+    @ApiModelProperty(value = "des")
+    @Column(length = 1024)
+    private String des;
 
 
     public String getVersionName() {
@@ -61,5 +64,13 @@ public class AndroidVersion extends BaseEntity {
 
     public void setDownloadUrl(String downloadUrl) {
         this.downloadUrl = downloadUrl;
+    }
+
+    public String getDes() {
+        return des;
+    }
+
+    public void setDes(String des) {
+        this.des = des;
     }
 }
