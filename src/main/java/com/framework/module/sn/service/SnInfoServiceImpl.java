@@ -101,11 +101,11 @@ public class SnInfoServiceImpl extends AbstractCrudService<SnInfo> implements Sn
         if (snArray.length == 0) {
             throw new BusinessException("sn信息填写的不正确");
         }
-        Integer snCount = snInfoRepository.countAllByMemberId(memberId);
-        Integer shopCount = shopRepository.countAllByMemberId(memberId, 0, new Date().getTime());
-        if ((snCount + shopCount + snArray.length) < 5) {
-            throw new BusinessException("首次划分不得少于5个");
-        }
+//        Integer snCount = snInfoRepository.countAllByMemberId(memberId);
+//        Integer shopCount = shopRepository.countAllByMemberId(memberId, 0, new Date().getTime());
+//        if ((snCount + shopCount + snArray.length) < 5) {
+//            throw new BusinessException("首次划分不得少于5个");
+//        }
         Member receiveMember = memberService.findOne(memberId);
         for (int i = 0; i < snArray.length; i++) {
             SnInfo snInfo = snInfoRepository.findFirstBySn(snArray[i]);
