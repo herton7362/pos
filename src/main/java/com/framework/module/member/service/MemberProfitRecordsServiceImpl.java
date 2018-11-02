@@ -727,6 +727,7 @@ public class MemberProfitRecordsServiceImpl extends AbstractCrudService<MemberPr
         }
         for (Member currentSon : currentSons) {
             List<String> sonList = new ArrayList<>();
+            sonList.add(currentSon.getId());
             AllyMembers allyMembers = memberService.getAlliesByMemberId(currentSon.getId(), new Date().getTime());
             if (allyMembers != null) {
                 sonList.addAll(allyMembers.getSonList());
@@ -793,7 +794,7 @@ public class MemberProfitRecordsServiceImpl extends AbstractCrudService<MemberPr
                 continue;
             }
             Map<String, Object> result = getBigPartner(member.getId(), threadHold);
-            int bigPartnerNum = (result == null || result.get("bigPartnerNum") == null) ? 0 : (Integer) result.get("bigPartnerNum");
+            int bigPartnerNum = (result == null || result.get("memberSize") == null) ? 0 : (Integer) result.get("memberSize");
             MemberProfitRecords managerProfit = new MemberProfitRecords();
             managerProfit.setProfitType(Constant.PROFIT_BIG_PARTNER);
             managerProfit.setMemberId(member.getId());
