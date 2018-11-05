@@ -11,10 +11,11 @@ import org.springframework.transaction.annotation.Transactional;
 @Transactional
 public class RealIdentityAuditServiceImpl extends AbstractCrudService<RealIdentityAudit> implements RealIdentityAuditService {
     private final MemberService memberService;
+
     @Override
     public RealIdentityAudit save(RealIdentityAudit realIdentityAudit) throws Exception {
-        if(realIdentityAudit.getStatus() == RealIdentityAudit.Status.PASS) {
-            Member member= memberService.findOne(realIdentityAudit.getMemberId());
+        if (realIdentityAudit.getStatus().equals(RealIdentityAudit.Status.PASS)) {
+            Member member = memberService.findOne(realIdentityAudit.getMemberId());
             member.setName(realIdentityAudit.getName());
             memberService.save(member);
         }
