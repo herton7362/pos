@@ -5,7 +5,7 @@ require(['jquery', 'vue', 'messager', 'utils'], function($, Vue, messager, utils
             crudgrid: {
                 $instance: {},
                 queryParams: {
-                    name: ''
+                	collectName: ''
                 },
                 columns: [
                     {field:'member.name', title:'会员'},
