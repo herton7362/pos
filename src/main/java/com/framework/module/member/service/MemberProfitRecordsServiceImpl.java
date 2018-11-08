@@ -569,10 +569,21 @@ public class MemberProfitRecordsServiceImpl extends AbstractCrudService<MemberPr
 
     @Override
     public void membersIncreaseLevel() throws Exception {
-        Iterable<Member> allMembers = repository.findAllOrderByCreatedDate();
+        Long lastMonthStart = DateTools.getLastMonthDayOne(new Date()).getTime();
+        Long lastMonthEnd = DateTools.getLastMonthLastDay(new Date()).getTime();
+        Iterable<Member> allMembersInDB = repository.findAllOrderByCreatedDate();
+        logger.info("所有用户数量为" + ((List<Member>) allMembersInDB).size());
+        List<Member> allMembers = new ArrayList<>();
+        for (Member m1 : allMembersInDB) {
+            if (!"1".equals(m1.getManualLevel())) {
+                m1.setMemberLevel(1);
+                allMembers.add(m1);
+            }
+        }
+        logger.info("筛选后用户数量" + allMembers.size());
         int s = 0;
-        while (s + 1 != ((List<Member>) allMembers).size()) {
-            Member member = ((List<Member>) allMembers).get(s);
+        while (s + 1 != allMembers.size()) {
+            Member member = allMembers.get(s);
             Integer memberLevel = member.getMemberLevel() == null ? 1 : member.getMemberLevel();
             // 获得下一级别的升级要求
             MemberLevelParam memberLevelParam = memberLevelParamService.getParamByLevel(String.valueOf(memberLevel + 1));
@@ -594,7 +605,7 @@ public class MemberProfitRecordsServiceImpl extends AbstractCrudService<MemberPr
             }
             Double totalTransactionAmount = 0d;
             for (String m : sonList) {
-                Map<String, Double> resultMap = memberProfitRecordsRepository.staticAllTransaction(m);
+                Map<String, Double> resultMap = memberProfitRecordsRepository.staticProfitsByMonthNew(m, lastMonthStart, lastMonthEnd);
                 totalTransactionAmount += resultMap.get("totalTransactionAmount") == null ? 0d : resultMap.get("totalTransactionAmount");
             }
             totalTransactionAmount = new BigDecimal(totalTransactionAmount).setScale(2, BigDecimal.ROUND_HALF_UP).doubleValue();
