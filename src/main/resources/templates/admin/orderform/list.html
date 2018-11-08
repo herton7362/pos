@@ -123,9 +123,9 @@
                                             <div class="col-xs-4 cell-title">会员：</div>
                                             {{row.member.name}}
                                         </td>
-                                        <td>
+                                        <td style="text-align: center;">
                                             <div class="col-xs-4 cell-title">配送方式：</div>
-                                            <span v-if="row.shippingCode == '自取'">自取</span>
+                                            <span v-if="row.shippingCode == '自取'||row.deliverToAddress.name == '自提'">自取</span>
                                             <span v-else>邮寄</span>
                                         </td>
                                         <td style="text-align: center;">
