@@ -296,16 +296,15 @@ public class MemberProfitController extends AbstractCrudController<MemberProfitR
         return new ResponseEntity<>(result, HttpStatus.OK);
     }
 
-    @ApiOperation(value = "团建奖测试")
-    @RequestMapping(value = "/testTeamBuilder", method = RequestMethod.GET)
+    @ApiOperation(value = "生成团建奖")
+    @RequestMapping(value = "/teamBuilderAward", method = RequestMethod.GET)
     @ApiImplicitParams({
             @ApiImplicitParam(value = "登录返回token", name = "access_token", dataType = "String", paramType = "query")})
     @ResponseBody
-    public ResponseEntity<?> testTeamBuilder() throws Exception {
+    public ResponseEntity<?> teamBuilderAward() throws Exception {
         Map<String, String[]> param = new HashMap<>();
         List<Member> allMember = memberService.findAll(param);
         for (Member member : allMember) {
-            String name = member.getName();
             memberProfitService.setTestTeamBuildProfit(member.getId());
         }
         return new ResponseEntity<>(HttpStatus.OK);
