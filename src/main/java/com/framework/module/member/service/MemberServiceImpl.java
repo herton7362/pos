@@ -35,6 +35,9 @@ public class MemberServiceImpl extends AbstractCrudService<Member> implements Me
         if (StringUtils.isNotBlank(member.getId())) {
             Member old = repository.findOne(member.getId());
             member.setPassword(old.getPassword());
+            if (member.getMemberLevel() != null && !member.getMemberLevel().equals(old.getMemberLevel())) {
+                member.setManualLevel("1");
+            }
         }
         return super.save(member);
     }

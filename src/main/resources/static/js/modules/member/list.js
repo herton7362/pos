@@ -34,6 +34,14 @@ require(['jquery', 'vue', 'messager', 'utils'], function($, Vue, messager, utils
                             }
                             return '未配置（默认支持）';
                         }},
+                    {field:'manualLevel', title:'等级设置方式', formatter: function(value) {
+                            if(value === '0') {
+                                return '自动';
+                            } else if(value === '1') {
+                                return '手动';
+                            }
+                            return '未配置（默认自动升级）';
+                        }},
                     // {field:'birthday', title:'生日', formatter: function(value) {
                     //     if(!value) {
                     //         return '';
@@ -93,7 +101,8 @@ require(['jquery', 'vue', 'messager', 'utils'], function($, Vue, messager, utils
                 birthday: null,
                 idCard: null,
                 address: null,
-                supportManagerAward: null
+                supportManagerAward: null,
+                manualLevel: null
             },
             memberLevelParams: []
         },

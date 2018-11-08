@@ -86,6 +86,9 @@ public class Member extends BaseUser implements Comparable {
     @ApiModelProperty(value = "支持领管理奖")
     @Column()
     private String supportManagerAward;
+    @ApiModelProperty(value = "手动设置用户等级")
+    @Column()
+    private String manualLevel;
     @Transient
     @JsonIgnore
     private Integer sortType;
@@ -409,6 +412,14 @@ public class Member extends BaseUser implements Comparable {
 
     public void setAllyAllActiveNumber(Integer allyAllActiveNumber) {
         this.allyAllActiveNumber = allyAllActiveNumber;
+    }
+
+    public String getManualLevel() {
+        return manualLevel;
+    }
+
+    public void setManualLevel(String manualLevel) {
+        this.manualLevel = manualLevel;
     }
 
     @Override

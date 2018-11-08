@@ -85,6 +85,16 @@
                                 </div>
                             </div>
                             <div class="form-group">
+                                <div class="radio">
+                                    <label>
+                                        <radio value="0" name="manualLevel" v-model="props.form.manualLevel"></radio> 自动设置等级
+                                    </label>
+                                    <label>
+                                        <radio value="1" name="manualLevel" v-model="props.form.manualLevel"></radio> 手动设置等级
+                                    </label>
+                                </div>
+                            </div>
+                            <div class="form-group">
                                 <label>生日：</label>
                                 <div class="input-group date">
                                     <div class="input-group-addon">
