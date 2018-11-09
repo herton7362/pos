@@ -151,7 +151,7 @@ public class MemberProfitController extends AbstractCrudController<MemberProfitR
         String memberId = UserThread.getInstance().get().getId();
         List<Achievement> result = new ArrayList<>();
         try {
-            result = memberProfitService.getAchievement(memberId);
+            result = memberProfitService.getAchievementNew(memberId);
         } catch (ParseException e) {
             return new ResponseEntity<>(result, BAD_REQUEST);
         }
