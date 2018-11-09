@@ -89,6 +89,9 @@ public class Member extends BaseUser implements Comparable {
     @ApiModelProperty(value = "手动设置用户等级")
     @Column()
     private String manualLevel;
+    @ApiModelProperty(value = "激活时间")
+    @Column()
+    private Long activeTime;
     @Transient
     @JsonIgnore
     private Integer sortType;
@@ -416,6 +419,14 @@ public class Member extends BaseUser implements Comparable {
 
     public String getManualLevel() {
         return manualLevel;
+    }
+
+    public Long getActiveTime() {
+        return activeTime;
+    }
+
+    public void setActiveTime(Long activeTime) {
+        this.activeTime = activeTime;
     }
 
     public void setManualLevel(String manualLevel) {

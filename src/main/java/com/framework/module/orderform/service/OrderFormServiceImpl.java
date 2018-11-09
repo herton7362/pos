@@ -46,17 +46,17 @@ public class OrderFormServiceImpl extends AbstractCrudService<OrderForm> impleme
     @Override
     public OrderForm makeOrder(OrderForm orderForm) throws Exception {
         Member member = orderForm.getMember();
-        if(member == null) {
+        if (member == null) {
             throw new BusinessException("下单账户未找到");
         }
-        if(orderForm.getDeliverToAddress() == null || StringUtils.isBlank(orderForm.getDeliverToAddress().getId())) {
+        if (orderForm.getDeliverToAddress() == null || StringUtils.isBlank(orderForm.getDeliverToAddress().getId())) {
             throw new BusinessException("请选择收货地址");
         }
         orderForm.setOrderNumber(getOutTradeNo());
         validAccount(orderForm);
-        if(OrderForm.OrderStatus.PAYED == orderForm.getStatus()) {
+        if (OrderForm.OrderStatus.PAYED == orderForm.getStatus()) {
             orderForm.setPaymentStatus(OrderForm.PaymentStatus.PAYED);
-        } else if(OrderForm.OrderStatus.UN_PAY == orderForm.getStatus()) {
+        } else if (OrderForm.OrderStatus.UN_PAY == orderForm.getStatus()) {
             orderForm.setPaymentStatus(OrderForm.PaymentStatus.UN_PAY);
         }
         List<OrderItem> items = new ArrayList<>();
@@ -65,7 +65,7 @@ public class OrderFormServiceImpl extends AbstractCrudService<OrderForm> impleme
         final OrderForm newOrderForm = orderFormRepository.save(orderForm);
         items.forEach(newOrderForm::addItem);
         // 修改账户余额
-        if(OrderForm.OrderStatus.PAYED == orderForm.getStatus()) {
+        if (OrderForm.OrderStatus.PAYED == orderForm.getStatus()) {
             consumeModifyMemberAccount(orderForm);
         }
         return orderForm;
@@ -73,6 +73,7 @@ public class OrderFormServiceImpl extends AbstractCrudService<OrderForm> impleme
 
     /**
      * 消费修改账户余额
+     *
      * @param orderForm 订单
      */
     private void consumeModifyMemberAccount(OrderForm orderForm) throws Exception {
@@ -92,6 +93,7 @@ public class OrderFormServiceImpl extends AbstractCrudService<OrderForm> impleme
 
     /**
      * 退款修改账户余额
+     *
      * @param orderForm 订单
      */
     private void rejectModifyMemberAccount(OrderForm orderForm) throws Exception {
@@ -122,10 +124,10 @@ public class OrderFormServiceImpl extends AbstractCrudService<OrderForm> impleme
     @Override
     public OrderForm saveShippingInfo(SendOutParam sendOutParam) throws Exception {
         OrderForm orderForm = orderFormRepository.findOne(sendOutParam.getId());
-        if(orderForm == null) {
+        if (orderForm == null) {
             throw new BusinessException("订单未找到");
         }
-        if(OrderForm.OrderStatus.PAYED != orderForm.getStatus()) {
+        if (OrderForm.OrderStatus.PAYED != orderForm.getStatus()) {
             throw new BusinessException("订单状态不正确");
         }
         orderForm.setStatus(OrderForm.OrderStatus.DELIVERED);
@@ -135,7 +137,7 @@ public class OrderFormServiceImpl extends AbstractCrudService<OrderForm> impleme
         orderForm.getItems().forEach(orderItem -> {
             Product product = orderItem.getProduct();
             Long count = 0L;
-            if(product.getStockCount() != null) {
+            if (product.getStockCount() != null) {
                 count = product.getStockCount();
             }
             product.setStockCount(count - 1);
@@ -147,13 +149,13 @@ public class OrderFormServiceImpl extends AbstractCrudService<OrderForm> impleme
     @Override
     public OrderForm receive(String id) throws Exception {
         OrderForm orderForm = orderFormRepository.findOne(id);
-        if(orderForm == null) {
+        if (orderForm == null) {
             throw new BusinessException("订单未找到");
         }
-        if(OrderForm.OrderStatus.DELIVERED != orderForm.getStatus()) {
+        if (OrderForm.OrderStatus.DELIVERED != orderForm.getStatus()) {
             throw new BusinessException("订单状态不正确");
         }
-        if(!MemberThread.getInstance().get().getId().equals(orderForm.getMember().getId())) {
+        if (!MemberThread.getInstance().get().getId().equals(orderForm.getMember().getId())) {
             throw new BusinessException("当前会员无权操作此订单");
         }
         orderForm.setStatus(OrderForm.OrderStatus.RECEIVED);
@@ -165,15 +167,15 @@ public class OrderFormServiceImpl extends AbstractCrudService<OrderForm> impleme
     @Override
     public OrderForm applyReject(ApplyRejectParam applyRejectParam) throws Exception {
         OrderForm orderForm = orderFormRepository.findOne(applyRejectParam.getId());
-        if(orderForm == null) {
+        if (orderForm == null) {
             throw new BusinessException("订单未找到");
         }
-        if(OrderForm.OrderStatus.DELIVERED != orderForm.getStatus()
+        if (OrderForm.OrderStatus.DELIVERED != orderForm.getStatus()
                 && OrderForm.OrderStatus.PAYED != orderForm.getStatus()
                 && OrderForm.OrderStatus.RECEIVED != orderForm.getStatus()) {
             throw new BusinessException("订单状态不正确");
         }
-        if(!MemberThread.getInstance().get().getId().equals(orderForm.getMember().getId())) {
+        if (!MemberThread.getInstance().get().getId().equals(orderForm.getMember().getId())) {
             throw new BusinessException("当前会员无权操作此订单");
         }
         orderForm.setStatus(OrderForm.OrderStatus.APPLY_REJECTED);
@@ -185,10 +187,10 @@ public class OrderFormServiceImpl extends AbstractCrudService<OrderForm> impleme
     @Override
     public OrderForm reject(RejectParam rejectParam) throws Exception {
         OrderForm orderForm = orderFormRepository.findOne(rejectParam.getId());
-        if(orderForm == null) {
+        if (orderForm == null) {
             throw new BusinessException("订单未找到");
         }
-        if(OrderForm.OrderStatus.APPLY_REJECTED != orderForm.getStatus()) {
+        if (OrderForm.OrderStatus.APPLY_REJECTED != orderForm.getStatus()) {
             throw new BusinessException("订单状态不正确");
         }
         orderForm.setStatus(OrderForm.OrderStatus.REJECTED);
@@ -243,14 +245,14 @@ public class OrderFormServiceImpl extends AbstractCrudService<OrderForm> impleme
         Map<String, String[]> param = new HashMap<>();
         param.put("orderNumber", new String[]{outTradeNo});
         List<OrderForm> orderForms = findAll(param);
-        if(orderForms != null && !orderForms.isEmpty()) {
+        if (orderForms != null && !orderForms.isEmpty()) {
             OrderForm orderForm = orderForms.get(0);
             orderForm.setStatus(OrderForm.OrderStatus.PAYED);
             orderForm.setPaymentStatus(OrderForm.PaymentStatus.PAYED);
             orderFormRepository.save(orderForm);
             consumeModifyMemberAccount(orderForm);
             // 查询是否购买超过五个机器，并将当前用户改为激活状态，并且调用激活奖励接口
-            if(orderForm.getMember().getStatus() == Member.Status.UN_ACTIVE || orderForm.getMember().getStatus() == null) {
+            if (orderForm.getMember().getStatus() == Member.Status.UN_ACTIVE || orderForm.getMember().getStatus() == null) {
                 param.clear();
                 param.put("member.id", new String[]{orderForm.getMember().getId()});
                 param.put("paymentStatus", new String[]{OrderForm.PaymentStatus.PAYED.name()});
@@ -261,9 +263,10 @@ public class OrderFormServiceImpl extends AbstractCrudService<OrderForm> impleme
                         total = total + orderItem.getCount();
                     }
                 }
-                if(total >= 5) {
+                if (total >= 5) {
                     Member member = memberService.findOne(orderForm.getMember().getId());
                     member.setStatus(Member.Status.ACTIVE);
+                    member.setActiveTime(new Date().getTime());
                     memberService.save(member);
                     memberProfitRecordsService.setTeamBuildProfit(member.getFatherId());
                 }
@@ -290,6 +293,7 @@ public class OrderFormServiceImpl extends AbstractCrudService<OrderForm> impleme
 
     /**
      * 要求外部订单号必须唯一。
+     *
      * @return 订单号
      */
     private synchronized String getOutTradeNo() {
@@ -298,8 +302,8 @@ public class OrderFormServiceImpl extends AbstractCrudService<OrderForm> impleme
         String key = format.format(date);
 
         Random r = new Random();
-        String rStr = (r.nextInt() +"").replace("-", "1");
-        key =  key + rStr;
+        String rStr = (r.nextInt() + "").replace("-", "1");
+        key = key + rStr;
         key = key.substring(0, 14);
         return key;
     }
@@ -307,6 +311,7 @@ public class OrderFormServiceImpl extends AbstractCrudService<OrderForm> impleme
     /**
      * 表单价格校验
      * 先计算实际货物的总价格
+     *
      * @param orderForm 订单对象
      * @throws Exception {@link com.kratos.exceptions.BusinessException}逻辑异常
      */
@@ -324,7 +329,7 @@ public class OrderFormServiceImpl extends AbstractCrudService<OrderForm> impleme
             actualTotalAmount = actualTotalAmount.add(new BigDecimal(product.getPrice()).multiply(new BigDecimal(orderItem.getCount())));
         }
 
-        if(orderForm.getCoupon() != null && StringUtils.isNotBlank(orderForm.getCoupon().getId())) {
+        if (orderForm.getCoupon() != null && StringUtils.isNotBlank(orderForm.getCoupon().getId())) {
             actualTotalAmount = new BigDecimal(couponService.useCoupon(orderForm.getCoupon().getId(), orderForm.getMember().getId(), actualTotalAmount.doubleValue()));
         } else {
             orderForm.setCoupon(null);
@@ -332,15 +337,16 @@ public class OrderFormServiceImpl extends AbstractCrudService<OrderForm> impleme
 
         actualTotalAmount = actualTotalAmount.setScale(2, RoundingMode.HALF_UP);
 
-        if(customerPayAmount.setScale(2, BigDecimal.ROUND_HALF_UP).compareTo(actualTotalAmount) != 0) {
+        if (customerPayAmount.setScale(2, BigDecimal.ROUND_HALF_UP).compareTo(actualTotalAmount) != 0) {
             // throw new BusinessException("结算金额不正确");
         }
     }
 
     /**
      * 记录消费记录
+     *
      * @param member 会员
-     * @param items 消费项
+     * @param items  消费项
      */
     private void recordConsume(Member member, Double cash, Double balance, Integer point, Double discount, List<OrderItem> items) throws Exception {
         OperationRecord rechargeRecord = new OperationRecord();
@@ -365,7 +371,8 @@ public class OrderFormServiceImpl extends AbstractCrudService<OrderForm> impleme
 
     /**
      * 记录退款记录
-     * @param member 会员
+     *
+     * @param member    会员
      * @param orderForm 订单实体
      */
     private void recordReject(Member member, Double cash, Double balance, Integer point, OrderForm orderForm) throws Exception {
@@ -375,13 +382,13 @@ public class OrderFormServiceImpl extends AbstractCrudService<OrderForm> impleme
         rechargeRecord.setClientId(MemberThread.getInstance().getClientId());
         rechargeRecord.setIpAddress(MemberThread.getInstance().getIpAddress());
         String content = String.format("现金退款 %s 元，余额退款 %s 元，积分退款 %s 分", cash, balance, point)
-                + String.format("  订单号：%s" , orderForm.getOrderNumber());
+                + String.format("  订单号：%s", orderForm.getOrderNumber());
         rechargeRecord.setContent(content);
         operationRecordService.save(rechargeRecord);
     }
 
     private Double subtractMoney(Double sourceMoney, Double money) {
-        if(sourceMoney == null) {
+        if (sourceMoney == null) {
             sourceMoney = 0D;
         }
         BigDecimal sp = new BigDecimal(sourceMoney);
@@ -389,7 +396,7 @@ public class OrderFormServiceImpl extends AbstractCrudService<OrderForm> impleme
     }
 
     private Double increaseMoney(Double sourceMoney, Double money) {
-        if(sourceMoney == null) {
+        if (sourceMoney == null) {
             sourceMoney = 0D;
         }
         BigDecimal sp = new BigDecimal(sourceMoney);
@@ -397,14 +404,14 @@ public class OrderFormServiceImpl extends AbstractCrudService<OrderForm> impleme
     }
 
     private Integer subtractNumber(Integer sourcePoint, Integer point) {
-        if(sourcePoint == null) {
+        if (sourcePoint == null) {
             sourcePoint = 0;
         }
         return sourcePoint - point;
     }
 
     private Integer increaseNumber(Integer sourcePoint, Integer point) {
-        if(sourcePoint == null) {
+        if (sourcePoint == null) {
             sourcePoint = 0;
         }
         return sourcePoint + point;
