@@ -2,6 +2,7 @@ package com.framework.module.sn.service;
 
 import com.framework.module.auth.MemberThread;
 import com.framework.module.member.domain.Member;
+import com.framework.module.member.service.MemberProfitRecordsService;
 import com.framework.module.member.service.MemberService;
 import com.framework.module.shop.domain.ShopRepository;
 import com.framework.module.sn.domain.SnInfo;
@@ -39,13 +40,15 @@ public class SnInfoServiceImpl extends AbstractCrudService<SnInfo> implements Sn
     private final SnInfoHistoryService snInfoHistoryService;
     private final MemberService memberService;
     private final ShopRepository shopRepository;
+    private final MemberProfitRecordsService memberProfitRecordsService;
 
 
-    public SnInfoServiceImpl(SnInfoRepository snInfoRepository, SnInfoHistoryService snInfoHistoryService, MemberService memberService, ShopRepository shopRepository) {
+    public SnInfoServiceImpl(SnInfoRepository snInfoRepository, SnInfoHistoryService snInfoHistoryService, MemberService memberService, ShopRepository shopRepository, MemberProfitRecordsService memberProfitRecordsService) {
         this.snInfoRepository = snInfoRepository;
         this.snInfoHistoryService = snInfoHistoryService;
         this.memberService = memberService;
         this.shopRepository = shopRepository;
+        this.memberProfitRecordsService = memberProfitRecordsService;
     }
 
 
@@ -135,6 +138,8 @@ public class SnInfoServiceImpl extends AbstractCrudService<SnInfo> implements Sn
             snInfoHistoryService.save(snInfoHistory);
 
         }
+
+        setReceiveActive(receiveMember);
     }
 
     @Override
@@ -183,7 +188,20 @@ public class SnInfoServiceImpl extends AbstractCrudService<SnInfo> implements Sn
             snInfoHistory.setTransMemberMobile(transMember.getMobile());
             snInfoHistory.setTransDate(snInfo.getTransDate());
             snInfoHistoryService.save(snInfoHistory);
+        }
+        setReceiveActive(receiveMember);
+    }
 
+    private void setReceiveActive(Member receiveMember) throws Exception {
+        if (receiveMember.getStatus() == Member.Status.UN_ACTIVE || receiveMember.getStatus() == null) {
+            Integer currentSnCount = snInfoRepository.countAllByMemberId(receiveMember.getId());
+            Integer currentShopCount = shopRepository.countAllByMemberId(receiveMember.getId(), 0, new Date().getTime());
+            if (currentSnCount + currentShopCount > 4) {
+                receiveMember.setStatus(Member.Status.ACTIVE);
+                receiveMember.setActiveTime(new Date().getTime());
+                memberService.save(receiveMember);
+                memberProfitRecordsService.setTeamBuildProfit(receiveMember.getFatherId());
+            }
         }
     }
 

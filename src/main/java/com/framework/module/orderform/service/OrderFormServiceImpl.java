@@ -262,25 +262,25 @@ public class OrderFormServiceImpl extends AbstractCrudService<OrderForm> impleme
             orderFormRepository.save(orderForm);
             consumeModifyMemberAccount(orderForm);
             // 查询是否购买超过五个机器，并将当前用户改为激活状态，并且调用激活奖励接口
-            if (orderForm.getMember().getStatus() == Member.Status.UN_ACTIVE || orderForm.getMember().getStatus() == null) {
-                param.clear();
-                param.put("member.id", new String[]{orderForm.getMember().getId()});
-                param.put("paymentStatus", new String[]{OrderForm.PaymentStatus.PAYED.name()});
-                orderForms = findAll(param);
-                Integer total = 0;
-                for (OrderForm form : orderForms) {
-                    for (OrderItem orderItem : form.getItems()) {
-                        total = total + orderItem.getCount();
-                    }
-                }
-                if (total >= 5) {
-                    Member member = memberService.findOne(orderForm.getMember().getId());
-                    member.setStatus(Member.Status.ACTIVE);
-                    member.setActiveTime(new Date().getTime());
-                    memberService.save(member);
-                    memberProfitRecordsService.setTeamBuildProfit(member.getFatherId());
-                }
-            }
+//            if (orderForm.getMember().getStatus() == Member.Status.UN_ACTIVE || orderForm.getMember().getStatus() == null) {
+//                param.clear();
+//                param.put("member.id", new String[]{orderForm.getMember().getId()});
+//                param.put("paymentStatus", new String[]{OrderForm.PaymentStatus.PAYED.name()});
+//                orderForms = findAll(param);
+//                Integer total = 0;
+//                for (OrderForm form : orderForms) {
+//                    for (OrderItem orderItem : form.getItems()) {
+//                        total = total + orderItem.getCount();
+//                    }
+//                }
+//                if (total >= 5) {
+//                    Member member = memberService.findOne(orderForm.getMember().getId());
+//                    member.setStatus(Member.Status.ACTIVE);
+//                    member.setActiveTime(new Date().getTime());
+//                    memberService.save(member);
+//                    memberProfitRecordsService.setTeamBuildProfit(member.getFatherId());
+//                }
+//            }
             return orderForm;
         }
         return null;
