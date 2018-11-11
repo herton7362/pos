@@ -6,6 +6,8 @@ import com.framework.module.member.service.MemberCashInRecordsService;
 import com.framework.module.member.service.MemberProfitRecordsService;
 import com.framework.module.member.service.MemberProfitTmpRecordsService;
 import com.framework.module.member.service.MemberService;
+import com.framework.module.shop.domain.ShopRepository;
+import com.framework.module.sn.domain.SnInfoRepository;
 import com.kratos.common.AbstractCrudController;
 import com.kratos.common.CrudService;
 import com.kratos.exceptions.BusinessException;
@@ -42,6 +44,8 @@ public class MemberProfitController extends AbstractCrudController<MemberProfitR
     private final DictionaryService dictionaryService;
     private final DictionaryCategoryService dictionaryCategoryService;
     private final MemberService memberService;
+    private final SnInfoRepository snInfoRepository;
+    private final ShopRepository shopRepository;
 
     @Override
     protected CrudService<MemberProfitRecords> getService() {
@@ -53,13 +57,15 @@ public class MemberProfitController extends AbstractCrudController<MemberProfitR
             MemberProfitRecordsService memberProfitService,
             MemberCashInRecordsService memberCashInRecordsService,
             MemberProfitTmpRecordsService memberProfitTmpRecordsService,
-            DictionaryService dictionaryService, DictionaryCategoryService dictionaryCategoryService, MemberService memberService) {
+            DictionaryService dictionaryService, DictionaryCategoryService dictionaryCategoryService, MemberService memberService, SnInfoRepository snInfoRepository, ShopRepository shopRepository) {
         this.memberProfitService = memberProfitService;
         this.memberCashInRecordsService = memberCashInRecordsService;
         this.memberProfitTmpRecordsService = memberProfitTmpRecordsService;
         this.dictionaryService = dictionaryService;
         this.dictionaryCategoryService = dictionaryCategoryService;
         this.memberService = memberService;
+        this.snInfoRepository = snInfoRepository;
+        this.shopRepository = shopRepository;
     }
 
     /**
@@ -210,6 +216,13 @@ public class MemberProfitController extends AbstractCrudController<MemberProfitR
             throw new BusinessException("提现最低金额为10元");
         }
         String memberId = UserThread.getInstance().get().getId();
+
+        Integer currentSnCount = snInfoRepository.countAllByMemberId(memberId);
+        Integer currentShopCount = shopRepository.countAllByMemberId(memberId, 0, new Date().getTime());
+        if (currentSnCount + currentShopCount < 5) {
+            throw new BusinessException("归属SN少于5台，不允许提现");
+        }
+
         double allowCashInAmout = memberProfitService.cashOnAmount(memberId);
         if (amount > allowCashInAmout) {
             throw new BusinessException("提现金额超出允许提现范围");
