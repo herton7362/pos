@@ -5,6 +5,7 @@ import com.framework.module.orderform.web.ApplyRejectParam;
 import com.framework.module.orderform.web.RejectParam;
 import com.framework.module.orderform.web.SendOutParam;
 import com.kratos.common.CrudService;
+import com.kratos.common.PageResult;
 
 import java.util.List;
 import java.util.Map;
@@ -77,4 +78,6 @@ public interface OrderFormService extends CrudService<OrderForm> {
      * @return 数量
      */
     Integer getPayedOrderItemCounts(String memberId) throws Exception;
+
+    PageResult<OrderForm> getAllSonsOrders(String memberId, Integer currentPage, Integer pageSize, Long startTime, Long endTime);
 }
