@@ -16,7 +16,6 @@ import com.framework.module.product.domain.Product;
 import com.framework.module.product.domain.ProductRepository;
 import com.framework.module.record.domain.OperationRecord;
 import com.framework.module.record.service.OperationRecordService;
-import com.framework.module.sn.domain.SnInfo;
 import com.kratos.common.AbstractCrudService;
 import com.kratos.common.PageRepository;
 import com.kratos.common.PageResult;
@@ -303,7 +302,7 @@ public class OrderFormServiceImpl extends AbstractCrudService<OrderForm> impleme
     }
 
     @Override
-    public PageResult<OrderForm> getAllSonsOrders(String memberId, Integer currentPage, Integer pageSize, Long startTime, Long endTime) {
+    public PageResult<OrderForm> getAllSonsOrders(String memberId, Integer currentPage, Integer pageSize, Long startTime, Long endTime, OrderForm.OrderStatus status) {
         PageRequest pageRequest = new PageRequest(currentPage, pageSize, Sort.Direction.DESC, "createdDate");
         Map<String, String[]> param = new HashMap<>();
         if (startTime != null && endTime != null) {
@@ -318,7 +317,9 @@ public class OrderFormServiceImpl extends AbstractCrudService<OrderForm> impleme
             String[] array = new String[allSons.size()];
             param.put("memberIds", allSons.toArray(array));
         }
-
+        if (status != null) {
+            param.put("status", new String[]{status.toString()});
+        }
         Page<OrderForm> all = pageRepository.findAll(new MySpecification(param, true), pageRequest);
         PageResult<OrderForm> pageResult = new PageResult<>();
         pageResult.setSize(all.getSize());
@@ -348,6 +349,17 @@ public class OrderFormServiceImpl extends AbstractCrudService<OrderForm> impleme
                 Predicate predicateTemp = criteriaBuilder.and(predicatesAnd.toArray(new Predicate[]{}));
                 predicates.add(predicateTemp);
             }
+
+            List<Predicate> predicatesStatus = new ArrayList<>();
+            if (params.containsKey("status")) {
+                String[] status = params.get("status");
+                predicatesStatus.add(criteriaBuilder.equal(root.get("status"), OrderForm.OrderStatus.valueOf(status[0])));
+            }
+            if (predicatesStatus.size() != 0) {
+                Predicate predicateTemp = criteriaBuilder.and(predicatesStatus.toArray(new Predicate[]{}));
+                predicates.add(predicateTemp);
+            }
+
             List<Predicate> predicatesIdOr = new ArrayList<>();
             if (params.containsKey("memberIds")) {
                 String[] memberIdList = params.get("memberIds");

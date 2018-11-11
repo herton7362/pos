@@ -79,5 +79,5 @@ public interface OrderFormService extends CrudService<OrderForm> {
      */
     Integer getPayedOrderItemCounts(String memberId) throws Exception;
 
-    PageResult<OrderForm> getAllSonsOrders(String memberId, Integer currentPage, Integer pageSize, Long startTime, Long endTime);
+    PageResult<OrderForm> getAllSonsOrders(String memberId, Integer currentPage, Integer pageSize, Long startTime, Long endTime, OrderForm.OrderStatus status);
 }
