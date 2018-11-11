@@ -38,11 +38,11 @@ public class ShopExchangeRecordsController extends AbstractCrudController<ShopEx
             @ApiImplicitParam(value = "登录返回token", name = "access_token", dataType = "String", paramType = "query")
     })
     @RequestMapping(value = "getAllExchangeRecords", method = RequestMethod.GET)
-    public ResponseEntity<PageResult<ShopExchangeRecords>> getAllExchangeRecords(@RequestParam Integer currentPage, @RequestParam Integer pageSize, @RequestParam(required = false) Long startTime, @RequestParam(required = false) Long endTime) throws Exception {
+    public ResponseEntity<PageResult<ShopExchangeRecords>> getAllExchangeRecords(@RequestParam Integer currentPage, @RequestParam Integer pageSize, @RequestParam(required = false) Long startTime, @RequestParam(required = false) Long endTime, @RequestParam(required = false) ShopExchangeRecords.Status status) throws Exception {
         String memberId = AdminThread.getInstance().get().getMemberId();
         if (StringUtils.isBlank(memberId)) {
             throw new BusinessException("未绑定会员信息");
         }
-        return new ResponseEntity<>(shopExchangeRecordsService.getAllExchangeRecords(memberId, currentPage, pageSize, startTime, endTime), HttpStatus.OK);
+        return new ResponseEntity<>(shopExchangeRecordsService.getAllExchangeRecords(memberId, currentPage, pageSize, startTime, endTime, status), HttpStatus.OK);
     }
 }

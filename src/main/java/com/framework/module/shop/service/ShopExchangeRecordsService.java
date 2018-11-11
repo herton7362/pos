@@ -11,5 +11,5 @@ public interface ShopExchangeRecordsService extends CrudService<ShopExchangeReco
 
     void examineExchangeMachine(String exchangeId, boolean examineResult) throws BusinessException;
 
-    PageResult<ShopExchangeRecords> getAllExchangeRecords(String memberId, Integer currentPage, Integer pageSize, Long startTime, Long endTime);
+    PageResult<ShopExchangeRecords> getAllExchangeRecords(String memberId, Integer currentPage, Integer pageSize, Long startTime, Long endTime, ShopExchangeRecords.Status status);
 }

@@ -4,8 +4,6 @@ import com.framework.module.member.domain.AllyMembers;
 import com.framework.module.member.domain.Member;
 import com.framework.module.member.domain.MemberRepository;
 import com.framework.module.member.service.MemberService;
-import com.framework.module.orderform.domain.OrderForm;
-import com.framework.module.orderform.service.OrderFormServiceImpl;
 import com.framework.module.shop.domain.Shop;
 import com.framework.module.shop.domain.ShopExchangeRecords;
 import com.framework.module.shop.domain.ShopExchangeRecordsRepository;
@@ -115,7 +113,7 @@ public class ShopExchangeRecordsServiceImpl extends AbstractCrudService<ShopExch
     }
 
     @Override
-    public PageResult<ShopExchangeRecords> getAllExchangeRecords(String memberId, Integer currentPage, Integer pageSize, Long startTime, Long endTime) {
+    public PageResult<ShopExchangeRecords> getAllExchangeRecords(String memberId, Integer currentPage, Integer pageSize, Long startTime, Long endTime, ShopExchangeRecords.Status status) {
         PageRequest pageRequest = new PageRequest(currentPage, pageSize, Sort.Direction.DESC, "createdDate");
         Map<String, String[]> param = new HashMap<>();
         if (startTime != null && endTime != null) {
@@ -129,6 +127,9 @@ public class ShopExchangeRecordsServiceImpl extends AbstractCrudService<ShopExch
         if (!CollectionUtils.isEmpty(allSons)) {
             String[] array = new String[allSons.size()];
             param.put("memberIds", allSons.toArray(array));
+        }
+        if (status != null) {
+            param.put("status", new String[]{status.toString()});
         }
 
         Page<ShopExchangeRecords> all = pageRepository.findAll(new MySpecification(param, true), pageRequest);
@@ -160,6 +161,18 @@ public class ShopExchangeRecordsServiceImpl extends AbstractCrudService<ShopExch
                 Predicate predicateTemp = criteriaBuilder.and(predicatesAnd.toArray(new Predicate[]{}));
                 predicates.add(predicateTemp);
             }
+
+            List<Predicate> predicatesStatus = new ArrayList<>();
+            if (params.containsKey("status")) {
+                String[] status = params.get("status");
+
+                predicatesStatus.add(criteriaBuilder.equal(root.get("status"), ShopExchangeRecords.Status.valueOf(status[0])));
+            }
+            if (predicatesStatus.size() != 0) {
+                Predicate predicateTemp = criteriaBuilder.and(predicatesStatus.toArray(new Predicate[]{}));
+                predicates.add(predicateTemp);
+            }
+
             List<Predicate> predicatesIdOr = new ArrayList<>();
             if (params.containsKey("memberIds")) {
                 String[] memberIdList = params.get("memberIds");
