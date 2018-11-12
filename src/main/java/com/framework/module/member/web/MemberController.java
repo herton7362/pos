@@ -284,6 +284,7 @@ public class MemberController extends AbstractCrudController<Member> {
         Map<String, Object> result = new HashMap<>();
         result.put("partnerName", searchMember.getName());
         List<String> sonList = new ArrayList<>();
+        sonList.add(searchMember.getId());
         AllyMembers allyMembers = memberService.getAlliesByMemberId(searchMember.getId(), new Date().getTime());
         if (allyMembers != null) {
             sonList.addAll(allyMembers.getSonList());
