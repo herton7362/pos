@@ -5,7 +5,8 @@ require(['jquery', 'vue', 'messager', 'utils'], function($, Vue, messager, utils
             data: [],
             queryParams: {
                 createdDate: [],
-                createdDateRadio: 0
+                createdDateRadio: 0,
+                member:{name:[]}
             },
             currentPage: 1,
             pagerSize: 7,

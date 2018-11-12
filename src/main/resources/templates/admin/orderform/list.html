@@ -39,9 +39,12 @@
                             <input type="text" placeholder="订单号" v-model="queryParams.orderNumber" class="form-control">
                         </div>
                         <div class="col-md-2">
+                            <input type="text" placeholder="合伙人姓名" v-model="queryParams.member.name" class="form-control">
+                        </div>
+                        <div class="col-md-2">
                             <combobox :options="orderStatus" text-key="text" v-model="queryParams.status" :root="{id:null, text:'订单状态'}"></combobox>
                         </div>
-                        <div class="col-md-6">
+                        <div class="col-md-4">
                             <div class="radio">
                                 <label>
                                     <radio :value="1" name="createdDate" v-model="queryParams.createdDateRadio"></radio> 今天
@@ -67,7 +70,7 @@
                                 搜索
                             </button>
                             <button type="button" class="btn btn-flat btn-info pull-right margin-r-5"
-                                    @click="queryParams={createdDate: [new Date(new Date().format('yyyy-MM-dd')).getTime(), new Date().getTime()],status:null,createdDateRadio: 1}">
+                                    @click="queryParams={createdDate: [new Date(new Date().format('yyyy-MM-dd')).getTime(), new Date().getTime()],status:null,createdDateRadio: 1,member:{name:null}}">
                                 <i class="fa fa-trash"></i>
                                 清空
                             </button>
