@@ -8,6 +8,7 @@ require(['jquery', 'vue', 'messager', 'utils'], function($, Vue, messager, utils
                               return null != value ? '绑定' : '未绑定';
                           }},
                       {field:'memberName', title:'归属合伙人'},
+                      {field:'memberMobile', title:'归属合伙人电话'},
                       {field:'transMemberName', title:'划拨人'},
                       {field:'shopName', title:'归属用户'}
                   	
