@@ -2,6 +2,7 @@ package com.framework.module.member.service;
 
 import com.framework.module.auth.MemberThread;
 import com.framework.module.member.domain.*;
+import com.framework.module.orderform.domain.OrderForm;
 import com.framework.module.record.domain.OperationRecord;
 import com.framework.module.record.service.OperationRecordService;
 import com.kratos.common.AbstractCrudService;
@@ -76,6 +77,12 @@ public class MemberServiceImpl extends AbstractCrudService<Member> implements Me
                 predicates.clear();
                 predicates.add(predicateTemp);
             }
+
+            List<Predicate> predicatesStatus = new ArrayList<>();
+            predicatesStatus.add(criteriaBuilder.equal(root.get("logicallyDeleted"), false));
+            Predicate predicateTemp = criteriaBuilder.and(predicatesStatus.toArray(new Predicate[]{}));
+            predicates.add(predicateTemp);
+
             predicates.add(predicate);
             return criteriaBuilder.and(predicates.toArray(new Predicate[]{}));
         }
