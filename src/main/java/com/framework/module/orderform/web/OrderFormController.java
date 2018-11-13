@@ -22,6 +22,7 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -239,12 +240,19 @@ public class OrderFormController extends AbstractCrudController<OrderForm> {
             @ApiImplicitParam(value = "登录返回token", name = "access_token", dataType = "String", paramType = "query")
     })
     @RequestMapping(value = "getAllSonsOrders", method = RequestMethod.GET)
-    public ResponseEntity<PageResult<OrderForm>> getAllSonsOrders(@RequestParam Integer currentPage, @RequestParam Integer pageSize, @RequestParam(required = false) Long startTime, @RequestParam(required = false) Long endTime, @RequestParam(required = false) OrderForm.OrderStatus status) throws Exception {
+    public ResponseEntity<PageResult<OrderForm>> getAllSonsOrders(@RequestParam Integer currentPage, @RequestParam Integer pageSize, @RequestParam(required = false) String startTime, @RequestParam(required = false) String endTime, @RequestParam(required = false) OrderForm.OrderStatus status) throws Exception {
         String memberId = AdminThread.getInstance().get().getMemberId();
         if (StringUtils.isBlank(memberId)) {
             throw new BusinessException("未绑定会员信息");
         }
-        return new ResponseEntity<>(orderFormService.getAllSonsOrders(memberId, currentPage, pageSize, startTime, endTime, status), HttpStatus.OK);
+        Long startTimeL = null;
+        Long endTimeL = null;
+        if (StringUtils.isNotBlank(startTime) && StringUtils.isNotBlank(endTime)) {
+            SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+            startTimeL = sdf.parse(startTime).getTime() - 1;
+            endTimeL = sdf.parse(endTime).getTime() + 1;
+        }
+        return new ResponseEntity<>(orderFormService.getAllSonsOrders(memberId, currentPage - 1, pageSize, startTimeL, endTimeL, status), HttpStatus.OK);
     }
 
     @Autowired
