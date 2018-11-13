@@ -302,12 +302,15 @@ public class OrderFormServiceImpl extends AbstractCrudService<OrderForm> impleme
     }
 
     @Override
-    public PageResult<OrderForm> getAllSonsOrders(String memberId, Integer currentPage, Integer pageSize, Long startTime, Long endTime, OrderForm.OrderStatus status) {
+    public PageResult<OrderForm> getAllSonsOrders(String memberId, Integer currentPage, Integer pageSize, Long startTime, Long endTime, OrderForm.OrderStatus status, String orderNumber) {
         PageRequest pageRequest = new PageRequest(currentPage, pageSize, Sort.Direction.DESC, "createdDate");
         Map<String, String[]> param = new HashMap<>();
         if (startTime != null && endTime != null) {
             param.put("startTime", new String[]{startTime.toString()});
             param.put("endTime", new String[]{endTime.toString()});
+        }
+        if (StringUtils.isNotBlank(orderNumber)) {
+            param.put("orderNumber", new String[]{orderNumber});
         }
         List<String> allSons = new ArrayList<>();
         AllyMembers allyMembers = memberService.getAlliesByMemberId(memberId);
@@ -338,6 +341,16 @@ public class OrderFormServiceImpl extends AbstractCrudService<OrderForm> impleme
         public Predicate toPredicate(Root<OrderForm> root, CriteriaQuery<?> criteriaQuery, CriteriaBuilder criteriaBuilder) {
             Predicate predicate = super.toPredicate(root, criteriaQuery, criteriaBuilder);
             List<Predicate> predicates = new ArrayList<>();
+
+            List<Predicate> predicatesOrderNum = new ArrayList<>();
+            if (params.containsKey("orderNumber")) {
+                String[] orderNumber = params.get("orderNumber");
+                predicatesOrderNum.add(criteriaBuilder.equal(root.get("orderNumber"), orderNumber[0]));
+            }
+            if (predicatesOrderNum.size() != 0) {
+                Predicate predicateTemp = criteriaBuilder.and(predicatesOrderNum.toArray(new Predicate[]{}));
+                predicates.add(predicateTemp);
+            }
 
             List<Predicate> predicatesAnd = new ArrayList<>();
             if (params.containsKey("startTime") && params.containsKey("endTime")) {

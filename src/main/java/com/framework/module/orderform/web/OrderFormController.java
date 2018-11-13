@@ -240,7 +240,7 @@ public class OrderFormController extends AbstractCrudController<OrderForm> {
             @ApiImplicitParam(value = "登录返回token", name = "access_token", dataType = "String", paramType = "query")
     })
     @RequestMapping(value = "getAllSonsOrders", method = RequestMethod.GET)
-    public ResponseEntity<PageResult<OrderForm>> getAllSonsOrders(@RequestParam Integer currentPage, @RequestParam Integer pageSize, @RequestParam(required = false) String startTime, @RequestParam(required = false) String endTime, @RequestParam(required = false) OrderForm.OrderStatus status) throws Exception {
+    public ResponseEntity<PageResult<OrderForm>> getAllSonsOrders(@RequestParam Integer currentPage, @RequestParam Integer pageSize, @RequestParam(required = false) String startTime, @RequestParam(required = false) String endTime, @RequestParam(required = false) OrderForm.OrderStatus status, @RequestParam(required = false) String orderNumber) throws Exception {
         String memberId = AdminThread.getInstance().get().getMemberId();
         if (StringUtils.isBlank(memberId)) {
             throw new BusinessException("未绑定会员信息");
@@ -252,7 +252,7 @@ public class OrderFormController extends AbstractCrudController<OrderForm> {
             startTimeL = sdf.parse(startTime).getTime() - 1;
             endTimeL = sdf.parse(endTime).getTime() + 1;
         }
-        return new ResponseEntity<>(orderFormService.getAllSonsOrders(memberId, currentPage - 1, pageSize, startTimeL, endTimeL, status), HttpStatus.OK);
+        return new ResponseEntity<>(orderFormService.getAllSonsOrders(memberId, currentPage - 1, pageSize, startTimeL, endTimeL, status, orderNumber), HttpStatus.OK);
     }
 
     @Autowired
