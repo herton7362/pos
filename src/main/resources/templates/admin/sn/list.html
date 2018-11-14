@@ -152,7 +152,7 @@
             <!-- sidemodal -->
             <validator :instance="distribution.validator">
                 <form @submit.prevent="submitDistribution">
-                    <sidemodal title="分配窗口" :footer="true" :instance="distribution.modal">
+                    <sidemodal title="分配窗口" :footer="true" :instance="distribution.modal" >
                         <template slot="body">
                             <div class="form-group">
                                 <label>会员：</label>
@@ -162,6 +162,11 @@
                                         :options="members"
                                         v-model="distribution.formData.memberId">
                                 </combobox>
+                                <div id="snExtend">
+                                </div>
+                                <label  style='cursor: pointer;' @click="snExtendAdd()">添加&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</label>
+                                <label style='color: red;cursor: pointer;' @click="snExtendDel()">删除</label>
+                                <input type="text" id="snAddValue" class="form-control">
                             </div>
                         </template>
                         <template slot="footer">

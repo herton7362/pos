@@ -8,7 +8,6 @@ require(['jquery', 'vue', 'messager', 'utils'], function($, Vue, messager, utils
                               return null != value ? '绑定' : '未绑定';
                           }},
                       {field:'memberName', title:'归属合伙人'},
-                      {field:'memberMobile', title:'归属合伙人电话'},
                       {field:'transMemberName', title:'划拨人'},
                       {field:'shopName', title:'归属用户'}
                   	
@@ -50,6 +49,7 @@ require(['jquery', 'vue', 'messager', 'utils'], function($, Vue, messager, utils
                     $instance: {}
                 }
             },
+            sns : [],
             members: [],
             currentMemberId: null
         },
@@ -217,7 +217,30 @@ require(['jquery', 'vue', 'messager', 'utils'], function($, Vue, messager, utils
                     }
                 })
             },
+            snExtendDel: function(){
+            	var flag = true;
+                $("input[name='snExtendName']").each(function (index, item) {
+                	  if($(this).prop("checked")){
+                		  flag = false;
+                		  $(this).parent().parent().remove();
+                	  }
+                });
+                if(flag){
+                	messager.bubble('请勾选一个sn，再删除！！');
+                }
+            },
+            snExtendAdd: function(){
+            	if($("#snAddValue").val()==''){
+            		messager.bubble('不可以为空');
+            		return;
+            	}
+                $("#snExtend").append("<div><label><input type='checkbox' name='snExtendName' value='"+$("#snAddValue").val()+"'>待选sn："+$("#snAddValue").val()+"</label><br/></div>");
+            },
             distribute: function () {
+            	$("#snExtend").html("");
+                $.each(this.datagrid.$instance.selectedRows, function () {
+                    $("#snExtend").append("<div><label><input type='checkbox' name='snExtendName' value='"+this.sn+"'>待选sn："+this.sn+"</label><br/></div>");
+                });
                 this.distribution.modal.$instance.open();
             },
             submitDistribution: function () {
@@ -225,20 +248,21 @@ require(['jquery', 'vue', 'messager', 'utils'], function($, Vue, messager, utils
                 if(!this.distribution.validator.$instance.isFormValid()) {
                     return;
                 }
-                var sns = [];
-                $.each(this.datagrid.$instance.selectedRows, function () {
-                    sns.push(this.sn);
-                });
+
+                self.sns = [];
+                $("input[name='snExtendName']").each(function (index, item) {
+                	self.sns.push($(this).val());
+              });
                 $.ajax({
                     url: utils.patchUrl('/api/sn/transSnByAdmin'),
                     contentType: 'application/json',
                     type: 'POST',
                     dataType: 'text',
                     data: JSON.stringify($.extend(this.distribution.formData, {
-                        sns: sns.join(','),
+                        sns: self.sns.join(','),
                         currentMemberId: self.currentMemberId
                     })),
-                    success: function(data) {console.log(data);
+                    success: function(data) {
                         self.distribution.modal.$instance.close();
                         messager.bubble('保存成功！');
                         self.load();
