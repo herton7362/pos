@@ -127,6 +127,14 @@ public class SnController extends AbstractCrudController<SnInfo> {
         return new ResponseEntity<>(snInfoService.getAllSnInfo(startSn, endSn, status, bindStatus, pageSize, currentPage, memberId), HttpStatus.OK);
     }
 
+    @ApiOperation(value = "查询所有SN信息，不支持分页")
+    @ApiImplicitParams({
+            @ApiImplicitParam(value = "登录返回token", name = "access_token", dataType = "String", paramType = "query")})
+    @RequestMapping(value = "/getAllSnInfoWithoutPage", method = RequestMethod.GET)
+    public ResponseEntity<List<String>> getAllSnInfoWithoutPage() {
+        return new ResponseEntity<>(snInfoRepository.getAllSn(), HttpStatus.OK);
+    }
+
     @ApiOperation(value = "查询Sn信息")
     @RequestMapping(value = "/searchSn", method = RequestMethod.GET)
     @ApiImplicitParams({
