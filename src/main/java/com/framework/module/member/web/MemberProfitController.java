@@ -210,7 +210,8 @@ public class MemberProfitController extends AbstractCrudController<MemberProfitR
 
     @ApiOperation(value = "用户提现")
     @RequestMapping(value = "/userCashIn", method = RequestMethod.POST, produces = "application/json; charset=utf-8")
-    @ApiImplicitParams({@ApiImplicitParam(name = "amount", value = "提现金额", dataType = "double", paramType = "query", required = true)})
+    @ApiImplicitParams({
+            @ApiImplicitParam(value = "登录返回token", name = "access_token", dataType = "String", paramType = "query")})
     public ResponseEntity<Map<String, String>> userCashIn(@RequestParam(value = "amount") double amount) throws Exception {
         if (amount < 10) {
             throw new BusinessException("提现最低金额为10元");
