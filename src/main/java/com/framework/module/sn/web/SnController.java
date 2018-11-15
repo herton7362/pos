@@ -1,16 +1,16 @@
 package com.framework.module.sn.web;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
 import com.framework.module.member.domain.Member;
 import com.framework.module.member.service.MemberProfitRecordsService;
 import com.framework.module.member.service.MemberService;
 import com.framework.module.shop.domain.Shop;
 import com.framework.module.shop.domain.ShopRepository;
+import com.framework.module.sn.domain.SnBrief;
+import com.framework.module.sn.domain.SnInfo;
 import com.framework.module.sn.domain.SnInfoRepository;
+import com.framework.module.sn.service.SnInfoService;
+import com.kratos.common.AbstractCrudController;
+import com.kratos.common.PageResult;
 import com.kratos.exceptions.BusinessException;
 import com.kratos.module.attachment.domain.Attachment;
 import com.kratos.module.attachment.service.AttachmentService;
@@ -19,20 +19,19 @@ import com.kratos.module.auth.domain.Admin;
 import com.kratos.module.auth.domain.Role;
 import com.kratos.module.auth.service.AdminService;
 import com.kratos.module.auth.service.RoleService;
+import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiImplicitParams;
+import io.swagger.annotations.ApiOperation;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
-import com.framework.module.sn.domain.SnInfo;
-import com.framework.module.sn.service.SnInfoService;
-import com.kratos.common.AbstractCrudController;
-import com.kratos.common.PageResult;
-
-import io.swagger.annotations.Api;
-import io.swagger.annotations.ApiOperation;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 @Api(value = "SN管理")
 @RestController
@@ -131,8 +130,16 @@ public class SnController extends AbstractCrudController<SnInfo> {
     @ApiImplicitParams({
             @ApiImplicitParam(value = "登录返回token", name = "access_token", dataType = "String", paramType = "query")})
     @RequestMapping(value = "/getAllSnInfoWithoutPage", method = RequestMethod.GET)
-    public ResponseEntity<List<String>> getAllSnInfoWithoutPage() {
-        return new ResponseEntity<>(snInfoRepository.getAllSn(), HttpStatus.OK);
+    public ResponseEntity<List<SnBrief>> getAllSnInfoWithoutPage() {
+        List<String> snInfos = snInfoRepository.getAllSn();
+        List<SnBrief> result = new ArrayList<>();
+        for (String s : snInfos) {
+            SnBrief snBrief = new SnBrief();
+            snBrief.setId(s);
+            snBrief.setName(s);
+            result.add(snBrief);
+        }
+        return new ResponseEntity<>(result, HttpStatus.OK);
     }
 
     @ApiOperation(value = "查询Sn信息")

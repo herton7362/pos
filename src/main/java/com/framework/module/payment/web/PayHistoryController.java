@@ -28,7 +28,7 @@ public class PayHistoryController extends AbstractCrudController<PayHistory> {
     @ApiOperation(value = "转账汇款代付")
     @RequestMapping(value = "/pay", method = RequestMethod.GET)
     public ResponseEntity<Map<String, Object>> pay(@RequestParam() String cashInId) {
-        payHistoryService.pay(cashInId);
+       // payHistoryService.pay(cashInId);
         return new ResponseEntity<>(HttpStatus.OK);
     }
 }

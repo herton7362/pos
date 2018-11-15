@@ -51,7 +51,8 @@ require(['jquery', 'vue', 'messager', 'utils'], function($, Vue, messager, utils
             },
             sns : [],
             members: [],
-            currentMemberId: null
+            currentMemberId: null,
+            sngroup: []
         },
         methods: {
             choseFile: function () {
@@ -287,6 +288,12 @@ require(['jquery', 'vue', 'messager', 'utils'], function($, Vue, messager, utils
                     self.members = data.content;
                 }
             });
+            // $.ajax({
+            //     url: utils.patchUrl('/api/sn/getAllSnInfoWithoutPage'),
+            //     success: function(data) {
+            //         self.sngroup = data;
+            //     }
+            // });
             $.ajax({
                 url: utils.patchUrl('/user/info'),
                 cache: false,
