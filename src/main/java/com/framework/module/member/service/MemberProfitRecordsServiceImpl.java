@@ -759,14 +759,14 @@ public class MemberProfitRecordsServiceImpl extends AbstractCrudService<MemberPr
                 bigPartner.setMemberId(currentSon.getId());
                 bigPartner.setMemberMobile(currentSon.getMobile());
                 bigPartner.setMemberName(currentSon.getName());
-                bigPartner.setTransactionAmount(String.valueOf(totalTransactionAmount));
+                bigPartner.setTransactionAmount(setDouleScale(totalTransactionAmount));
                 bigPartnerList.add(bigPartner);
                 totalAmount += totalTransactionAmount;
             }
         }
         Map<String, Object> result = new HashMap<>();
         result.put("bigPartnerList", bigPartnerList);
-        result.put("totalAmount", String.valueOf(setDouleScale(totalAmount)));
+        result.put("totalAmount", setDouleScale(totalAmount));
         result.put("memberSize", bigPartnerList.size());
         return result;
     }
