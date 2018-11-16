@@ -44,13 +44,13 @@ public class PayHistoryServiceImpl extends AbstractCrudService<PayHistory> imple
         Map<String, String[]> param = new HashMap<>();
         param.put("mchtOrderNo", new String[]{memberCashInRecords.getId()});
         List<PayHistory> payHistoryList = findAll(param);
-        if (payHistoryList.size()!=0){
-
+        if (payHistoryList.size() != 0) {
+            throw new BusinessException("已经支付过，不能重复支付");
         }
-
+        String transaction = DateFormatUtils.format(System.currentTimeMillis(), "yyyyMMddHHmmss") + RandomStringUtils.randomNumeric(4);
         SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyyMMddHHmmss");
         PaymentContent content = new PaymentContent();
-        content.setMchtOrderNo(memberCashInRecords.getId());
+        content.setMchtOrderNo(transaction);
         content.setOrderDateTime(simpleDateFormat.format(new Date()));
         content.setAccountNo(memberCashInRecords.getCollectAccount());
         content.setAccountName(memberCashInRecords.getCollectName());
@@ -75,6 +75,9 @@ public class PayHistoryServiceImpl extends AbstractCrudService<PayHistory> imple
         if (jsonObject.containsKey("requestId")) {
             payHistory.setRequestId(jsonObject.getString("requestId"));
         }
+        if (jsonObject.containsKey("orderState")) {
+            payHistory.setOrderState(jsonObject.getString("orderState"));
+        }
         payHistory.setMchtOrderNo(content.getMchtOrderNo());
         payHistory.setOrderDateTime(content.getOrderDateTime());
         payHistory.setAccountNo(content.getAccountNo());
@@ -87,7 +90,18 @@ public class PayHistoryServiceImpl extends AbstractCrudService<PayHistory> imple
         payHistory.setNotifyUrl(content.getNotifyUrl());
         payHistory.setResultCode(resultCode);
         payHistory.setResultDes(resultDes);
+        payHistory.setCashInId(memberCashInRecords.getId());
         save(payHistory);
         return new PayResult(resultCode, resultDes);
+    }
+
+    @Override
+    public PayHistory getPayInfo(String paymentId) throws Exception {
+        PayHistory payHistory = findOne(paymentId);
+        if (payHistory == null) {
+            throw new BusinessException("无代付记录");
+        }
+
+        return null;
     }
 }

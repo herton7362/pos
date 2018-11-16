@@ -36,4 +36,10 @@ public class PayHistoryController extends AbstractCrudController<PayHistory> {
         }
         return new ResponseEntity<>(HttpStatus.OK);
     }
+
+    @ApiOperation(value = "转账汇款代付")
+    @RequestMapping(value = "/getPayInfo", method = RequestMethod.GET)
+    public ResponseEntity<PayHistory> getPayInfo(@RequestParam() String paymentId) throws Exception {
+        return new ResponseEntity<>(payHistoryService.getPayInfo(paymentId), HttpStatus.OK);
+    }
 }
