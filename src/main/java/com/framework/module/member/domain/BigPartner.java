@@ -18,7 +18,7 @@ public class BigPartner {
     @ApiModelProperty(value = "盟友电话")
     private String memberMobile;
     @ApiModelProperty(value = "盟友交易额")
-    private Double transactionAmount;
+    private String transactionAmount;
 
     public String getMemberId() {
         return memberId;
@@ -44,11 +44,11 @@ public class BigPartner {
         this.memberMobile = memberMobile;
     }
 
-    public Double getTransactionAmount() {
+    public String getTransactionAmount() {
         return transactionAmount;
     }
 
-    public void setTransactionAmount(Double transactionAmount) {
+    public void setTransactionAmount(String transactionAmount) {
         this.transactionAmount = transactionAmount;
     }
 }

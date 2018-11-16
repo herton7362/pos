@@ -18,6 +18,9 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 @Component
 @Transactional
@@ -37,6 +40,14 @@ public class PayHistoryServiceImpl extends AbstractCrudService<PayHistory> imple
         if (!MemberCashInRecords.Status.PASS.equals(memberCashInRecords.getStatus())) {
             throw new BusinessException("审核未通过，不能提现");
         }
+
+        Map<String, String[]> param = new HashMap<>();
+        param.put("mchtOrderNo", new String[]{memberCashInRecords.getId()});
+        List<PayHistory> payHistoryList = findAll(param);
+        if (payHistoryList.size()!=0){
+
+        }
+
         SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyyMMddHHmmss");
         PaymentContent content = new PaymentContent();
         content.setMchtOrderNo(memberCashInRecords.getId());
@@ -52,9 +63,7 @@ public class PayHistoryServiceImpl extends AbstractCrudService<PayHistory> imple
         content.setPurpose("用户提现");
         content.setRemark("用户提现");
         content.setNotifyUrl("http://aaaa");
-
         String result = PaymentDemo.sendPayment(content);
-
         JSONObject jsonObject = JSONObject.parseObject(result);
         String resultCode = jsonObject.getString("responseCode");
         String resultDes = jsonObject.getString("responseMsg");
@@ -79,7 +88,6 @@ public class PayHistoryServiceImpl extends AbstractCrudService<PayHistory> imple
         payHistory.setResultCode(resultCode);
         payHistory.setResultDes(resultDes);
         save(payHistory);
-
         return new PayResult(resultCode, resultDes);
     }
 }

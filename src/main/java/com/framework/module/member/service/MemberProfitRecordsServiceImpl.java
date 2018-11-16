@@ -759,7 +759,7 @@ public class MemberProfitRecordsServiceImpl extends AbstractCrudService<MemberPr
                 bigPartner.setMemberId(currentSon.getId());
                 bigPartner.setMemberMobile(currentSon.getMobile());
                 bigPartner.setMemberName(currentSon.getName());
-                bigPartner.setTransactionAmount(totalTransactionAmount);
+                bigPartner.setTransactionAmount(String.valueOf(totalTransactionAmount));
                 bigPartnerList.add(bigPartner);
                 totalAmount += totalTransactionAmount;
             }
