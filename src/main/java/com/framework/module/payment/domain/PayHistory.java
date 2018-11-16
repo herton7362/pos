@@ -39,6 +39,10 @@ public class PayHistory extends BaseEntity {
     private String requestId;
     @Column(length = 50)
     private String mchtId;
+    @Column(length = 50)
+    private String resultCode;
+    @Column(length = 50)
+    private String resultDes;
 
     public String getMchtOrderNo() {
         return mchtOrderNo;
@@ -144,5 +148,19 @@ public class PayHistory extends BaseEntity {
         this.mchtId = mchtId;
     }
 
+    public String getResultCode() {
+        return resultCode;
+    }
 
+    public void setResultCode(String resultCode) {
+        this.resultCode = resultCode;
+    }
+
+    public String getResultDes() {
+        return resultDes;
+    }
+
+    public void setResultDes(String resultDes) {
+        this.resultDes = resultDes;
+    }
 }

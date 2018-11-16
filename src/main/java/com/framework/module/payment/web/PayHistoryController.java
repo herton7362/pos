@@ -1,8 +1,10 @@
 package com.framework.module.payment.web;
 
 import com.framework.module.payment.domain.PayHistory;
+import com.framework.module.payment.domain.PayResult;
 import com.framework.module.payment.service.PayHistoryService;
 import com.kratos.common.AbstractCrudController;
+import com.kratos.exceptions.BusinessException;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.http.HttpStatus;
@@ -27,8 +29,11 @@ public class PayHistoryController extends AbstractCrudController<PayHistory> {
 
     @ApiOperation(value = "转账汇款代付")
     @RequestMapping(value = "/pay", method = RequestMethod.GET)
-    public ResponseEntity<Map<String, Object>> pay(@RequestParam() String cashInId) {
-       // payHistoryService.pay(cashInId);
+    public ResponseEntity<Map<String, Object>> pay(@RequestParam() String cashInId) throws Exception {
+        PayResult payResult = payHistoryService.pay(cashInId);
+        if (!"000000".equals(payResult.getResultCode())) {
+            throw new BusinessException("第三方异常" + payResult.getResultCode() + "-" + payResult.getResultDes());
+        }
         return new ResponseEntity<>(HttpStatus.OK);
     }
 }

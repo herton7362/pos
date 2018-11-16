@@ -1,10 +1,12 @@
 package com.framework.module.payment.service;
 
+import com.alibaba.fastjson.JSONObject;
 import com.framework.module.klt.PaymentDemo;
 import com.framework.module.klt.model.PaymentContent;
 import com.framework.module.member.domain.MemberCashInRecords;
 import com.framework.module.member.service.MemberCashInRecordsService;
 import com.framework.module.payment.domain.PayHistory;
+import com.framework.module.payment.domain.PayResult;
 import com.kratos.common.AbstractCrudService;
 import com.kratos.exceptions.BusinessException;
 import org.apache.commons.lang.RandomStringUtils;
@@ -27,7 +29,7 @@ public class PayHistoryServiceImpl extends AbstractCrudService<PayHistory> imple
     }
 
     @Override
-    public void pay(String cashInId) throws Exception {
+    public PayResult pay(String cashInId) throws Exception {
         MemberCashInRecords memberCashInRecords = memberCashInRecordsService.findOne(cashInId);
         if (memberCashInRecords == null) {
             throw new BusinessException("无提现记录");
@@ -44,12 +46,40 @@ public class PayHistoryServiceImpl extends AbstractCrudService<PayHistory> imple
         content.setAccountType("1");
         content.setBankNo("000000000000");
         content.setBankName(memberCashInRecords.getBankName());
-        content.setAmt(String.valueOf(memberCashInRecords.getCashAmount() * 100));
+        Double cash = memberCashInRecords.getCashAmount() * 100;
+        String cashStr = String.valueOf(cash);
+        content.setAmt(cashStr.substring(0, cashStr.indexOf(".")));
         content.setPurpose("用户提现");
+        content.setRemark("用户提现");
         content.setNotifyUrl("http://aaaa");
 
-        PayHistory payHistory = new PayHistory();
+        String result = PaymentDemo.sendPayment(content);
 
-        PaymentDemo.sendPayment(content);
+        JSONObject jsonObject = JSONObject.parseObject(result);
+        String resultCode = jsonObject.getString("responseCode");
+        String resultDes = jsonObject.getString("responseMsg");
+
+        PayHistory payHistory = new PayHistory();
+        if (jsonObject.containsKey("mchtId")) {
+            payHistory.setMchtId(jsonObject.getString("mchtId"));
+        }
+        if (jsonObject.containsKey("requestId")) {
+            payHistory.setRequestId(jsonObject.getString("requestId"));
+        }
+        payHistory.setMchtOrderNo(content.getMchtOrderNo());
+        payHistory.setOrderDateTime(content.getOrderDateTime());
+        payHistory.setAccountNo(content.getAccountNo());
+        payHistory.setAccountName(content.getAccountName());
+        payHistory.setAccountType(content.getAccountType());
+        payHistory.setBankNo(content.getBankNo());
+        payHistory.setBankName(content.getBankName());
+        payHistory.setAmt(content.getAmt());
+        payHistory.setPurpose(content.getPurpose());
+        payHistory.setNotifyUrl(content.getNotifyUrl());
+        payHistory.setResultCode(resultCode);
+        payHistory.setResultDes(resultDes);
+        save(payHistory);
+
+        return new PayResult(resultCode, resultDes);
     }
 }
