@@ -113,6 +113,10 @@ public class PayHistoryServiceImpl extends AbstractCrudService<PayHistory> imple
         if (jsonObject.containsKey("orderState")) {
             payHistory.setOrderState(jsonObject.getString("orderState"));
         }
+        if (jsonObject.containsKey("orderDesc")) {
+            payHistory.setOrderDesc(jsonObject.getString("orderDesc"));
+        }
+
         if (!"000000".equals(resultCode)) {
             throw new BusinessException("查询异常：" + resultCode + "-" + resultDes);
         }
