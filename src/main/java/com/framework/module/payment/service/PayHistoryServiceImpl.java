@@ -2,6 +2,7 @@ package com.framework.module.payment.service;
 
 import com.alibaba.fastjson.JSONObject;
 import com.framework.module.klt.PaymentDemo;
+import com.framework.module.klt.model.GetPaymentContent;
 import com.framework.module.klt.model.PaymentContent;
 import com.framework.module.member.domain.MemberCashInRecords;
 import com.framework.module.member.service.MemberCashInRecordsService;
@@ -101,7 +102,20 @@ public class PayHistoryServiceImpl extends AbstractCrudService<PayHistory> imple
         if (payHistory == null) {
             throw new BusinessException("无代付记录");
         }
-
-        return null;
+        GetPaymentContent content = new GetPaymentContent();
+        content.setMchtOrderNo(payHistory.getMchtOrderNo());
+        content.setPaymentBusinessType("SINGLE_PAY");
+        content.setOrderDate(payHistory.getOrderDateTime().substring(0, 8));
+        String result = PaymentDemo.getPayment(content);
+        JSONObject jsonObject = JSONObject.parseObject(result);
+        String resultCode = jsonObject.getString("responseCode");
+        String resultDes = jsonObject.getString("responseMsg");
+        if (jsonObject.containsKey("orderState")) {
+            payHistory.setOrderState(jsonObject.getString("orderState"));
+        }
+        if (!"000000".equals(resultCode)) {
+            throw new BusinessException("查询异常：" + resultCode + "-" + resultDes);
+        }
+        return save(payHistory);
     }
 }
