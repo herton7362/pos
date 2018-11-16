@@ -14,11 +14,11 @@ public class RealIdentityAuditServiceImpl extends AbstractCrudService<RealIdenti
 
     @Override
     public RealIdentityAudit save(RealIdentityAudit realIdentityAudit) throws Exception {
-        if (realIdentityAudit.getStatus().equals(RealIdentityAudit.Status.PASS)) {
-            Member member = memberService.findOne(realIdentityAudit.getMemberId());
-            member.setName(realIdentityAudit.getName());
-            memberService.save(member);
-        }
+//        if (realIdentityAudit.getStatus().equals(RealIdentityAudit.Status.PASS)) {
+        Member member = memberService.findOne(realIdentityAudit.getMemberId());
+        member.setName(realIdentityAudit.getName());
+        memberService.save(member);
+//        }
         return super.save(realIdentityAudit);
     }
 
