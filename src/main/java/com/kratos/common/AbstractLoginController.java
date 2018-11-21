@@ -1,5 +1,6 @@
 package com.kratos.common;
 
+import com.framework.module.auth.MemberThread;
 import com.framework.module.member.domain.AllyMemberInfos;
 import com.framework.module.member.domain.Member;
 import com.framework.module.member.domain.MemberLevelParam;
@@ -23,6 +24,8 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 
 import java.util.Date;
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * 提供登录注册等服务
@@ -280,6 +283,38 @@ public abstract class AbstractLoginController {
             return new ResponseEntity<>(member, HttpStatus.OK);
         }
         return new ResponseEntity<>(user, HttpStatus.OK);
+    }
+
+    /**
+     * 查询登录用户
+     */
+    @ApiOperation(value = "查询用户激活子孙数量")
+    @ApiImplicitParams({
+            @ApiImplicitParam(value = "登录返回token", name = "access_token", dataType = "String", paramType = "query")})
+    @RequestMapping(value = "/user/getActiveSonNum", method = RequestMethod.GET)
+    public ResponseEntity<Map<String, Integer>> getActiveSonNum() throws Exception {
+        Member member = MemberThread.getInstance().get();
+        AllyMemberInfos allyMembers = memberService.getAlliesInfosByMemberId(member.getId(), new Date().getTime());
+        int activeSonNum = 0;
+        int activeGrandSonNum = 0;
+        if (allyMembers != null) {
+            member.setAllySonNumber(allyMembers.getSonList().size());
+            member.setAllyAllNumber(allyMembers.getTotalNum());
+            for (Member m : allyMembers.getSonList()) {
+                if (Member.Status.ACTIVE.equals(m.getStatus())) {
+                    activeSonNum++;
+                }
+            }
+            for (Member m : allyMembers.getGrandSonList()) {
+                if (Member.Status.ACTIVE.equals(m.getStatus())) {
+                    activeGrandSonNum++;
+                }
+            }
+        }
+        Map<String, Integer> result = new HashMap<>();
+        result.put("allyAllActiveNumber", activeGrandSonNum + activeSonNum);
+        result.put("allySonActiveNumber", activeSonNum);
+        return new ResponseEntity<>(result, HttpStatus.OK);
     }
 
     /**
