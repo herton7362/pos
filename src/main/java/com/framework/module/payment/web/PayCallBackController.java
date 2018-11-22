@@ -1,9 +1,7 @@
 package com.framework.module.payment.web;
 
-import com.framework.module.payment.domain.PayHistory;
 import com.framework.module.payment.domain.PayResult;
 import com.framework.module.payment.service.PayHistoryService;
-import com.kratos.common.AbstractCrudController;
 import com.kratos.exceptions.BusinessException;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
@@ -18,12 +16,12 @@ import java.util.Map;
 
 @Api(value = "代付转账接口")
 @RestController
-@RequestMapping("/api/payHistory")
-public class PayHistoryController extends AbstractCrudController<PayHistory> {
+@RequestMapping("/pay/callback")
+public class PayCallBackController {
 
     private final PayHistoryService payHistoryService;
 
-    public PayHistoryController(PayHistoryService payHistoryService) {
+    public PayCallBackController(PayHistoryService payHistoryService) {
         this.payHistoryService = payHistoryService;
     }
 
@@ -35,11 +33,5 @@ public class PayHistoryController extends AbstractCrudController<PayHistory> {
             throw new BusinessException("第三方异常" + payResult.getResultCode() + "-" + payResult.getResultDes());
         }
         return new ResponseEntity<>(HttpStatus.OK);
-    }
-
-    @ApiOperation(value = "转账汇款代付")
-    @RequestMapping(value = "/getPayInfo", method = RequestMethod.GET)
-    public ResponseEntity<PayHistory> getPayInfo(@RequestParam() String paymentId) throws Exception {
-        return new ResponseEntity<>(payHistoryService.getPayInfo(paymentId), HttpStatus.OK);
     }
 }
