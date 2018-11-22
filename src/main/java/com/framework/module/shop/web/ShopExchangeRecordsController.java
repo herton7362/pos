@@ -48,10 +48,15 @@ public class ShopExchangeRecordsController extends AbstractCrudController<ShopEx
         }
         Long startTimeL = null;
         Long endTimeL = null;
-        if (StringUtils.isNotBlank(startTime) && StringUtils.isNotBlank(endTime)) {
+//        if (StringUtils.isNotBlank(startTime) && StringUtils.isNotBlank(endTime)) {
+//            SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+//            startTimeL = sdf.parse(startTime).getTime() - 1;
+//            endTimeL = sdf.parse(endTime).getTime() + 1;
+//        }
+        if (startTime != null && endTime != null) {
             SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-            startTimeL = sdf.parse(startTime).getTime() - 1;
-            endTimeL = sdf.parse(endTime).getTime() + 1;
+            startTimeL = sdf.parse(startTime + " 00:00:00").getTime() - 1;
+            endTimeL = sdf.parse(endTime + " 23:59:59").getTime() + 1;
         }
         return new ResponseEntity<>(shopExchangeRecordsService.getAllExchangeRecords(memberId, currentPage - 1, pageSize, startTimeL, endTimeL, status), HttpStatus.OK);
     }
