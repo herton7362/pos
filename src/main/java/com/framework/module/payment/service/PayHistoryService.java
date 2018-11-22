@@ -8,4 +8,6 @@ public interface PayHistoryService extends CrudService<PayHistory> {
     PayResult pay(String cashInId) throws Exception;
 
     PayHistory getPayInfo(String paymentId) throws Exception;
+
+    void callback(String merchantOrderId, String orderStatus, String errorCode, String errorMsg) throws Exception;
 }

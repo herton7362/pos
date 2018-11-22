@@ -7,13 +7,14 @@ import com.framework.module.klt.model.PaymentContent;
 import com.framework.module.member.domain.MemberCashInRecords;
 import com.framework.module.member.service.MemberCashInRecordsService;
 import com.framework.module.payment.domain.PayHistory;
+import com.framework.module.payment.domain.PayHistoryRepository;
 import com.framework.module.payment.domain.PayResult;
 import com.kratos.common.AbstractCrudService;
 import com.kratos.exceptions.BusinessException;
 import org.apache.commons.lang.RandomStringUtils;
+import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.time.DateFormatUtils;
-import org.apache.commons.lang.time.DateUtils;
-import org.springframework.security.access.method.P;
+import org.apache.log4j.Logger;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -27,9 +28,12 @@ import java.util.Map;
 @Transactional
 public class PayHistoryServiceImpl extends AbstractCrudService<PayHistory> implements PayHistoryService {
     private final MemberCashInRecordsService memberCashInRecordsService;
+    private final PayHistoryRepository payHistoryRepository;
+    private final Logger logger = Logger.getLogger(PayHistoryServiceImpl.class);
 
-    public PayHistoryServiceImpl(MemberCashInRecordsService memberCashInRecordsService) {
+    public PayHistoryServiceImpl(MemberCashInRecordsService memberCashInRecordsService, PayHistoryRepository payHistoryRepository) {
         this.memberCashInRecordsService = memberCashInRecordsService;
+        this.payHistoryRepository = payHistoryRepository;
     }
 
     @Override
@@ -63,7 +67,7 @@ public class PayHistoryServiceImpl extends AbstractCrudService<PayHistory> imple
         content.setAmt(cashStr.substring(0, cashStr.indexOf(".")));
         content.setPurpose("用户提现");
         content.setRemark("用户提现");
-        content.setNotifyUrl("http://aaaa");
+        content.setNotifyUrl("http://39.105.39.148:8050/pay/callback");
         String result = PaymentDemo.sendPayment(content);
         JSONObject jsonObject = JSONObject.parseObject(result);
         String resultCode = jsonObject.getString("responseCode");
@@ -121,5 +125,28 @@ public class PayHistoryServiceImpl extends AbstractCrudService<PayHistory> imple
             throw new BusinessException("查询异常：" + resultCode + "-" + resultDes);
         }
         return save(payHistory);
+    }
+
+    @Override
+    public void callback(String merchantOrderId, String orderStatus, String errorCode, String errorMsg) throws Exception {
+        PayHistory payHistory = payHistoryRepository.findFirstByMchtOrderNo(merchantOrderId);
+        if (payHistory == null) {
+            logger.error(merchantOrderId + "无支付记录");
+            return;
+        }
+        if ("0".equals(orderStatus)) {
+            payHistory.setOrderState("IN_PROCESS");
+        } else if ("1".equals(orderStatus)) {
+            payHistory.setOrderState("SUCCESS");
+        } else if ("2".equals(orderStatus)) {
+            payHistory.setOrderState("FAIL");
+        }
+        if (StringUtils.isNotBlank(errorCode)) {
+            payHistory.setResultCode(errorCode);
+        }
+        if (StringUtils.isNotBlank(errorMsg)) {
+            payHistory.setResultDes(errorMsg);
+        }
+        save(payHistory);
     }
 }
