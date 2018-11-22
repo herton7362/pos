@@ -84,8 +84,8 @@ require(['jquery', 'vue', 'messager', 'utils'], function ($, Vue, messager, util
                 window.location.href = utils.patchUrlPrefixUrl('/memberprofit/exportCashInRecords')
             },
             pay: function (row) {
+                var self = this;
                 messager.alert('确认给该用户转账？', function () {
-                    var self = this;
                     $.ajax({
                         url: utils.patchUrl('/api/payHistory/pay'),
                         data: {
@@ -94,9 +94,12 @@ require(['jquery', 'vue', 'messager', 'utils'], function ($, Vue, messager, util
                         type: 'GET',
                         success: function () {
                             messager.bubble("转账成功");
-                            self.crudgrid.$instance.load({
-                                status: 'PASS'
-                            });
+
+                            setTimeout(function () {
+                                self.crudgrid.$instance.load({
+                                    status: 'PASS'
+                                });
+                            }, 500)
                         }
                     })
                 });
