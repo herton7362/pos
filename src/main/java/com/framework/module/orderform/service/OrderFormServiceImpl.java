@@ -342,45 +342,38 @@ public class OrderFormServiceImpl extends AbstractCrudService<OrderForm> impleme
             Predicate predicate = super.toPredicate(root, criteriaQuery, criteriaBuilder);
             List<Predicate> predicates = new ArrayList<>();
 
-            List<Predicate> predicatesOrderNum = new ArrayList<>();
             if (params.containsKey("orderNumber")) {
+                List<Predicate> predicatesOrderNum = new ArrayList<>();
                 String[] orderNumber = params.get("orderNumber");
                 predicatesOrderNum.add(criteriaBuilder.equal(root.get("orderNumber"), orderNumber[0]));
-            }
-            if (predicatesOrderNum.size() != 0) {
                 Predicate predicateTemp = criteriaBuilder.and(predicatesOrderNum.toArray(new Predicate[]{}));
                 predicates.add(predicateTemp);
             }
 
-            List<Predicate> predicatesAnd = new ArrayList<>();
             if (params.containsKey("startTime") && params.containsKey("endTime")) {
+                List<Predicate> predicatesAnd = new ArrayList<>();
                 String[] startTime = params.get("startTime");
                 String[] endTime = params.get("endTime");
-                predicatesAnd.add(criteriaBuilder.between(root.get("createdDate"), Long.valueOf(startTime[0]), Long.valueOf(endTime[0])));
-            }
-            if (predicatesAnd.size() != 0) {
+                predicatesAnd.add(criteriaBuilder.lt(root.get("createdDate"), Long.valueOf(endTime[0])));
+                predicatesAnd.add(criteriaBuilder.gt(root.get("createdDate"), Long.valueOf(startTime[0])));
                 Predicate predicateTemp = criteriaBuilder.and(predicatesAnd.toArray(new Predicate[]{}));
                 predicates.add(predicateTemp);
             }
 
-            List<Predicate> predicatesStatus = new ArrayList<>();
             if (params.containsKey("status")) {
+                List<Predicate> predicatesStatus = new ArrayList<>();
                 String[] status = params.get("status");
                 predicatesStatus.add(criteriaBuilder.equal(root.get("status"), OrderForm.OrderStatus.valueOf(status[0])));
-            }
-            if (predicatesStatus.size() != 0) {
                 Predicate predicateTemp = criteriaBuilder.and(predicatesStatus.toArray(new Predicate[]{}));
                 predicates.add(predicateTemp);
             }
 
-            List<Predicate> predicatesIdOr = new ArrayList<>();
             if (params.containsKey("memberIds")) {
+                List<Predicate> predicatesIdOr = new ArrayList<>();
                 String[] memberIdList = params.get("memberIds");
                 for (int i = 0; i < memberIdList.length; i++) {
                     predicatesIdOr.add(criteriaBuilder.equal(root.get("createUserId"), memberIdList[i]));
                 }
-            }
-            if (predicatesIdOr.size() != 0) {
                 Predicate predicateTemp = criteriaBuilder.or(predicatesIdOr.toArray(new Predicate[]{}));
                 predicates.add(predicateTemp);
             }
