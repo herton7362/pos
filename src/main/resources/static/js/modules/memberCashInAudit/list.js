@@ -85,24 +85,40 @@ require(['jquery', 'vue', 'messager', 'utils'], function ($, Vue, messager, util
             },
             pay: function (row) {
                 var self = this;
-                messager.alert('确认给该用户转账？', function () {
+                if(confirm('确认给该用户转账吗？')==true){
                     $.ajax({
-                        url: utils.patchUrl('/api/payHistory/pay'),
-                        data: {
-                            cashInId: row.id
-                        },
-                        type: 'GET',
-                        success: function () {
-                            messager.bubble("转账成功");
-
-                            setTimeout(function () {
-                                self.crudgrid.$instance.load({
-                                    status: 'PASS'
-                                });
-                            }, 500)
-                        }
-                    })
-                });
+                                url: utils.patchUrl('/api/payHistory/pay'),
+                                data: {
+                                    cashInId: row.id
+                                },
+                                type: 'GET',
+                                success: function () {
+                                    messager.bubble("转账成功");
+                                    setTimeout(function () {
+                                        self.crudgrid.$instance.load({
+                                            status: 'PASS'
+                                        });
+                                    }, 500)
+                                }
+                            })
+                }
+                // messager.alert('确认给该用户转账？', function () {
+                //     $.ajax({
+                //         url: utils.patchUrl('/api/payHistory/pay'),
+                //         data: {
+                //             cashInId: row.id
+                //         },
+                //         type: 'GET',
+                //         success: function () {
+                //             messager.bubble("转账成功");
+                //             setTimeout(function () {
+                //                 self.crudgrid.$instance.load({
+                //                     status: 'PASS'
+                //                 });
+                //             }, 500)
+                //         }
+                //     })
+                // });
             }
         },
         watch: {
