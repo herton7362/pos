@@ -3,11 +3,7 @@ package com.framework.module.member.domain;
 import com.kratos.entity.BaseEntity;
 import io.swagger.annotations.ApiModelProperty;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.EnumType;
-import javax.persistence.Enumerated;
-import java.sql.Timestamp;
+import javax.persistence.*;
 
 /**
  * <p>Description: 提现记录表</p>
@@ -50,6 +46,18 @@ public class MemberCashInRecords extends BaseEntity {
     @ApiModelProperty(value = "银行卡银行")
     @Column(length = 200)
     private String bankName;
+
+    @ApiModelProperty(value = "代付状态")
+    @Transient
+    private String payOrderState;
+
+    @ApiModelProperty(value = "代付返回码")
+    @Transient
+    private String payResultCode;
+
+    @ApiModelProperty(value = "代付返回描述")
+    @Transient
+    private String payResultDes;
 
     public String getMemberId() {
         return memberId;
@@ -113,6 +121,30 @@ public class MemberCashInRecords extends BaseEntity {
 
     public void setBankName(String bankName) {
         this.bankName = bankName;
+    }
+
+    public String getPayOrderState() {
+        return payOrderState;
+    }
+
+    public void setPayOrderState(String payOrderState) {
+        this.payOrderState = payOrderState;
+    }
+
+    public String getPayResultCode() {
+        return payResultCode;
+    }
+
+    public void setPayResultCode(String payResultCode) {
+        this.payResultCode = payResultCode;
+    }
+
+    public String getPayResultDes() {
+        return payResultDes;
+    }
+
+    public void setPayResultDes(String payResultDes) {
+        this.payResultDes = payResultDes;
     }
 
     public enum Status {

@@ -67,7 +67,7 @@ public class PayHistoryServiceImpl extends AbstractCrudService<PayHistory> imple
         content.setAmt(cashStr.substring(0, cashStr.indexOf(".")));
         content.setPurpose("用户提现");
         content.setRemark("用户提现");
-        content.setNotifyUrl("http://39.105.39.148/pay/callback");
+        content.setNotifyUrl("http://39.105.39.148:8050/pay/callback");
         String result = PaymentDemo.sendPayment(content);
         JSONObject jsonObject = JSONObject.parseObject(result);
         String resultCode = jsonObject.getString("responseCode");

@@ -36,6 +36,6 @@ public class PayCallBackController {
                         "errorMsg" + errorMsg;
         logger.info("callback result====" + builder);
         payHistoryService.callback(merchantOrderId, orderStatus, errorCode, errorMsg);
-        return new ResponseEntity<>(HttpStatus.OK);
+        return new ResponseEntity<>("success", HttpStatus.OK);
     }
 }

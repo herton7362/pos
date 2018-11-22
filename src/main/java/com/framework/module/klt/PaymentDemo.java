@@ -18,15 +18,19 @@ public class PaymentDemo {
 
     //测试地址
     public static final String url = "https://ipay.chinasmartpay.cn/openapi/singlePayment/payment";
+//    public static final String url = "https://openapi.openepay.com/openapi/singlePayment/payment";
 
     public static final String get_url = "https://ipay.chinasmartpay.cn/openapi/singlePayment/query";
+    //    public static final String get_url = "https://openapi.openepay.com/openapi/singlePayment/query";
     //测试md5Key
     public static final String md5Key = "742fa3ffd050fb441763bf8fb6c0594f";
     //测试商户号
     public static final String merchantId = "903110153110001";
+//    public static final String merchantId = "903210118110801";
 
     /**
      * 扣费接口
+     *
      * @return
      * @throws IOException
      * @throws NoSuchAlgorithmException
