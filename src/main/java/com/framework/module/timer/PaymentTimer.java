@@ -26,16 +26,16 @@ public class PaymentTimer {
         this.payHistoryService = payHistoryService;
     }
 
-//    @Scheduled(cron = "0 0/10 * * * ?")
-//    public void getPaymentInfo() throws Exception {
-//        logger.info("get payment start.");
-//        Map<String, String[]> param = new HashMap<>();
-//        param.put("orderState", new String[]{"IN_PROCESS"});
-//        List<PayHistory> payHistoryList = payHistoryService.findAll(param);
-//        logger.info(payHistoryList.size() + " has in process.");
-//        for (PayHistory p : payHistoryList) {
-//            payHistoryService.getPayInfo(p.getId());
-//        }
-//        logger.info("end payment start.");
-//    }
+    @Scheduled(cron = "0 0/10 * * * ?")
+    public void getPaymentInfo() throws Exception {
+        logger.info("get payment start.");
+        Map<String, String[]> param = new HashMap<>();
+        param.put("orderState", new String[]{"IN_PROCESS"});
+        List<PayHistory> payHistoryList = payHistoryService.findAll(param);
+        logger.info(payHistoryList.size() + " has in process.");
+        for (PayHistory p : payHistoryList) {
+            payHistoryService.getPayInfo(p.getId());
+        }
+        logger.info("end payment start.");
+    }
 }
