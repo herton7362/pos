@@ -37,9 +37,10 @@ public class MemberCashInRecordsController extends AbstractCrudController<Member
                 t.setPayOrderState(payHistory.getOrderState());
                 t.setPayResultCode(payHistory.getResultCode());
                 t.setPayResultDes(payHistory.getResultDes());
+            }else {
+                t.setPayOrderState("UN_PAY");
             }
         }
-
         return result;
     }
 }

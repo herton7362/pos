@@ -26,7 +26,24 @@ require(['jquery', 'vue', 'messager', 'utils'], function($, Vue, messager, utils
                     {field:'createdDate', title:'申请时间', formatter: function (value) {
                         return new Date(value).format('yyyy-MM-dd HH:mm')
                     }},
-                    {field:'reason', title:'提现失败理由'}
+                    {field:'reason', title:'提现失败理由'},
+                    {field:'payOrderState', title:'转账状态' , formatter: function(value) {
+                            if('UN_PAY' === value) {
+                                return '未转账';
+                            } else if('SUCCESS' === value) {
+                                return '成功';
+                            } else if('IN_PROCESS' === value) {
+                                return '处理中';
+                            } else if('FAIL' === value) {
+                                return '失败';
+                            } else if('CREATE' === value) {
+                                return '已受理';
+                            } else if('REFUSE' === value) {
+                                return '拒绝交易';
+                            }
+                        }},
+                    {field:'payResultCode', title:'支付机构返回码'},
+                    {field:'payResultDes', title:'支付机构返回描述'}
                 ]
             },
             formData: {
