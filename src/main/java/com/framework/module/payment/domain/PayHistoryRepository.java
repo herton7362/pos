@@ -6,5 +6,5 @@ public interface PayHistoryRepository extends PageRepository<PayHistory> {
 
     PayHistory findFirstByMchtOrderNo(String mchtOrderNo);
 
-    PayHistory findFirstByCashInId(String cashInId);
+    PayHistory findFirstByCashInIdOrderByCreatedDateDesc(String cashInId);
 }

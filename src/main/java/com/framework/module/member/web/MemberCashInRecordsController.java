@@ -32,7 +32,7 @@ public class MemberCashInRecordsController extends AbstractCrudController<Member
         PageResult<MemberCashInRecords> page = (PageResult<MemberCashInRecords>) result.getBody();
         List<MemberCashInRecords> list = page.getContent();
         for (MemberCashInRecords t : list) {
-            PayHistory payHistory = payHistoryRepository.findFirstByCashInId(t.getId());
+            PayHistory payHistory = payHistoryRepository.findFirstByCashInIdOrderByCreatedDateDesc(t.getId());
             if (payHistory != null) {
                 t.setPayOrderState(payHistory.getOrderState());
                 t.setPayResultCode(payHistory.getResultCode());
