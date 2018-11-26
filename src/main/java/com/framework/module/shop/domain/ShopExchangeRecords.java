@@ -25,7 +25,16 @@ public class ShopExchangeRecords extends BaseEntity {
     @Column(length = 20)
     @Enumerated(EnumType.STRING)
     private Status status = Status.EXCHANGING;
+    @ApiModelProperty(value = "审核人ID")
+    private String auditMemberId;
 
+    public String getAuditMemberId() {
+        return auditMemberId;
+    }
+
+    public void setAuditMemberId(String auditMemberId) {
+        this.auditMemberId = auditMemberId;
+    }
 
     public String getShopId() {
         return shopId;

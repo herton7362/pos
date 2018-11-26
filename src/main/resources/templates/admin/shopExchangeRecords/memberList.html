@@ -71,10 +71,10 @@
                                     :instance="datagrid"
                                     :table-transform-response="tableTransformResponse"
                             >
-                                <!--<template slot="operator" scope="props">-->
-                                    <!--<a class="btn btn-xs bg-green" @click="audit(props.row, true)">审核通过</a>-->
-                                    <!--<a class="btn btn-xs bg-red" @click="audit(props.row, false)">审核不通过</a>-->
-                                <!--</template>-->
+                                <template slot="operator" scope="props">
+                                    <a class="btn btn-xs bg-green" @click="audit(props.row, true)">审核通过</a>
+                                    <a class="btn btn-xs bg-red" @click="audit(props.row, false)">审核不通过</a>
+                                </template>
                             </datagrid>
                         </div>
                     </div>

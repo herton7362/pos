@@ -11,6 +11,7 @@ import com.framework.module.shop.domain.ShopRepository;
 import com.kratos.common.AbstractCrudService;
 import com.kratos.common.PageResult;
 import com.kratos.exceptions.BusinessException;
+import com.kratos.module.auth.AdminThread;
 import com.sun.jndi.toolkit.url.UrlUtil;
 import org.apache.log4j.Logger;
 import org.springframework.data.domain.Page;
@@ -109,6 +110,7 @@ public class ShopExchangeRecordsServiceImpl extends AbstractCrudService<ShopExch
             shop.setExchangePosMachine(0);
         }
         shopRepository.save(shop);
+        shopExchangeRecords.setAuditMemberId(AdminThread.getInstance().get().getId());
         shopExchangeRecordsRepository.save(shopExchangeRecords);
     }
 
