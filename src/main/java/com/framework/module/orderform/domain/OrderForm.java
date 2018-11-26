@@ -13,6 +13,7 @@ import java.util.List;
 
 /**
  * 订单
+ *
  * @author tang he
  * @since 1.0.0
  */
@@ -61,6 +62,9 @@ public class OrderForm extends BaseEntity {
     private String shippingCode;
     @ApiModelProperty(value = "发货日期")
     private Long shippingDate;
+    @ApiModelProperty(value = "发货人")
+    @Column(length = 36)
+    private String shippingMemberId;
     @ApiModelProperty(value = "配送状态")
     @Column(length = 20)
     private String shippingStatus;
@@ -268,8 +272,16 @@ public class OrderForm extends BaseEntity {
         this.applyRejectRemark = applyRejectRemark;
     }
 
+    public String getShippingMemberId() {
+        return shippingMemberId;
+    }
+
+    public void setShippingMemberId(String shippingMemberId) {
+        this.shippingMemberId = shippingMemberId;
+    }
+
     public void addItem(OrderItem item) {
-        if(items == null) {
+        if (items == null) {
             items = new ArrayList<>();
         }
         item.setOrderForm(this);
@@ -279,6 +291,7 @@ public class OrderForm extends BaseEntity {
     public enum PaymentStatus {
         UN_PAY("待支付"), PAYED("已支付");
         private String displayName;
+
         PaymentStatus(String displayName) {
             this.displayName = displayName;
         }
@@ -297,9 +310,11 @@ public class OrderForm extends BaseEntity {
         REJECTED("已退货"),
         CANCEL("已取消");
         private String displayName;
+
         OrderStatus(String displayName) {
             this.displayName = displayName;
         }
+
         public String getDisplayName() {
             return displayName;
         }

@@ -20,6 +20,7 @@ import com.kratos.common.AbstractCrudService;
 import com.kratos.common.PageRepository;
 import com.kratos.common.PageResult;
 import com.kratos.exceptions.BusinessException;
+import com.kratos.module.auth.UserThread;
 import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -143,6 +144,7 @@ public class OrderFormServiceImpl extends AbstractCrudService<OrderForm> impleme
         orderForm.setStatus(OrderForm.OrderStatus.DELIVERED);
         orderForm.setShippingCode(sendOutParam.getShippingCode());
         orderForm.setShippingDate(sendOutParam.getShippingDate());
+        orderForm.setShippingMemberId(UserThread.getInstance().get().getId());
         orderFormRepository.save(orderForm);
         orderForm.getItems().forEach(orderItem -> {
             Product product = orderItem.getProduct();

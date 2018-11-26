@@ -147,6 +147,20 @@
                                                 <div class="col-xs-4 cell-title">操作：</div>
                                                 <a class="btn btn-xs bg-purple" title="查看"
                                                    @click="detailModalOpen(row)"><i class="fa fa-fw fa-eye"></i></a>
+                                                <a v-if="row.paymentStatus == 'UN_PAY'"
+                                                   class="btn btn-xs bg-green"
+                                                   title="确认收款"
+                                                   @click="pay(row)"><i class="fa fa-fw fa-cny"></i></a>
+                                                <a v-if="row.status == 'PAYED'"
+                                                   class="btn btn-xs bg-green"
+                                                   title="发货"
+                                                   @click="shipModalOpen(row)"><i class="fa fa-bus"></i></a>
+                                                <a v-if="row.status == 'APPLY_REJECTED'"
+                                                   class="btn btn-xs bg-red"
+                                                   title="退换货"
+                                                   @click="rejectModalOpen(row)"><i class="fa fa-reply"></i></a>
+                                                <a class="btn btn-xs bg-red" title="删除" @click="remove(row)"><i
+                                                        class="fa fa-fw fa-stop"></i></a>
                                             </td>
                                         </tr>
                                         <tr v-for="sub in row.items" v-if="row.expended">
@@ -188,6 +202,70 @@
                     </div>
                 </div>
             </div>
+
+            <validator :instance="shippingInfo.validator">
+                <form @submit.prevent="shippingInfoSave">
+                    <modal title="发货信息维护" :footer="true" :instance="shippingInfo.modal">
+                        <template slot="body">
+                            <div class="form-group">
+                                <label>运单号：</label>
+                                <input type="text" class="form-control" required
+                                       v-model="shippingInfo.form.shippingCode" placeholder="输入运单号">
+                            </div>
+                            <div class="form-group">
+                                <label>发货日期：</label>
+                                <div class="input-group date">
+                                    <div class="input-group-addon">
+                                        <i class="fa fa-calendar"></i>
+                                    </div>
+                                    <datepicker required v-model="shippingInfo.form.shippingDate"></datepicker>
+                                </div>
+                            </div>
+                        </template>
+                        <template slot="footer">
+                            <button type="button" class="btn btn-default margin-r-5 btn-flat"
+                                    @click="shippingInfo.modal.$instance.close()">取消发货
+                            </button>
+                            <button type="submit" class="btn btn-primary btn-flat">确认发货</button>
+                        </template>
+                    </modal>
+                </form>
+            </validator>
+
+            <validator :instance="returnMoney.validator">
+                <form @submit.prevent="returnMoneySave">
+                    <modal title="退换货" :footer="true" :instance="returnMoney.modal">
+                        <template slot="body">
+                            <div class="form-group">
+                                <label>退回金额（如果换货则为 0）：</label>
+                                <input type="number" class="form-control" required
+                                       v-model="returnMoney.form.returnedMoney" placeholder="输入退款金额">
+                            </div>
+                            <div class="form-group">
+                                <label>退回余额（如果换货则为 0）：</label>
+                                <input type="number" class="form-control" required
+                                       v-model="returnMoney.form.returnedBalance" placeholder="输入退回余额">
+                            </div>
+                            <div class="form-group">
+                                <label>退回积分（如果换货则为 0）：</label>
+                                <input type="number" class="form-control" required
+                                       v-model="returnMoney.form.returnedPoint" placeholder="输入退回积分">
+                            </div>
+                            <div class="form-group">
+                                <label>备注：</label>
+                                <textarea class="form-control" rows="3" required
+                                          v-model="returnMoney.form.returnedRemark" placeholder="输入备注"></textarea>
+                            </div>
+                        </template>
+                        <template slot="footer">
+                            <button type="button" class="btn btn-default margin-r-5 btn-flat"
+                                    @click="returnMoney.modal.$instance.close()">取消退款
+                            </button>
+                            <button type="submit" class="btn btn-primary btn-flat">确认退款</button>
+                        </template>
+                    </modal>
+                </form>
+            </validator>
 
             <sidemodal :title="'订单详情 | 单号：' + formDetail.form.orderNumber" :footer="true" :instance="formDetail.modal">
                 <template slot="body">

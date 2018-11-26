@@ -186,6 +186,12 @@ public class ShopExchangeRecordsServiceImpl extends AbstractCrudService<ShopExch
                 Predicate predicateTemp = criteriaBuilder.or(predicatesIdOr.toArray(new Predicate[]{}));
                 predicates.add(predicateTemp);
             }
+
+            List<Predicate> predicatesDelete = new ArrayList<>();
+            predicatesDelete.add(criteriaBuilder.equal(root.get("logicallyDeleted"), false));
+            Predicate predicateDelete = criteriaBuilder.and(predicatesDelete.toArray(new Predicate[]{}));
+            predicates.add(predicateDelete);
+
             predicates.add(predicate);
             return criteriaBuilder.and(predicates.toArray(new Predicate[]{}));
         }
