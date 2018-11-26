@@ -56,9 +56,9 @@
                             :instance="crudgrid"
                             query-key="collectName"
                     >
-                        <!--<template slot="datagrid-operator" scope="props">-->
-                            <!--<a v-if="props.row.payOrderState !== 'SUCCESS'&& props.row.payOrderState !== 'IN_PROCESS' && searchStatus==='PASS'"  class="btn btn-xs bg-green" @click="pay(props.row)" title="转账"><i class="fa fa-fw fa-money"></i></a>-->
-                        <!--</template>-->
+                        <template slot="datagrid-operator" scope="props">
+                            <a v-if="props.row.payOrderState !== 'SUCCESS'&& props.row.payOrderState !== 'IN_PROCESS' && searchStatus==='PASS'"  class="btn btn-xs bg-green" @click="pay(props.row)" title="转账"><i class="fa fa-fw fa-money"></i></a>
+                        </template>
 
                         <template slot="form-body" scope="props">
                             <div class="form-group">
