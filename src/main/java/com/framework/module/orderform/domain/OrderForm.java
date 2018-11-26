@@ -84,6 +84,9 @@ public class OrderForm extends BaseEntity {
     @ApiModelProperty(value = "退款备注")
     @Column(length = 500)
     private String returnedRemark;
+    @ApiModelProperty(value = "退款审核人ID")
+    @Column(length = 36)
+    private String returnedMemberId;
     @ApiModelProperty(value = "申请退款备注")
     @Column(length = 500)
     private String applyRejectRemark;
@@ -278,6 +281,14 @@ public class OrderForm extends BaseEntity {
 
     public void setShippingMemberId(String shippingMemberId) {
         this.shippingMemberId = shippingMemberId;
+    }
+
+    public String getReturnedMemberId() {
+        return returnedMemberId;
+    }
+
+    public void setReturnedMemberId(String returnedMemberId) {
+        this.returnedMemberId = returnedMemberId;
     }
 
     public void addItem(OrderItem item) {

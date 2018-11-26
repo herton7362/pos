@@ -209,6 +209,7 @@ public class OrderFormServiceImpl extends AbstractCrudService<OrderForm> impleme
         orderForm.setReturnedMoney(rejectParam.getReturnedMoney());
         orderForm.setReturnedBalance(rejectParam.getReturnedBalance());
         orderForm.setReturnedPoint(rejectParam.getReturnedPoint());
+        orderForm.setReturnedMemberId(UserThread.getInstance().get().getId());
         orderForm.setApplyRejectRemark(rejectParam.getReturnedRemark());
         orderFormRepository.save(orderForm);
         // 修改账户余额
