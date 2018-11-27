@@ -65,8 +65,8 @@ public class PayHistoryServiceImpl extends AbstractCrudService<PayHistory> imple
         Double cash = memberCashInRecords.getCashAmount() * 100;
         String cashStr = String.valueOf(cash);
         content.setAmt(cashStr.substring(0, cashStr.indexOf(".")));
-        content.setPurpose("用户提现");
-        content.setRemark("用户提现");
+        content.setPurpose("资金清算");
+        content.setRemark("资金清算");
         content.setNotifyUrl("http://39.105.39.148/pay/callback");
 //        content.setNotifyUrl("http://39.105.39.148:8050/pay/callback");
         String result = PaymentDemo.sendPayment(content);
