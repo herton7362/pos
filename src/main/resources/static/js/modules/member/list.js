@@ -49,6 +49,12 @@ require(['jquery', 'vue', 'messager', 'utils'], function($, Vue, messager, utils
                     //     return new Date(value).format("yyyy-MM-dd");
                     // }},
                     {field:'idCard', title:'身份证'},
+                    {field:'activeTime', title:'激活时间', formatter: function (value) {
+                        if (value==null){
+                            return "未记录";
+                        }
+                            return new Date(value).format('yyyy-MM-dd HH:mm:ss')
+                        }},
                     // {field:'address', title:'所在地区'}
                 ]
             },
