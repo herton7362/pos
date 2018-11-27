@@ -261,7 +261,6 @@ public class MemberProfitController extends AbstractCrudController<MemberProfitR
     @ResponseBody
     public ResponseEntity<Map<String, Object>> getBigPartner() throws Exception {
         String memberId = UserThread.getInstance().get().getId();
-
         Map<String, String[]> params = new HashMap<>();
         params.put("code", new String[]{"BigTransaction"});
         List<DictionaryCategory> dictionaryCategories = dictionaryCategoryService.findAll(params);
@@ -300,7 +299,6 @@ public class MemberProfitController extends AbstractCrudController<MemberProfitR
         } catch (ParseException e) {
             throw new BusinessException("月份格式不正确");
         }
-
         List<AchievementDetail> result = new ArrayList<>();
         try {
             result = memberProfitService.getAchievementByMonth(memberId, endMonth, size + 1);

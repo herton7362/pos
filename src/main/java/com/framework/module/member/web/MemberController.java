@@ -290,7 +290,6 @@ public class MemberController extends AbstractCrudController<Member> {
             sonList.addAll(allyMembers.getSonList());
             sonList.addAll(allyMembers.getGrandSonList());
         }
-
         if (CollectionUtils.isEmpty(sonList)) {
             return new ResponseEntity<>(result, HttpStatus.OK);
         }
@@ -308,6 +307,9 @@ public class MemberController extends AbstractCrudController<Member> {
         result.put("totalTransactionAmount", totalTransactionAmount);
         result.put("shopNum", shopSize);
         result.put("partnerNum", sonList.size());
+
+        result.putAll(memberService.getActiveSonNum());
+
         return new ResponseEntity<>(result, HttpStatus.OK);
     }
 

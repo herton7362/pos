@@ -5,6 +5,8 @@ import com.framework.module.member.domain.AllyMembers;
 import com.framework.module.member.domain.Member;
 import com.kratos.common.CrudService;
 
+import java.util.Map;
+
 public interface MemberService extends CrudService<Member> {
     /**
      * 根据登录名获取会员
@@ -72,4 +74,6 @@ public interface MemberService extends CrudService<Member> {
      * @param member 会员参数
      */
     void editPwd(Member member) throws Exception;
+
+    Map<String, Integer> getActiveSonNum();
 }

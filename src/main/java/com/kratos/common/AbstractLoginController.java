@@ -293,28 +293,7 @@ public abstract class AbstractLoginController {
             @ApiImplicitParam(value = "登录返回token", name = "access_token", dataType = "String", paramType = "query")})
     @RequestMapping(value = "/user/getActiveSonNum", method = RequestMethod.GET)
     public ResponseEntity<Map<String, Integer>> getActiveSonNum() throws Exception {
-        Map<String, Integer> result = new HashMap<>();
-        Member member = MemberThread.getInstance().get();
-        AllyMemberInfos allyMembers = memberService.getAlliesInfosByMemberId(member.getId(), new Date().getTime());
-        int activeSonNum = 0;
-        int activeGrandSonNum = 0;
-        if (allyMembers != null) {
-            result.put("allySonNumber", allyMembers.getSonList().size());
-            result.put("allyAllNumber", allyMembers.getTotalNum());
-            for (Member m : allyMembers.getSonList()) {
-                if (Member.Status.ACTIVE.equals(m.getStatus())) {
-                    activeSonNum++;
-                }
-            }
-            for (Member m : allyMembers.getGrandSonList()) {
-                if (Member.Status.ACTIVE.equals(m.getStatus())) {
-                    activeGrandSonNum++;
-                }
-            }
-        }
-        result.put("allyAllActiveNumber", activeGrandSonNum + activeSonNum);
-        result.put("allySonActiveNumber", activeSonNum);
-        return new ResponseEntity<>(result, HttpStatus.OK);
+        return new ResponseEntity<>(memberService.getActiveSonNum(), HttpStatus.OK);
     }
 
     /**
