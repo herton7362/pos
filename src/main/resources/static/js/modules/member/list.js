@@ -18,14 +18,12 @@ require(['jquery', 'vue', 'messager', 'utils'], function($, Vue, messager, utils
                     {field:'loginName', title:'登录名'},
                     {field:'name', title:'姓名'},
                     {field:'mobile', title:'手机'},
-                    // {field:'gender', title:'性别', formatter: function(value) {
-                    //     if(value === '0') {
-                    //         return '女士';
-                    //     } else if(value === '1') {
-                    //         return '先生';
-                    //     }
-                    //     return '未知';
-                    // }},
+                    {field:'status', title:'状态', formatter: function(value) {
+                        if(value === 'ACTIVE') {
+                            return '激活';
+                        }
+                        return '未激活';
+                    }},
                     {field:'supportManagerAward', title:'是否支持管理奖', formatter: function(value) {
                             if(value === '0') {
                                 return '不支持';
