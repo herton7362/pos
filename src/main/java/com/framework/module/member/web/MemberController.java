@@ -317,7 +317,7 @@ public class MemberController extends AbstractCrudController<Member> {
     @ApiOperation(value = "关系树查询", notes = "关系树查询")
     @RequestMapping(value = "/searchForTree", method = RequestMethod.GET, produces = "application/json; charset=utf-8")
     public ResponseEntity<List<Member>> searchForTree(@RequestParam(required = false) String memberId) throws Exception {
-        if (UserThread.getInstance().get() instanceof Admin) {
+        if (UserThread.getInstance().get() instanceof Admin && StringUtils.isEmpty(memberId)) {
             memberId = AdminThread.getInstance().get().getMemberId();
         }
         if (StringUtils.isEmpty(memberId)) {
