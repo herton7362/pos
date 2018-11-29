@@ -14,6 +14,7 @@ import com.kratos.common.PageResult;
 import com.kratos.exceptions.BusinessException;
 import com.kratos.module.auth.AdminThread;
 import com.kratos.module.auth.UserThread;
+import com.kratos.module.auth.domain.Admin;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiImplicitParams;
@@ -316,6 +317,9 @@ public class MemberController extends AbstractCrudController<Member> {
     @ApiOperation(value = "关系树查询", notes = "关系树查询")
     @RequestMapping(value = "/searchForTree", method = RequestMethod.GET, produces = "application/json; charset=utf-8")
     public ResponseEntity<List<Member>> searchForTree(@RequestParam(required = false) String memberId) throws Exception {
+        if (UserThread.getInstance().get() instanceof Admin) {
+            memberId = AdminThread.getInstance().get().getMemberId();
+        }
         if (StringUtils.isEmpty(memberId)) {
             Map<String, String[]> param = new HashMap<>();
             return new ResponseEntity<>(getService().findAll(param), HttpStatus.OK);

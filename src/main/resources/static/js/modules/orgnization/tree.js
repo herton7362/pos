@@ -98,17 +98,17 @@ require(['jquery', 'vue', 'messager', 'utils'], function ($, Vue, messager, util
         mounted: function () {
             var self = this;
             $.ajax({
-                url: utils.patchUrl('/api/member'),
+                url: utils.patchUrl('/api/member/searchForTree'),
                 data: {
                     sort: 'sortNumber',
                     order: 'asc',
                     logicallyDeleted: false
                 },
                 success: function (data) {
-                    $.each(data.content, function () {
+                    $.each(data, function () {
                         this.name = this.name + '(' + this.loginName + ')';
                     });
-                    self.members = data.content;
+                    self.members = data;
                 }
             });
             this.loadSidebar()
