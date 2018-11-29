@@ -22,6 +22,8 @@ import javax.persistence.criteria.CriteriaQuery;
 import javax.persistence.criteria.Predicate;
 import javax.persistence.criteria.Root;
 import java.math.BigDecimal;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.*;
 
 @Component("memberService")
@@ -67,15 +69,35 @@ public class MemberServiceImpl extends AbstractCrudService<Member> implements Me
         public Predicate toPredicate(Root<Member> root, CriteriaQuery<?> criteriaQuery, CriteriaBuilder criteriaBuilder) {
             Predicate predicate = super.toPredicate(root, criteriaQuery, criteriaBuilder);
             List<Predicate> predicates = new ArrayList<>();
+//            if (params.containsKey("quickSearch") && StringUtils.isNotBlank(params.get("quickSearch")[0])) {
+//                String[] value = params.get("quickSearch");
+//                predicates.add(criteriaBuilder.like(root.get("name"), "%" + value[0] + "%"));
+//                predicates.add(criteriaBuilder.like(root.get("loginName"), "%" + value[0] + "%"));
+//                predicates.add(criteriaBuilder.like(root.get("mobile"), "%" + value[0] + "%"));
+//                predicates.add(criteriaBuilder.like(root.get("idCard"), "%" + value[0] + "%"));
+//                Predicate predicateTemp = criteriaBuilder.or(predicates.toArray(new Predicate[]{}));
+//                predicates.clear();
+//                predicates.add(predicateTemp);
+//            }
+
             if (params.containsKey("quickSearch") && StringUtils.isNotBlank(params.get("quickSearch")[0])) {
                 String[] value = params.get("quickSearch");
-                predicates.add(criteriaBuilder.like(root.get("name"), "%" + value[0] + "%"));
-                predicates.add(criteriaBuilder.like(root.get("loginName"), "%" + value[0] + "%"));
-                predicates.add(criteriaBuilder.like(root.get("mobile"), "%" + value[0] + "%"));
-                predicates.add(criteriaBuilder.like(root.get("idCard"), "%" + value[0] + "%"));
-                Predicate predicateTemp = criteriaBuilder.or(predicates.toArray(new Predicate[]{}));
-                predicates.clear();
-                predicates.add(predicateTemp);
+                SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+                try {
+                    Date tmp = sdf.parse(value[0] + " 23:59:59");
+                    predicates.add(criteriaBuilder.lt(root.get("activeTime"), tmp.getTime()));
+                    Predicate predicateTemp = criteriaBuilder.and(predicates.toArray(new Predicate[]{}));
+                    predicates.clear();
+                    predicates.add(predicateTemp);
+                } catch (ParseException e) {
+                    predicates.add(criteriaBuilder.like(root.get("name"), "%" + value[0] + "%"));
+                    predicates.add(criteriaBuilder.like(root.get("loginName"), "%" + value[0] + "%"));
+                    predicates.add(criteriaBuilder.like(root.get("mobile"), "%" + value[0] + "%"));
+                    predicates.add(criteriaBuilder.like(root.get("idCard"), "%" + value[0] + "%"));
+                    Predicate predicateTemp = criteriaBuilder.or(predicates.toArray(new Predicate[]{}));
+                    predicates.clear();
+                    predicates.add(predicateTemp);
+                }
             }
 
             List<Predicate> predicatesStatus = new ArrayList<>();
